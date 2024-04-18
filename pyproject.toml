@@ -5,6 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "cocorum"
 version = "0.0.1"
+keywords = ["rumble", "api", "wrapper", "livestream"]
 authors = [
   { name="Wilbur Jaywright", email="zargulthewizard@outlook.com" },
 ]
