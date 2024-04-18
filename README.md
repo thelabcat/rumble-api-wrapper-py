@@ -1,4 +1,4 @@
-# Rumble Livestream API Python Wrapper
+# Cocorum: Rumble Livestream API Python Wrapper
 A Python wrapper for the Rumble Livestream API v1.0 (beta), with some quality of live additions, such as:
 - Automatic refresh when past the refresh_rate delay when querying any non_static property.
 - All timespamps are parsed to seconds since Epoch, UTC timezone.
@@ -10,7 +10,7 @@ I tried to document the wrapper well, so the help function should work. Note, yo
 Most attributes that are not added features have the same name as the direct JSON counterparts, with the exception of adding prefixes to some things that have the same name in the JSON as Python builtin functions. For example, thing/id in JSON is thing.thing_id in this Python wrapper.
 
 ```
-from rumble_api import RumbleAPI
+from cocorum import RumbleAPI
 api = RumbleAPI(API_URL, refresh_rate = 10)
 print(api.username)
 print(api.latest_follower)
