@@ -1,4 +1,4 @@
-# Cocorum: Rumble Livestream API Python Wrapper
+# Cocorum: Rumble Live Stream API Python Wrapper
 A Python wrapper for the Rumble Livestream API v1.0 (beta), with some quality of live additions, such as:
 - Automatic refresh when past the refresh_rate delay when querying any non_static property.
 - All timespamps are parsed to seconds since Epoch, UTC timezone.
