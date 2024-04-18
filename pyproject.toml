@@ -1,0 +1,20 @@
+[project]
+name = "cocorum"
+version = "0.0.1"
+authors = [
+  { name="Wilbur Jaywright", email="zargulthewizard@outlook.com" },
+]
+description = "An unofficial Python wrapper for the Rumble Live Stream API v1.0 (beta)"
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: GNU Affero General Public License v3",
+    "Operating System :: OS Independent",
+    "Development Status :: 3 - Alpha",
+]
+
+[project.urls]
+Homepage = "https://github.com/thelabcat/rumble-api-wrapper-py"
+Issues = "https://github.com/thelabcat/rumble-api-wrapper-py/issues"
+RumbleAPIdocs = "https://rumblefaq.groovehq.com/help/how-to-use-rumble-s-live-stream-api"
