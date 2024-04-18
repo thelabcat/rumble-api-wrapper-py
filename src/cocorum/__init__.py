@@ -6,21 +6,7 @@ import requests
 import time
 import calendar
 
-TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S" #Rumble timestamp format, not including the 6 TODO characters at the end
-
-HEADERS = {"User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"}
-
-STATIC_KEYS = [ #Keys of the API JSON that should not change unless the API URL changes, and so do not trigger a refresh
-    "user_id",
-    "username",
-    "channel_id",
-    "channel_name",
-    ]
-
-STATIC_KEYS_STREAM = [ #Keys of the API JSON stream object that should not change unless the API URL changes, and so do not trigger a refresh
-    "id",
-    "created_on"
-    ]
+from .localvars import *
 
 def parse_timestamp(timestamp):
     """Parse a Rumble timestamp to seconds since Epoch"""

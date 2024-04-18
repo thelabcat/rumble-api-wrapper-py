@@ -1,5 +1,5 @@
 # Cocorum: Rumble Live Stream API Python Wrapper
-A Python wrapper for the Rumble Livestream API v1.0 (beta), with some quality of live additions, such as:
+A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality of live additions, such as:
 - Automatic refresh when past the refresh_rate delay when querying any non_static property.
 - All timespamps are parsed to seconds since Epoch, UTC timezone.
 - Chat has new_messages and new_rants properties that return only messages and rants since the last time they were read.
@@ -11,13 +11,22 @@ Most attributes that are not added features have the same name as the direct JSO
 
 ```
 from cocorum import RumbleAPI
+from cocorum.localvars import *
+
 api = RumbleAPI(API_URL, refresh_rate = 10)
+
 print(api.username)
 print(api.latest_follower)
+
 if api.latest_subscriber:
     print(api.latest_subscriber, "subscribed for $" + str(api.latest_subscriber.amount_dollars))
+
+#RumbleLivestream objects returned by RumbleAPI properties are deep: When queried, they will pull new information via their parent RumbleAPI object.
 livestream = api.latest_livestream #None if there is no stream running
+
 if livestream:
+    if livestream.visibility != STREAM_VIS_PUBLIC:
+        print("Stream is not public.")
     message = livestream.chat.latest_message #None if there are no messages yet
     if message:
         print(message.username, "said", message)
