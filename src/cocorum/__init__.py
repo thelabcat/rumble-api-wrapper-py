@@ -7,10 +7,7 @@ import time
 import calendar
 
 from .localvars import *
-
-def parse_timestamp(timestamp):
-    """Parse a Rumble timestamp to seconds since Epoch"""
-    return calendar.timegm(time.strptime(timestamp[:-6], TIMESTAMP_FORMAT)) #Trims off the 6 TODO characters at the end
+from .utils import *
 
 class RumbleAPISubObj(object):
     """Abstract class for a Rumble API object"""
@@ -162,7 +159,7 @@ class RumbleLivestream(object):
     @property
     def chat_id(self):
         """The livestream chat ID"""
-        return int(self.stream_id, 36)
+        return int(self.stream_id, len(STREAM_ID_BASE))
 
     @property
     def title(self):

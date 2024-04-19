@@ -26,3 +26,9 @@ API_TYPE_CHANNEL = "channel"
 STREAM_VIS_PUBLIC = "public"
 STREAM_VIS_UNLISTED = "unlisted"
 STREAM_VIS_PRIVATE = "private"
+
+#Numerical base that the stream ID is in
+STREAM_ID_BASE = "0123456789abcdefghijklmnopqrstuvwxyz"
+
+#Rumble's SSE chat display URL for a stream
+SSE_CHAT_URL = "https://web7.rumble.com/chat/api/chat/{chat_id}/stream" #Format this with a chat_id
