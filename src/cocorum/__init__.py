@@ -428,47 +428,47 @@ class RumbleAPI(object):
     @property
     def num_followers(self):
         """The number of followers of this user or channel"""
-        return self["num_followers"]
+        return self["followers"]["num_followers"]
 
     @property
     def num_followers_total(self):
         """The total number of followers of this account across all channels"""
-        return self["num_followers_total"]
+        return self["followers"]["num_followers_total"]
 
     @property
     def latest_follower(self):
         """The latest follower of this user or channel"""
-        if not self["latest_follower"]:
+        if not self["followers"]["latest_follower"]:
             return None #No-one has followed this user or channel yet
-        return RumbleFollower(self["latest_follower"])
+        return RumbleFollower(self["followers"]["latest_follower"])
 
     @property
     def recent_followers(self):
         """A list (technically a shallow generator object) of recent followers"""
-        data = self["recent_followers"].copy().values()
+        data = self["followers"]["recent_followers"].copy()
         return [RumbleFollower(json_block) for json_block in data]
 
     @property
     def num_subscribers(self):
         """The number of subscribers of this user or channel"""
-        return self["num_subscribers"]
+        return self["subscribers"]["num_subscribers"]
 
     @property
     def num_subscribers_total(self):
         """The total number of subscribers of this account across all channels"""
-        return self["num_subscribers_total"]
+        return self["subscribers"]["num_subscribers_total"]
 
     @property
     def latest_subscriber(self):
         """The latest subscriber of this user or channel"""
-        if not self["latest_subscriber"]:
+        if not self["subscribers"]["latest_subscriber"]:
             return None #No-one has subscribed to this user or channel yet
-        return RumbleSubscriber(self["latest_subscriber"])
+        return RumbleSubscriber(self["subscribers"]["latest_subscriber"])
 
     @property
     def recent_subscribers(self):
         """A list (technically a shallow generator object) of recent subscribers"""
-        data = self["recent_subscribers"].copy().values()
+        data = self["subscribers"]["recent_subscribers"].copy()
         return [RumbleSubscriber(json_block) for json_block in data]
 
     @property
