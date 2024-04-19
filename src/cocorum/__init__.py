@@ -32,7 +32,7 @@ class RumbleUserAction(RumbleAPISubObj):
         """Is this follower equal to another"""
         if type(other) == str: #Check if the compared string is our username
             return self.username == other
-        if type(other) == type(self): #Check if the compared follower has our username
+        if hasattr(other, "username"): #Check if the compared object has a username and if it matches our own
             return self.username == other.username
 
     def __str__(self):
@@ -80,6 +80,8 @@ class RumbleSubscriber(RumbleUserAction):
             return self.amount_cents == other
         if type(other) == type(self): #Check if the compared subscriber has the same username and amount
             return (self.username, self.amount_cents) == (other.username, other.amount_cents)
+        if hasattr(other, "username"): #Check if the compared object has a username and if it matches our own
+            return self.username == other.username
 
     @property
     def user(self):
@@ -137,8 +139,10 @@ class RumbleLivestream(object):
             return self.stream_id == other
         if type(other) in (int, float): #check if the compared number is our chat ID (linked to stream ID)
             return self.chat_id == other
-        if type(other) == type(self): #Check if the compared stream has the same stream ID
+        if hasattr(other, "stream_id"): #Check if the compared object has the same stream ID
             return self.stream_id == other.stream_id
+        if hasattr(other, "chat_id"): #Check if the compared object has the same chat ID
+            return self.stream_id == other.chat_id
 
     def __str__(self):
         """The livestream in string form"""
@@ -222,6 +226,10 @@ class RumbleChatMessage(RumbleUserAction):
             return self.text == other
         if type(other) == type(self): #Check if the compared message has the same username and text
             return (self.username, self.text) == (other.username, other.text)
+        if hasattr(other, "text"): #Check if the compared object has the same text
+            if hasattr(other, "username"): #Check if the compared object has the same username
+                return (self.username, self.text) == (other.username, other.text)
+            return self.text == other.text #the other object had no username attribute
 
     def __str__(self):
         """Follower as a string"""
@@ -250,6 +258,12 @@ class RumbleRant(RumbleChatMessage):
             return self.text == other
         if type(other) == type(self): #Check if the compared rant has the same username, amount, and text
             return (self.username, self.amount_cents, self.text) == (other.username, other.amount_cents, other.text)
+        if hasattr(other, "text"): #Check if the compared object has the same text
+            if hasattr(other, "username"): #Check if the compared object has the same username
+                if hasattr(other, "amount_cents"): #Check if the compared object has the same amount
+                    return (self.username, self.amount_cents, self.text) == (other.username, other.amount_cents, other.text)
+                return (self.username, self.text) == (other.username, other.text) #Other object has no amount_cents attribute
+            return self.text == other.text #Other object had no username attribute
 
     @property
     def expires_on(self):
