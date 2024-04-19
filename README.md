@@ -32,6 +32,24 @@ if livestream:
         print(message.username, "said", message)
 ```
 
+## Experimental SSE chat submodule
+This part of cocorum is not part of the official Rumble Livestream API, but may provide a more reliable method of ensuring all chat messages are received.
+
+```
+from cocorum import ssechat
+
+chat = ssechat.SSEChat(chat_id = CHAT_ID)
+#Do chat.mailbox = [] here to erase messages that were still visible before we connected
+
+msg = True
+while msg:
+    msg = chat.next_chat_message() #Hangs until a new message arrives
+    print(msg.user.username, ":", msg)
+
+print("Chat has closed.")
+```
+
+## Conclusion
 Hope this helps!
 
 I, Wilbur Jaywright, and my brand, Marswide BGL, have no official association with Rumble Corp. beyond that of a normal user and/or channel on the Rumble Video platform. This wrapper is not officially endorsed by Rumble Corp. or its subsidiaries.
