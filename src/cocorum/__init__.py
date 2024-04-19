@@ -83,7 +83,7 @@ class RumbleSubscriber(RumbleUserAction):
 
     @property
     def user(self):
-        """TODO"""
+        """AFAIK this is being deprecated, use username instead"""
         return self["user"]
 
     @property
