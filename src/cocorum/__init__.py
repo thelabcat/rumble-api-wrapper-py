@@ -159,7 +159,7 @@ class RumbleLivestream(object):
     @property
     def chat_id(self):
         """The livestream chat ID"""
-        return int(self.stream_id, len(STREAM_ID_BASE))
+        return id_stream_to_chat(self.stream_id)
 
     @property
     def title(self):
