@@ -1,34 +1,39 @@
 #!/usr/bin/env python3
-#Rumble SSE chat display client
-#S.D.G.
+"""Rumble SSE chat display client
 
-import sseclient
+S.D.G."""
+
 import json #For parsing SSE message data
+import requests
+import sseclient
 from .localvars import *
 from .utils import *
 
-class SSEChatObject(object):
+class SSEChatObject():
     """Object in SSE chat API"""
-    def __init__(self, json, chat):
+    def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent SSEChat object"""
-        self._json = json
+        self._jsondata = jsondata
         self.chat = chat
 
     def __getitem__(self, key):
         """Get a key from the JSON"""
-        return self._json[key]
+        return self._jsondata[key]
 
 class SSEChatter(SSEChatObject):
     """A user or channel in the SSE chat"""
-    def __init__(self, json, chat):
+    def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent SSEChat object"""
-        super().__init__(json, chat)
+        super().__init__(jsondata, chat)
         self.__profile_pic = None #The stored profile picture of the user or channel as a URL
 
     def __eq__(self, other):
         """Compare this chatter with another"""
-        if type(other) == str:
+        #If the other is a string, check if it matches our username
+        if isinstance(other, str):
             return self.username == other
+
+        #If the other has a username attribute, check if it matches our own
         if hasattr(other, "username"):
             return self.username == other.username
 
@@ -50,7 +55,7 @@ class SSEChatter(SSEChatObject):
     def profile_pic_url(self):
         """The URL of the chatter's profile picture, if they have one"""
         try:
-            return self._json["image.1"]
+            return self._jsondata["image.1"]
         except KeyError:
             return None
 
@@ -61,18 +66,20 @@ class SSEChatter(SSEChatObject):
             return b''
 
         if not self.__profile_pic: #We never queried the profile pic before
-            response = requests.get(self.profile_pic_url)
+            #TODO make the timeout configurable
+            response = requests.get(self.profile_pic_url, timeout = DEFAULT_TIMEOUT)
             if response.status_code != 200:
                 raise Exception("Status code " + str(response.status_code))
+
             self.__profile_pic = response.content
 
         return self.__profile_pic
 
 class SSEChatUser(SSEChatter):
     """User in SSE chat"""
-    def __init__(self, json, chat):
+    def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent SSEChat object"""
-        super().__init__(json, chat)
+        super().__init__(jsondata, chat)
         self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
 
     @property
@@ -108,9 +115,9 @@ class SSEChatUser(SSEChatter):
 
 class SSEChatChannel(SSEChatter):
     """A channel in the SSE chat"""
-    def __init__(self, json, chat):
+    def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent SSEChat object"""
-        super().__init__(json, chat)
+        super().__init__(jsondata, chat)
 
         #Find the user who has this channel
         for user in self.chat.users.values():
@@ -121,7 +128,7 @@ class SSEChatChannel(SSEChatter):
     @property
     def is_appearing(self):
         """Is the user of this channel still appearing as it?"""
-        return user.channel_id == self.channel_id #The user channel_id still matches our own
+        return self.user.channel_id == self.channel_id #The user channel_id still matches our own
 
     @property
     def channel_id(self):
@@ -135,17 +142,20 @@ class SSEChatChannel(SSEChatter):
 
 class SSEChatUserBadge(SSEChatObject):
     """A badge of a user"""
-    def __init__(self, slug, json, chat):
+    def __init__(self, slug, jsondata, chat):
         """Pass the slug, the object JSON, and the parent SSEChat object"""
-        super().__init__(json, chat)
+        super().__init__(jsondata, chat)
         self.slug = slug #The unique identification for this badge
         self.__icon = None
 
     def __eq__(self, other):
         """Check if this badge is equal to another"""
-        if type(other) == str: #Check if the string is either our slug or our label in any language
+        #Check if the string is either our slug or our label in any language
+        if isinstance(other, str):
             return other in (self.slug, self.label.values())
-        if type(other) == type(self): #Compare the other badge's slug with our own
+
+        #Check if the compared object has the same slug, if it has one
+        if hasattr(other, "slug"):
             return self.slug == other.slug
 
     def __str__(self):
@@ -166,9 +176,11 @@ class SSEChatUserBadge(SSEChatObject):
     def icon(self):
         """The badge's icon as a bytestring"""
         if not self.__icon: #We never queried the icon before
-            response = requests.get(self.icon_url)
+            #TODO make the timeout configurable
+            response = requests.get(self.icon_url, timeout = DEFAULT_TIMEOUT)
             if response.status_code != 200:
                 raise Exception("Status code " + str(response.status_code))
+
             self.__icon = response.content
 
         return self.__icon
@@ -177,15 +189,21 @@ class SSEChatMessage(SSEChatObject):
     """A single chat message from the SSE API"""
     def __eq__(self, other):
         """Compare this chat message with another"""
-        if type(other) == str:
+        if isinstance(other, str):
             return self.text == other
 
+        #Check if the other object's text matches our own, if it has such
         if hasattr(other, "text"):
+            #Check if the other object's user ID matches our own, if it has one
             if hasattr(other, "user_id"):
                 return (self.user_id, self.text) == (other.user_id, other.text)
+
+            #Check if the other object's username matches our own, if it has one
             if hasattr(other, "username"):
                 return (self.user.username, self.text) == (other.username, other.text)
-            return self.text == other.text #No user identifying attributes, but the text does match
+
+            #No user identifying attributes, but the text does match
+            return self.text == other.text
 
     def __str__(self):
         """The chat message in string form"""
@@ -228,13 +246,14 @@ class SSEChatMessage(SSEChatObject):
     def channel(self):
         """Reference to the channel that posted this message, if there was one"""
         if not self.channel_id:
-            return none
+            return None
+
         return self.chat.channels[self.channel_id]
 
     @property
     def is_rant(self):
         """Is this message a rant?"""
-        return "rant" in self._json.keys()
+        return "rant" in self._jsondata.keys()
 
     @property
     def rant_price_cents(self):
@@ -257,7 +276,7 @@ class SSEChatMessage(SSEChatObject):
             return self.time
         return parse_timestamp(self["rant"]["expires_on"])
 
-class SSEChatAPI(object):
+class SSEChatAPI():
     """Access the Rumble SSE chat api"""
     def __init__(self, chat_id = None, stream_id = None):
         if stream_id: #Stream ID as provided by the API
@@ -280,9 +299,9 @@ class SSEChatAPI(object):
         self.url = SSE_CHAT_URL.format(chat_id = self.chat_id)
         self.client = sseclient.SSEClient(self.url)
         self.chat_running = True
-        self.parse_init_data(self.next_json())
+        self.parse_init_data(self.next_jsondata())
 
-    def next_json(self):
+    def next_jsondata(self):
         """Wait for the next message from the SSE and parse the JSON"""
         if not self.chat_running: #Do not try to query a new message if chat is closed
             return
@@ -292,50 +311,52 @@ class SSEChatAPI(object):
             self.chat_running = False #Chat has been closed
             return
         if not message.data: #Blank SSE event
-            return self.next_json() #Self recursion should work so long as we don't get dozens of blank events in a row
+            #Self recursion should work so long as we don't get dozens of blank events in a row
+            return self.next_jsondata()
+
         return json.loads(message.data)
 
-    def parse_init_data(self, json):
+    def parse_init_data(self, jsondata):
         """Extract initial chat data from the SSE init message JSON"""
-        if json["type"] != "init":
+        if jsondata["type"] != "init":
             raise ValueError("That is not init json")
 
         #Parse pre-connection messages, users, and channels
-        self.update_mailbox(json)
-        self.update_users(json)
-        self.update_channels(json)
+        self.update_mailbox(jsondata)
+        self.update_users(jsondata)
+        self.update_channels(jsondata)
 
         #Load the chat badges
-        self.load_badges(json)
+        self.load_badges(jsondata)
 
-        self.rants_enabled = json["data"]["config"]["rants"]["enable"]
+        self.rants_enabled = jsondata["data"]["config"]["rants"]["enable"]
         #subscription TODO
         #rant levels TODO
-        self.message_length_max = json["data"]["config"]["message_length_max"]
+        self.message_length_max = jsondata["data"]["config"]["message_length_max"]
 
-    def update_mailbox(self, json):
+    def update_mailbox(self, jsondata):
         """Parse chat messages from an SSE data JSON"""
-        self.mailbox += [SSEChatMessage(message_json, self) for message_json in json["data"]["messages"]]
+        self.mailbox += [SSEChatMessage(message_json, self) for message_json in jsondata["data"]["messages"]]
 
-    def update_users(self, json):
+    def update_users(self, jsondata):
         """Update our dictionary of users from an SSE data JSON"""
-        for user_json in json["data"]["users"]:
+        for user_json in jsondata["data"]["users"]:
             try:
-                self.users[user_json["id"]]._json = user_json #Update an existing user's JSON
+                self.users[user_json["id"]]._jsondata = user_json #Update an existing user's JSON
             except KeyError: #User is new
                 self.users[user_json["id"]] = SSEChatUser(user_json, self)
 
-    def update_channels(self, json):
+    def update_channels(self, jsondata):
         """Update our dictionary of channels from an SSE data JSON"""
-        for channel_json in json["data"]["users"]:
+        for channel_json in jsondata["data"]["users"]:
             try:
-                self.channels[channel_json["id"]]._json = channel_json #Update an existing channel's JSON
+                self.channels[channel_json["id"]]._jsondata = channel_json #Update an existing channel's JSON
             except KeyError: #Channel is new
                 self.channels.update({channel_json["id"] : SSEChatChannel(channel_json, self)})
 
-    def load_badges(self, json):
+    def load_badges(self, jsondata):
         """Create our dictionary of badges given a dictionary of badges"""
-        self.badges = {badge_slug : SSEChatUserBadge(badge_slug, json["data"]["config"]["badges"][badge_slug], self) for badge_slug in json["data"]["config"]["badges"].keys()}
+        self.badges = {badge_slug : SSEChatUserBadge(badge_slug, jsondata["data"]["config"]["badges"][badge_slug], self) for badge_slug in jsondata["data"]["config"]["badges"].keys()}
 
     @property
     def stream_id(self):
@@ -348,15 +369,15 @@ class SSEChatAPI(object):
     def next_chat_message(self):
         """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""
         if not self.mailbox: #We don't already have messages
-            json = self.next_json()
-            if not json: #The chat has closed or a blank event
+            jsondata = self.next_jsondata()
+            if not jsondata: #The chat has closed or a blank event
                 return
-            if json["type"] != "messages":
+            if jsondata["type"] != "messages":
                 raise ValueError("API did not send a messages message")
 
             #Parse messages, users, and channels
-            self.update_mailbox(json)
-            self.update_users(json)
-            self.update_channels(json)
+            self.update_mailbox(jsondata)
+            self.update_users(jsondata)
+            self.update_channels(jsondata)
 
         return self.mailbox.pop(0) #Return the first message in the mailbox, and then remove it from there
