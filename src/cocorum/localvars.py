@@ -1,19 +1,24 @@
 #!/usr/bin/env python3
-#Cocorum local variable definitions
-#S.D.G.
+"""Cocorum local variable definitions
 
-TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S" #Rumble timestamp format, not including the 6 TODO characters at the end
+S.D.G."""
 
+#Rumble timestamp format, not including the 6 TODO characters at the end
+TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
+
+#Headers for the Rumble Live Stream API request (currently must fake a User-Agent string)
 HEADERS = {"User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"}
 
-STATIC_KEYS = [ #Keys of the API JSON that should not change unless the API URL changes, and so do not trigger a refresh
+#Keys of the API JSON that should not change unless the API URL changes, and so do not trigger a refresh
+STATIC_KEYS = [
     "user_id",
     "username",
     "channel_id",
     "channel_name",
     ]
 
-STATIC_KEYS_STREAM = [ #Keys of the API JSON stream object that should not change unless the API URL changes, and so do not trigger a refresh
+#Keys of the API JSON stream object that should not change unless the API URL changes, and so do not trigger a refresh
+STATIC_KEYS_STREAM = [
     "id",
     "created_on"
     ]
@@ -27,12 +32,20 @@ STREAM_VIS_PUBLIC = "public"
 STREAM_VIS_UNLISTED = "unlisted"
 STREAM_VIS_PRIVATE = "private"
 
+#Base URL to Rumble's website, for URLs that are relative to it
 RUMBLE_BASE_URL = "https://rumble.com"
 
 #Numerical base that the stream ID is in
 STREAM_ID_BASE = "0123456789abcdefghijklmnopqrstuvwxyz"
 
-#Rumble's SSE chat display URL for a stream
-SSE_CHAT_URL = "https://web7.rumble.com/chat/api/chat/{chat_id}/stream" #Format this with a chat_id
+#Rumble's SSE chat display URL for a stream, format this string with a chat_id
+SSE_CHAT_URL = "https://web7.rumble.com/chat/api/chat/{chat_id}/stream"
 
-BADGE_ICON_SIZE = "48" #Size of chat badge icons to retrieve, only valid one has long been the string 48
+#Size of chat badge icons to retrieve, only valid one has long been the string 48
+BADGE_ICON_SIZE = "48"
+
+#How long to wait before giving up on a network request, in seconds
+DEFAULT_TIMEOUT = 20
+
+#How long to reuse old data from the API, in seconds
+DEFAULT_REFRESH_RATE = 10
