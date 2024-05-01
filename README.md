@@ -1,4 +1,4 @@
-<h1><img src="cocorum_icon.png" alt="icon" width="64"/> Cocorum: Rumble Live Stream API Python Wrapper</h1>
+<h1><img src="cocorum_icon.png" alt="" width="64"/> Cocorum: Rumble Live Stream API Python Wrapper</h1>
 A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality of live additions, such as:
 - Automatic refresh when past the refresh_rate delay when querying any non_static property.
 - All timespamps are parsed to seconds since Epoch, UTC timezone.
@@ -33,7 +33,7 @@ if livestream:
 ```
 
 ## Experimental SSE chat submodule
-This part of cocorum is not part of the official Rumble Livestream API, but may provide a more reliable method of ensuring all chat messages are received.
+This part of cocorum is not part of the official Rumble Live Stream API, but may provide a more reliable method of ensuring all chat messages are received.
 
 ```
 from cocorum import ssechat
