@@ -338,7 +338,7 @@ class RumbleLiveChat():
 
     def __getitem__(self, key):
         """Return a key from the stream's chat JSON"""
-        return self.stream._json["chat"][key]
+        return self.stream["chat"][key]
 
     @property
     def latest_message(self):
