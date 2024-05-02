@@ -38,8 +38,8 @@ RUMBLE_BASE_URL = "https://rumble.com"
 #Numerical base that the stream ID is in
 STREAM_ID_BASE = "0123456789abcdefghijklmnopqrstuvwxyz"
 
-#Rumble's SSE chat display URL for a stream, format this string with a chat_id
-SSE_CHAT_URL = "https://web7.rumble.com/chat/api/chat/{chat_id}/stream"
+#Rumble's SSE chat display URL for a stream, format this string with a stream_id_b10
+SSE_CHAT_URL = "https://web7.rumble.com/chat/api/chat/{stream_id_b10}/stream"
 
 #Size of chat badge icons to retrieve, only valid one has long been the string 48
 BADGE_ICON_SIZE = "48"

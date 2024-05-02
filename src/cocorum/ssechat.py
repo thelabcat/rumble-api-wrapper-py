@@ -278,17 +278,8 @@ class SSEChatMessage(SSEChatObject):
 
 class SSEChatAPI():
     """Access the Rumble SSE chat api"""
-    def __init__(self, chat_id = None, stream_id = None):
-        if stream_id: #Stream ID as provided by the API
-            self.chat_id = id_stream_to_chat(stream_id)
-            if chat_id and self.chat_id != chat_id:
-                raise ValueError("Stream ID and chat ID were both specified but they do not match")
-        elif chat_id: #Chat ID as it appears in the popout URL
-            self.chat_id = chat_id
-        else:
-            raise ValueError("Must specify either stream_id or chat_id")
-
-        self.__stream_id = stream_id
+    def __init__(self, stream_id):
+        self.stream_id = stream_id_ensure_b36(stream_id)
 
         self.mailbox = [] #A mailbox if you will
         self.users = {} #Dictionary of users by user ID
@@ -296,7 +287,7 @@ class SSEChatAPI():
         self.badges = {}
 
         #Connect to the API
-        self.url = SSE_CHAT_URL.format(chat_id = self.chat_id)
+        self.url = SSE_CHAT_URL.format(stream_id_b10 = self.stream_id_b10)
         self.client = sseclient.SSEClient(self.url)
         self.chat_running = True
         self.parse_init_data(self.next_jsondata())
@@ -359,12 +350,9 @@ class SSEChatAPI():
         self.badges = {badge_slug : SSEChatUserBadge(badge_slug, jsondata["data"]["config"]["badges"][badge_slug], self) for badge_slug in jsondata["data"]["config"]["badges"].keys()}
 
     @property
-    def stream_id(self):
-        """If we don't know our stream ID, figure it out from the chat ID"""
-        if not self.__stream_id:
-            self.__stream_id = id_chat_to_stream(self.chat_id)
-
-        return self.__stream_id
+    def stream_id_b10(self):
+        """The chat ID in user"""
+        return stream_id_36_to_10(self.stream_id)
 
     def next_chat_message(self):
         """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""

@@ -58,10 +58,10 @@ class RumbleUserAction(RumbleAPISubObj):
             return b''
 
         if not self.__profile_pic: #We never queried the profile pic before
-            response = requests.get(self.profile_pic_url)
+            #TODO make this timeout assignable
+            response = requests.get(self.profile_pic_url, DEFAULT_TIMEOUT)
             if response.status_code != 200:
-                #TODO make this timeout assignable
-                raise Exception("Status code " + str(response.status_code), DEFAULT_TIMEOUT)
+                raise Exception("Status code " + str(response.status_code))
 
             self.__profile_pic = response.content
 
@@ -90,7 +90,7 @@ class RumbleSubscriber(RumbleUserAction):
         if hasattr(other, "username"):
             #Check if the compared object's cost amout matches our own, if it has one
             if hasattr(other, "amount_cents"):
-                self.amount_cents == other.amount_cents
+                return self.amount_cents == other.amount_cents
 
             #Other object has no amount_cents attribute
             return self.username == other.username
@@ -159,15 +159,15 @@ class RumbleLivestream():
 
         #check if the compared number is our chat ID (linked to stream ID)
         if isinstance(other, (int, float)):
-            return self.chat_id == other
+            return self.stream_id_b10 == other
 
         #Check if the compared object has the same stream ID
         if hasattr(other, "stream_id"):
             return self.stream_id == other.stream_id
 
         #Check if the compared object has the same chat ID
-        if hasattr(other, "chat_id"):
-            return self.stream_id == other.chat_id
+        if hasattr(other, "stream_id_b10"):
+            return self.stream_id_b10 == other.stream_id_b10
 
     def __str__(self):
         """The livestream in string form"""
@@ -189,9 +189,9 @@ class RumbleLivestream():
         return self["id"]
 
     @property
-    def chat_id(self):
-        """The livestream chat ID"""
-        return id_stream_to_chat(self.stream_id)
+    def stream_id_b10(self):
+        """The livestream chat ID (stream ID in base 10)"""
+        return stream_id_36_to_10(self.stream_id)
 
     @property
     def title(self):
