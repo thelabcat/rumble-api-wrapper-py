@@ -39,7 +39,7 @@ This part of cocorum is not part of the official Rumble Live Stream API, but may
 from cocorum import ssechat
 
 chat = ssechat.SSEChat(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
-#Do chat.mailbox = [] here to erase messages that were still visible before we connected
+chat.clear_mailbox() #erase messages that were still visible before we connected
 
 msg = True
 while msg:

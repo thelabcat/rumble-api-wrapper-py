@@ -281,7 +281,7 @@ class SSEChat():
     def __init__(self, stream_id):
         self.stream_id = utils.stream_id_ensure_b36(stream_id)
 
-        self.mailbox = [] #A mailbox if you will
+        self.__mailbox = [] #A mailbox if you will
         self.users = {} #Dictionary of users by user ID
         self.channels = {} #Dictionary of channels by channel ID
         self.badges = {}
@@ -327,7 +327,11 @@ class SSEChat():
 
     def update_mailbox(self, jsondata):
         """Parse chat messages from an SSE data JSON"""
-        self.mailbox += [SSEChatMessage(message_json, self) for message_json in jsondata["data"]["messages"]]
+        self.__mailbox += [SSEChatMessage(message_json, self) for message_json in jsondata["data"]["messages"]]
+
+    def clear_mailbox(self):
+        """Delete anything in the mailbox"""
+        self.__mailbox = []
 
     def update_users(self, jsondata):
         """Update our dictionary of users from an SSE data JSON"""
@@ -356,7 +360,7 @@ class SSEChat():
 
     def next_chat_message(self):
         """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""
-        if not self.mailbox: #We don't already have messages
+        if not self.__mailbox: #We don't already have messages
             jsondata = self.next_jsondata()
             if not jsondata: #The chat has closed or a blank event
                 return
@@ -368,4 +372,4 @@ class SSEChat():
             self.update_users(jsondata)
             self.update_channels(jsondata)
 
-        return self.mailbox.pop(0) #Return the first message in the mailbox, and then remove it from there
+        return self.__mailbox.pop(0) #Return the first message in the mailbox, and then remove it from there
