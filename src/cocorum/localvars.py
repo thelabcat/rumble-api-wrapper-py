@@ -17,7 +17,7 @@ STATIC_KEYS = [
     "channel_name",
     ]
 
-#Keys of the API JSON stream object that should not change unless the API URL changes, and so do not trigger a refresh
+#Keys of the API JSON stream object that should not trigger a refresh
 STATIC_KEYS_STREAM = [
     "id",
     "created_on"
