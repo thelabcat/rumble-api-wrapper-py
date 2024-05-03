@@ -1,6 +1,28 @@
 #!/usr/bin/env python3
-"""Cocorum: a Python wrapper for the Rumble.com API
+"""A Python wrapper for the Rumble.com API
+Example usage:
+```
+from cocorum import RumbleAPI
+from cocorum.localvars import *
 
+api = RumbleAPI(API_URL, refresh_rate = 10)
+
+print(api.username)
+print(api.latest_follower)
+
+if api.latest_subscriber:
+    print(api.latest_subscriber, "subscribed for $" + str(api.latest_subscriber.amount_dollars))
+
+#RumbleLivestream objects returned by RumbleAPI properties are deep: When queried, they will pull new information via their parent RumbleAPI object.
+livestream = api.latest_livestream #None if there is no stream running
+
+if livestream:
+    if livestream.visibility != STREAM_VIS_PUBLIC:
+        print("Stream is not public.")
+    message = livestream.chat.latest_message #None if there are no messages yet
+    if message:
+        print(message.username, "said", message)
+```
 S.D.G."""
 
 import time

@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Cocorum local variable definitions
-
 S.D.G."""
 
 #Rumble timestamp format, not including the 6 TODO characters at the end

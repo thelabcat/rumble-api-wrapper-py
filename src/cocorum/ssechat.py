@@ -1,6 +1,19 @@
 #!/usr/bin/env python3
-"""Rumble SSE chat display client
+"""SSE chat display client
+Example usage:
+```
+from cocorum import ssechat
 
+chat = ssechat.SSEChat(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
+chat.clear_mailbox() #Erase messages that were still visible before we connected
+
+msg = True
+while msg:
+    msg = chat.next_chat_message() #Hangs until a new message arrives
+    print(msg.user.username, ":", msg)
+
+print("Chat has closed.")
+```
 S.D.G."""
 
 import json #For parsing SSE message data

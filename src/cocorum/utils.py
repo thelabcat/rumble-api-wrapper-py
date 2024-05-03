@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 """Rumble API utilities
-
 S.D.G."""
 
 import calendar
