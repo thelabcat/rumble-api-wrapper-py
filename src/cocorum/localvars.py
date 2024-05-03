@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """Cocorum local variable definitions
+
+This submodule provides absolute variable definitions for Cocorum.
+
 S.D.G."""
 
 #Rumble timestamp format, not including the 6 TODO characters at the end

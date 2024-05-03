@@ -1,5 +1,15 @@
 #!/usr/bin/env python3
-"""A Python wrapper for the Rumble.com API
+"""An unofficial Python wrapper for the Rumble.com APIs
+
+A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality of life additions, such as:
+- Automatic refresh when past the refresh_rate delay when querying any non_static property.
+- All timespamps are parsed to seconds since Epoch, UTC timezone.
+- Chat has new_messages and new_rants properties that return only messages and rants since the last time they were read.
+
+Note, you are only expected to create a RumbleAPI() and / or ssechat.SSEChat() object, and work with everything through them.
+
+Most attributes that are not added features have the same name as the direct JSON counterparts, with the exception of adding prefixes to some things that have the same name in the JSON as Python builtin functions. For example, thing/id in JSON is thing.thing_id in this Python wrapper.
+
 Example usage:
 ```
 from cocorum import RumbleAPI

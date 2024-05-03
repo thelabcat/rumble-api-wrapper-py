@@ -1,5 +1,8 @@
 #!/usr/bin/env python3
 """SSE chat display client
+
+This part of cocorum is not part of the official Rumble Live Stream API, but may provide a more reliable method of ensuring all chat messages are received.
+
 Example usage:
 ```
 from cocorum import ssechat

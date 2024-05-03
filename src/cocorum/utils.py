@@ -1,5 +1,11 @@
 #!/usr/bin/env python3
 """Rumble API utilities
+
+This submodule provides some utilities for working with the APIs:
+- Timestamp parsing
+- Converting stream IDs from base 36 to base 10 and vice versa
+- Ensuring a stream ID is one of those two bases, converting if necessary
+
 S.D.G."""
 
 import calendar
