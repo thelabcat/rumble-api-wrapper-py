@@ -491,6 +491,12 @@ class RumbleAPI():
                 self.__livestreams[json["id"]] = Livestream(json, self)
 
     @property
+    def data_timestamp(self):
+        """The timestamp on the last data refresh"""
+        #Definitely don't ever trigger a refresh on this
+        self._json["now"]
+
+    @property
     def api_type(self):
         """Type of API URL in use, user or channel"""
         return self["type"]
