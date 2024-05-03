@@ -7,7 +7,7 @@ import json #For parsing SSE message data
 import requests
 import sseclient
 from .localvars import *
-from .utils import *
+from . import utils
 
 class SSEChatObject():
     """Object in SSE chat API"""
@@ -217,7 +217,7 @@ class SSEChatMessage(SSEChatObject):
     @property
     def time(self):
         """The time the message was sent on, in seconds since the Epoch UTC"""
-        return parse_timestamp(self["time"])
+        return utils.parse_timestamp(self["time"])
 
     @property
     def user_id(self):
@@ -274,12 +274,12 @@ class SSEChatMessage(SSEChatObject):
         """When the rant expires, returns message creation time if message is not a rant"""
         if not self.is_rant:
             return self.time
-        return parse_timestamp(self["rant"]["expires_on"])
+        return utils.parse_timestamp(self["rant"]["expires_on"])
 
 class SSEChatAPI():
     """Access the Rumble SSE chat api"""
     def __init__(self, stream_id):
-        self.stream_id = stream_id_ensure_b36(stream_id)
+        self.stream_id = utils.stream_id_ensure_b36(stream_id)
 
         self.mailbox = [] #A mailbox if you will
         self.users = {} #Dictionary of users by user ID
@@ -352,7 +352,7 @@ class SSEChatAPI():
     @property
     def stream_id_b10(self):
         """The chat ID in user"""
-        return stream_id_36_to_10(self.stream_id)
+        return utils.stream_id_36_to_10(self.stream_id)
 
     def next_chat_message(self):
         """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""

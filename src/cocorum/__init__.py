@@ -8,9 +8,9 @@ import calendar
 import requests
 
 from .localvars import *
-from .utils import *
+from . import utils
 
-class RumbleAPISubObj():
+class APISubObj():
     """Abstract class for a Rumble API object"""
     def __init__(self, json):
         """Pass the JSON block for a single Rumble API subobject"""
@@ -20,7 +20,7 @@ class RumbleAPISubObj():
         """Get a key from the JSON"""
         return self._json[key]
 
-class RumbleUserAction(RumbleAPISubObj):
+class UserAction(APISubObj):
     """Abstract class for Rumble user actions"""
     def __init__(self, json):
         """Pass the JSON block for a single Rumble user action"""
@@ -59,7 +59,7 @@ class RumbleUserAction(RumbleAPISubObj):
 
         if not self.__profile_pic: #We never queried the profile pic before
             #TODO make this timeout assignable
-            response = requests.get(self.profile_pic_url, DEFAULT_TIMEOUT)
+            response = requests.get(self.profile_pic_url, timeout = DEFAULT_TIMEOUT)
             if response.status_code != 200:
                 raise Exception("Status code " + str(response.status_code))
 
@@ -67,14 +67,14 @@ class RumbleUserAction(RumbleAPISubObj):
 
         return self.__profile_pic
 
-class RumbleFollower(RumbleUserAction):
+class Follower(UserAction):
     """Rumble follower"""
     @property
     def followed_on(self):
         """When the follower followed, in seconds since Epoch UTC"""
-        return parse_timestamp(self["followed_on"])
+        return utils.parse_timestamp(self["followed_on"])
 
-class RumbleSubscriber(RumbleUserAction):
+class Subscriber(UserAction):
     """Rumble subscriber"""
     def __eq__(self, other):
         """Is this subscriber equal to another"""
@@ -113,9 +113,9 @@ class RumbleSubscriber(RumbleUserAction):
     @property
     def subscribed_on(self):
         """When the subscriber subscribed, in seconds since Epoch UTC"""
-        return parse_timestamp(self["subscribed_on"])
+        return utils.parse_timestamp(self["subscribed_on"])
 
-class RumbleStreamCategory(RumbleAPISubObj):
+class StreamCategory(APISubObj):
     """Category of a Rumble stream"""
 
     @property
@@ -142,14 +142,14 @@ class RumbleStreamCategory(RumbleAPISubObj):
         """The category in string form"""
         return self.title
 
-class RumbleLivestream():
+class Livestream():
     """Rumble livestream"""
     def __init__(self, json, api):
         """Pass the JSON block of a single Rumble livestream"""
         self._json = json
         self.api = api
         self.is_disappeared = False #The livestream is in the API listing
-        self.__chat = RumbleLiveChat(self)
+        self.__chat = LiveChat(self)
 
     def __eq__(self, other):
         """Is this stream equal to another"""
@@ -191,7 +191,7 @@ class RumbleLivestream():
     @property
     def stream_id_b10(self):
         """The livestream chat ID (stream ID in base 10)"""
-        return stream_id_36_to_10(self.stream_id)
+        return utils.stream_id_36_to_10(self.stream_id)
 
     @property
     def title(self):
@@ -201,7 +201,7 @@ class RumbleLivestream():
     @property
     def created_on(self):
         """When the livestream was created, in seconds since the Epock UTC"""
-        return parse_timestamp(self["created_on"])
+        return utils.parse_timestamp(self["created_on"])
 
     @property
     def is_live(self):
@@ -217,7 +217,7 @@ class RumbleLivestream():
     def categories(self):
         """A list of our categories"""
         data = self["categories"].copy().values()
-        return [RumbleStreamCategory(json_block) for json_block in data]
+        return [StreamCategory(json_block) for json_block in data]
 
     @property
     def likes(self):
@@ -247,7 +247,7 @@ class RumbleLivestream():
         """The livestream chat"""
         return self.__chat
 
-class RumbleChatMessage(RumbleUserAction):
+class ChatMessage(UserAction):
     """A single message in a Rumble livestream chat"""
     def __eq__(self, other):
         """Is this message equal to another"""
@@ -279,14 +279,14 @@ class RumbleChatMessage(RumbleUserAction):
     @property
     def created_on(self):
         """When the message was created, in seconds since Epoch UTC"""
-        return parse_timestamp(self["created_on"])
+        return utils.parse_timestamp(self["created_on"])
 
     @property
     def badges(self):
         """The user's badges"""
         return tuple(self["badges"].values())
 
-class RumbleRant(RumbleChatMessage):
+class Rant(ChatMessage):
     """A single rant in a Rumble livestream chat"""
     def __eq__(self, other):
         """Is this category equal to another"""
@@ -327,7 +327,7 @@ class RumbleRant(RumbleChatMessage):
         """The rant amount in dollars"""
         return self["amount_dollars"]
 
-class RumbleLiveChat():
+class LiveChat():
     """Reference for chat of a Rumble livestream"""
     def __init__(self, stream):
         """Pass the JSON block of a single Rumble livestream"""
@@ -345,13 +345,13 @@ class RumbleLiveChat():
         """The latest chat message"""
         if not self["latest_message"]:
             return None #No-one has chatted on this stream yet
-        return RumbleChatMessage(self["latest_message"])
+        return ChatMessage(self["latest_message"])
 
     @property
     def recent_messages(self):
         """Recent chat messages"""
         data = self["recent_messages"].copy()
-        return [RumbleChatMessage(json_block) for json_block in data]
+        return [ChatMessage(json_block) for json_block in data]
 
     @property
     def new_messages(self):
@@ -375,13 +375,13 @@ class RumbleLiveChat():
         """The latest chat rant"""
         if not self["latest_rant"]:
             return None #No-one has ranted on this stream yet
-        return RumbleRant(self["latest_rant"])
+        return Rant(self["latest_rant"])
 
     @property
     def recent_rants(self):
         """Recent chat rants"""
         data = self["recent_rants"].copy()
-        return [RumbleRant(json_block) for json_block in data]
+        return [Rant(json_block) for json_block in data]
 
     @property
     def new_rants(self):
@@ -456,7 +456,7 @@ class RumbleAPI():
                 self.__livestreams[json["id"]]._json = json
 
             except KeyError: #The livestream has not been stored yet
-                self.__livestreams[json["id"]] = RumbleLivestream(json, self)
+                self.__livestreams[json["id"]] = Livestream(json, self)
 
     @property
     def api_type(self):
@@ -498,13 +498,13 @@ class RumbleAPI():
         """The latest follower of this user or channel"""
         if not self["followers"]["latest_follower"]:
             return None #No-one has followed this user or channel yet
-        return RumbleFollower(self["followers"]["latest_follower"])
+        return Follower(self["followers"]["latest_follower"])
 
     @property
     def recent_followers(self):
         """A list (technically a shallow generator object) of recent followers"""
         data = self["followers"]["recent_followers"].copy()
-        return [RumbleFollower(json_block) for json_block in data]
+        return [Follower(json_block) for json_block in data]
 
     @property
     def num_subscribers(self):
@@ -521,13 +521,13 @@ class RumbleAPI():
         """The latest subscriber of this user or channel"""
         if not self["subscribers"]["latest_subscriber"]:
             return None #No-one has subscribed to this user or channel yet
-        return RumbleSubscriber(self["subscribers"]["latest_subscriber"])
+        return Subscriber(self["subscribers"]["latest_subscriber"])
 
     @property
     def recent_subscribers(self):
         """A list (technically a shallow generator object) of recent subscribers"""
         data = self["subscribers"]["recent_subscribers"].copy()
-        return [RumbleSubscriber(json_block) for json_block in data]
+        return [Subscriber(json_block) for json_block in data]
 
     @property
     def livestreams(self):
