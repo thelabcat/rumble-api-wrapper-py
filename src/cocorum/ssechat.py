@@ -276,7 +276,7 @@ class SSEChatMessage(SSEChatObject):
             return self.time
         return utils.parse_timestamp(self["rant"]["expires_on"])
 
-class SSEChatAPI():
+class SSEChat():
     """Access the Rumble SSE chat api"""
     def __init__(self, stream_id):
         self.stream_id = utils.stream_id_ensure_b36(stream_id)
