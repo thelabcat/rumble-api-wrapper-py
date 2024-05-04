@@ -84,8 +84,7 @@ class SSEChatter(SSEChatObject):
         if not self.__profile_pic: #We never queried the profile pic before
             #TODO make the timeout configurable
             response = requests.get(self.profile_pic_url, timeout = DEFAULT_TIMEOUT)
-            if response.status_code != 200:
-                raise Exception("Status code " + str(response.status_code))
+            assert response.status_code == 200, "Status code " + str(response.status_code)
 
             self.__profile_pic = response.content
 
@@ -194,8 +193,7 @@ class SSEChatUserBadge(SSEChatObject):
         if not self.__icon: #We never queried the icon before
             #TODO make the timeout configurable
             response = requests.get(self.icon_url, timeout = DEFAULT_TIMEOUT)
-            if response.status_code != 200:
-                raise Exception("Status code " + str(response.status_code))
+            assert response.status_code == 200, "Status code " + str(response.status_code)
 
             self.__icon = response.content
 
@@ -326,6 +324,7 @@ class SSEChat():
     def parse_init_data(self, jsondata):
         """Extract initial chat data from the SSE init message JSON"""
         if jsondata["type"] != "init":
+            print(jsondata)
             raise ValueError("That is not init json")
 
         #Parse pre-connection messages, users, and channels
@@ -380,12 +379,27 @@ class SSEChat():
             jsondata = self.next_jsondata()
             if not jsondata: #The chat has closed or a blank event
                 return
-            if jsondata["type"] != "messages":
-                raise ValueError("API did not send a messages message")
 
-            #Parse messages, users, and channels
-            self.update_mailbox(jsondata)
-            self.update_users(jsondata)
-            self.update_channels(jsondata)
+            #Messages were deleted, remove them from our mailbox if we have them
+            if jsondata["type"] == "delete_messages":
+                print("Messages were deleted. SSE handling not implemented.")
+#                 for message in self.__mailbox[:]:
+#                     if str(message.message_id) in jsondata["data"]["message_ids"]:
+#                         self.__mailbox.remove(message)
+#
+#                 if not self.__mailbox:
+#                     NotImplemented
+
+            #New chat messages came in
+            elif jsondata["type"] == "messages":
+                #Parse messages, users, and channels
+                self.update_mailbox(jsondata)
+                self.update_users(jsondata)
+                self.update_channels(jsondata)
+
+            #Unimplemented event type
+            else:
+                print("API sent an unimplemented SSE event type")
+                print(jsondata)
 
         return self.__mailbox.pop(0) #Return the first message in the mailbox, and then remove it from there

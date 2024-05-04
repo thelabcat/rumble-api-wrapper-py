@@ -92,8 +92,7 @@ class UserAction(APISubObj):
         if not self.__profile_pic: #We never queried the profile pic before
             #TODO make this timeout assignable
             response = requests.get(self.profile_pic_url, timeout = DEFAULT_TIMEOUT)
-            if response.status_code != 200:
-                raise Exception("Status code " + str(response.status_code))
+            assert response.status_code == 200, "Status code " + str(response.status_code)
 
             self.__profile_pic = response.content
 
@@ -469,8 +468,7 @@ class RumbleAPI():
         """Reload data from the API"""
         self.last_refresh_time = time.time()
         response = requests.get(self.api_url, headers = HEADERS, timeout = self.request_timeout)
-        if response.status_code != 200:
-            raise Exception("Status code " + str(response.status_code))
+        assert response.status_code == 200, "Status code " + str(response.status_code)
 
         self._json = response.json()
 
@@ -494,7 +492,7 @@ class RumbleAPI():
     def data_timestamp(self):
         """The timestamp on the last data refresh"""
         #Definitely don't ever trigger a refresh on this
-        self._json["now"]
+        return self._json["now"]
 
     @property
     def api_type(self):
