@@ -10,12 +10,9 @@ from cocorum import ssechat
 chat = ssechat.SSEChat(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
 chat.clear_mailbox() #Erase messages that were still visible before we connected
 
-msg = True
-while msg:
-    msg = chat.next_chat_message #Hangs until a new message arrives
+while True:
+    msg = chat.get_message() #Hangs until a new message arrives
     print(msg.user.username, ":", msg)
-
-print("Chat has closed.")
 ```
 S.D.G."""
 
@@ -317,6 +314,7 @@ class SSEChat():
             self.chat_running = False #Chat has been closed
             return
         if not message.data: #Blank SSE event
+            print("Blank SSE event:", message)
             #Self recursion should work so long as we don't get dozens of blank events in a row
             return self.next_jsondata()
 
@@ -381,8 +379,7 @@ class SSEChat():
         """The chat ID in user"""
         return utils.stream_id_36_to_10(self.stream_id)
 
-    @property
-    def next_chat_message(self):
+    def get_message(self):
         """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""
         if not self.__mailbox: #We don't already have messages
             #JSON data is coming in, but it isn't of messages type'
