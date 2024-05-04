@@ -296,6 +296,7 @@ class SSEChat():
         self.stream_id = utils.stream_id_ensure_b36(stream_id)
 
         self.__mailbox = [] #A mailbox if you will
+        self.deleted_message_ids = [] #IDs of messages that were deleted, as reported by the client
         self.users = {} #Dictionary of users by user ID
         self.channels = {} #Dictionary of channels by channel ID
         self.badges = {}
@@ -342,11 +343,18 @@ class SSEChat():
 
     def update_mailbox(self, jsondata):
         """Parse chat messages from an SSE data JSON"""
+        #Add new messages
         self.__mailbox += [SSEChatMessage(message_json, self) for message_json in jsondata["data"]["messages"]]
 
     def clear_mailbox(self):
         """Delete anything in the mailbox"""
         self.__mailbox = []
+
+    def clear_deleted_message_ids(self):
+        """Clear and return the list of deleted message IDs"""
+        del_m = self.deleted_message_ids.copy()
+        self.deleted_message_ids = []
+        return del_m
 
     def update_users(self, jsondata):
         """Update our dictionary of users from an SSE data JSON"""
@@ -373,33 +381,28 @@ class SSEChat():
         """The chat ID in user"""
         return utils.stream_id_36_to_10(self.stream_id)
 
+    @property
     def next_chat_message(self):
         """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""
         if not self.__mailbox: #We don't already have messages
-            jsondata = self.next_jsondata()
+            #JSON data is coming in, but it isn't of messages type'
+            while (jsondata := self.next_jsondata()) and jsondata["type"] != "messages":
+
+                #Messages were deleted
+                if jsondata["type"] in ("delete_messages", "delete_non_rant_messages"):
+                    self.deleted_message_ids += jsondata["data"]["message_ids"]
+
+                #Unimplemented event type
+                else:
+                    print("API sent an unimplemented SSE event type")
+                    print(jsondata)
+
             if not jsondata: #The chat has closed or a blank event
                 return
 
-            #Messages were deleted, remove them from our mailbox if we have them
-            if jsondata["type"] == "delete_messages":
-                print("Messages were deleted. SSE handling not implemented.")
-#                 for message in self.__mailbox[:]:
-#                     if str(message.message_id) in jsondata["data"]["message_ids"]:
-#                         self.__mailbox.remove(message)
-#
-#                 if not self.__mailbox:
-#                     NotImplemented
-
-            #New chat messages came in
-            elif jsondata["type"] == "messages":
-                #Parse messages, users, and channels
-                self.update_mailbox(jsondata)
-                self.update_users(jsondata)
-                self.update_channels(jsondata)
-
-            #Unimplemented event type
-            else:
-                print("API sent an unimplemented SSE event type")
-                print(jsondata)
+            #Parse messages, users, and channels
+            self.update_mailbox(jsondata)
+            self.update_users(jsondata)
+            self.update_channels(jsondata)
 
         return self.__mailbox.pop(0) #Return the first message in the mailbox, and then remove it from there
