@@ -43,7 +43,7 @@ chat.clear_mailbox() #Erase messages that were still visible before we connected
 
 msg = True
 while msg:
-    msg = chat.next_chat_message() #Hangs until a new message arrives
+    msg = chat.next_chat_message #Hangs until a new message arrives
     print(msg.user.username, ":", msg)
 
 print("Chat has closed.")
