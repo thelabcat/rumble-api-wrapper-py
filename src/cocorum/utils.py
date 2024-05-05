@@ -18,6 +18,7 @@ def parse_timestamp(timestamp):
 
 def stream_id_10_to_36(stream_id_b10):
     """Convert a chat ID to the corresponding stream ID"""
+    stream_id_b10 = int(stream_id_b10)
     stream_id = ""
     base_len = len(STREAM_ID_BASE)
     while stream_id_b10:
