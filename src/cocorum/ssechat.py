@@ -21,6 +21,7 @@ import requests
 import sseclient
 from .localvars import *
 from . import utils
+from . import UserAction
 
 class SSEChatObject():
     """Object in SSE chat API"""
@@ -33,59 +34,17 @@ class SSEChatObject():
         """Get a key from the JSON"""
         return self._jsondata[key]
 
-class SSEChatter(SSEChatObject):
+class SSEChatter(UserAction, SSEChatObject):
     """A user or channel in the SSE chat"""
     def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent SSEChat object"""
-        super().__init__(jsondata, chat)
-        self.__profile_pic = None #The stored profile picture of the user or channel as a URL
-
-    def __eq__(self, other):
-        """Compare this chatter with another"""
-        #If the other is a string, check if it matches our username
-        if isinstance(other, str):
-            return self.username == other
-
-        #If the other has a username attribute, check if it matches our own
-        if hasattr(other, "username"):
-            return self.username == other.username
-
-    def __str__(self):
-        """The chatter in string form"""
-        return self.username
-
-    @property
-    def username(self):
-        """The username"""
-        return self["username"]
+        UserAction.__init__(self, jsondata)
+        SSEChatObject.__init__(self, jsondata, chat)
 
     @property
     def link(self):
         """The user's subpage of Rumble.com"""
         return self["link"]
-
-    @property
-    def profile_pic_url(self):
-        """The URL of the chatter's profile picture, if they have one"""
-        try:
-            return self._jsondata["image.1"]
-        except KeyError:
-            return None
-
-    @property
-    def profile_pic(self):
-        """The chatter's profile picture as a bytes string"""
-        if not self.profile_pic_url: #The profile picture is blank
-            return b''
-
-        if not self.__profile_pic: #We never queried the profile pic before
-            #TODO make the timeout configurable
-            response = requests.get(self.profile_pic_url, timeout = DEFAULT_TIMEOUT)
-            assert response.status_code == 200, "Status code " + str(response.status_code)
-
-            self.__profile_pic = response.content
-
-        return self.__profile_pic
 
 class SSEChatUser(SSEChatter):
     """User in SSE chat"""
