@@ -438,6 +438,8 @@ class RumbleAPI():
         self.refresh_rate = refresh_rate
         self.request_timeout = request_timeout
         self.last_refresh_time = 0
+        self.last_newfollower_time = time.time()
+        self.last_newsubscriber_time = time.time()
         self.__livestreams = {}
         self._json = {}
         self.api_url = api_url
@@ -538,9 +540,21 @@ class RumbleAPI():
 
     @property
     def recent_followers(self):
-        """A list (technically a shallow generator object) of recent followers"""
+        """A list of recent followers"""
         data = self["followers"]["recent_followers"].copy()
         return [Follower(json_block) for json_block in data]
+
+    @property
+    def new_followers(self):
+        """Followers that are newer than the last time this was checked (or RumbleAPI object creation)"""
+        recent_followers = self.recent_followers
+
+        nf = [follower for follower in recent_followers if follower.followed_on > self.last_newfollower_time]
+        nf.sort(key = lambda x: x.followed_on)
+
+        self.last_newfollower_time = time.time()
+
+        return nf
 
     @property
     def num_subscribers(self):
@@ -564,6 +578,18 @@ class RumbleAPI():
         """A list (technically a shallow generator object) of recent subscribers"""
         data = self["subscribers"]["recent_subscribers"].copy()
         return [Subscriber(json_block) for json_block in data]
+
+    @property
+    def new_subscribers(self):
+        """Subscribers that are newer than the last time this was checked (or RumbleAPI object creation)"""
+        recent_subscribers = self.recent_subscribers
+
+        ns = [subscriber for subscriber in recent_subscribers if subscriber.subscribed_on > self.last_newsubscriber_time]
+        ns.sort(key = lambda x: x.subscribed_on)
+
+        self.last_newsubscriber_time = time.time()
+
+        return ns
 
     @property
     def livestreams(self):
