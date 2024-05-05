@@ -253,6 +253,7 @@ class SSEChat():
 
         self.__mailbox = [] #A mailbox if you will
         self.deleted_message_ids = [] #IDs of messages that were deleted, as reported by the client
+        self.pinned_message = None #If a message is pinned, it is assigned to this
         self.users = {} #Dictionary of users by user ID
         self.channels = {} #Dictionary of channels by channel ID
         self.badges = {}
@@ -268,12 +269,16 @@ class SSEChat():
         if not self.chat_running: #Do not try to query a new message if chat is closed
             return
 
-        message = next(self.client, None)
+        try:
+            message = next(self.client, None)
+        except requests.exceptions.ReadTimeout:
+            message = None
+
         if not message:
             self.chat_running = False #Chat has been closed
             return
         if not message.data: #Blank SSE event
-            print("Blank SSE event:", message)
+            print("Blank SSE event:>", message, "<:")
             #Self recursion should work so long as we don't get dozens of blank events in a row
             return self.next_jsondata()
 
@@ -355,6 +360,10 @@ class SSEChat():
             #Re-initialize (could contain new messages)
             elif jsondata["type"] == "init":
                 self.parse_init_data(jsondata)
+
+            #Pinned message
+            elif jsondata["type"] == "pin_message":
+                self.pinned_message = SSEChatMessage(jsondata["data"]["message"])
 
             #New messages
             elif jsondata["type"] == "messages":
