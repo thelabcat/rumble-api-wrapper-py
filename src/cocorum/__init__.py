@@ -44,19 +44,19 @@ from . import utils
 
 class APISubObj():
     """Abstract class for a Rumble API object"""
-    def __init__(self, json):
+    def __init__(self, jsondata):
         """Pass the JSON block for a single Rumble API subobject"""
-        self._json = json
+        self._jsondata = jsondata
 
     def __getitem__(self, key):
         """Get a key from the JSON"""
-        return self._json[key]
+        return self._jsondata[key]
 
 class UserAction(APISubObj):
     """Abstract class for Rumble user actions"""
-    def __init__(self, json):
+    def __init__(self, jsondata):
         """Pass the JSON block for a single Rumble user action"""
-        super().__init__(json)
+        super().__init__(jsondata)
         self.__profile_pic = None
 
     def __eq__(self, other):
@@ -175,9 +175,9 @@ class StreamCategory(APISubObj):
 
 class Livestream():
     """Rumble livestream"""
-    def __init__(self, json, api):
+    def __init__(self, jsondata, api):
         """Pass the JSON block of a single Rumble livestream"""
-        self._json = json
+        self._jsondata = jsondata
         self.api = api
         self.is_disappeared = False #The livestream is in the API listing
         self.__chat = LiveChat(self)
@@ -212,7 +212,7 @@ class Livestream():
         if (not self.is_disappeared) and (key not in STATIC_KEYS_STREAM) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
             self.api.refresh()
 
-        return self._json[key]
+        return self._jsondata[key]
 
     @property
     def stream_id(self):
@@ -248,7 +248,7 @@ class Livestream():
     def categories(self):
         """A list of our categories"""
         data = self["categories"].copy().values()
-        return [StreamCategory(json_block) for json_block in data]
+        return [StreamCategory(jsondata_block) for jsondata_block in data]
 
     @property
     def likes(self):
@@ -382,7 +382,7 @@ class LiveChat():
     def recent_messages(self):
         """Recent chat messages"""
         data = self["recent_messages"].copy()
-        return [ChatMessage(json_block) for json_block in data]
+        return [ChatMessage(jsondata_block) for jsondata_block in data]
 
     @property
     def new_messages(self):
@@ -412,7 +412,7 @@ class LiveChat():
     def recent_rants(self):
         """Recent chat rants"""
         data = self["recent_rants"].copy()
-        return [Rant(json_block) for json_block in data]
+        return [Rant(jsondata_block) for jsondata_block in data]
 
     @property
     def new_rants(self):
@@ -441,7 +441,7 @@ class RumbleAPI():
         self.last_newfollower_time = time.time()
         self.last_newsubscriber_time = time.time()
         self.__livestreams = {}
-        self._json = {}
+        self._jsondata = {}
         self.api_url = api_url
 
     @property
@@ -459,7 +459,7 @@ class RumbleAPI():
         """Return a key from the JSON, refreshing if necessary"""
         if key not in STATIC_KEYS and time.time() - self.last_refresh_time > self.refresh_rate:
             self.refresh()
-        return self._json[key]
+        return self._jsondata[key]
 
     def check_refresh(self):
         """Refresh only if we are past the refresh rate"""
@@ -472,29 +472,29 @@ class RumbleAPI():
         response = requests.get(self.api_url, headers = HEADERS, timeout = self.request_timeout)
         assert response.status_code == 200, "Status code " + str(response.status_code)
 
-        self._json = response.json()
+        self._jsondata = response.json()
 
         #Remove livestream references that are no longer listed
-        listed_ids = [json["id"] for json in self._json["livestreams"]]
+        listed_ids = [jsondata["id"] for jsondata in self._jsondata["livestreams"]]
         for stream_id in self.__livestreams.copy():
             if stream_id not in listed_ids:
                 self.__livestreams[stream_id].is_disappeared = True
                 del self.__livestreams[stream_id]
 
         #Update livestream references' JSONs in-place
-        for json in self._json["livestreams"]:
+        for jsondata in self._jsondata["livestreams"]:
             try:
                 #Update the JSON of the stored livestream
-                self.__livestreams[json["id"]]._json = json
+                self.__livestreams[jsondata["id"]]._jsondata = jsondata
 
             except KeyError: #The livestream has not been stored yet
-                self.__livestreams[json["id"]] = Livestream(json, self)
+                self.__livestreams[jsondata["id"]] = Livestream(jsondata, self)
 
     @property
     def data_timestamp(self):
         """The timestamp on the last data refresh"""
         #Definitely don't ever trigger a refresh on this
-        return self._json["now"]
+        return self._jsondata["now"]
 
     @property
     def api_type(self):
@@ -542,7 +542,7 @@ class RumbleAPI():
     def recent_followers(self):
         """A list of recent followers"""
         data = self["followers"]["recent_followers"].copy()
-        return [Follower(json_block) for json_block in data]
+        return [Follower(jsondata_block) for jsondata_block in data]
 
     @property
     def new_followers(self):
@@ -577,7 +577,7 @@ class RumbleAPI():
     def recent_subscribers(self):
         """A list (technically a shallow generator object) of recent subscribers"""
         data = self["subscribers"]["recent_subscribers"].copy()
-        return [Subscriber(json_block) for json_block in data]
+        return [Subscriber(jsondata_block) for jsondata_block in data]
 
     @property
     def new_subscribers(self):
