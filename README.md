@@ -13,6 +13,9 @@ Most attributes that are not added features have the same name as the direct JSO
 from cocorum import RumbleAPI
 from cocorum.localvars import *
 
+#API_URL is either your Rumble Live Stream API URL with key,
+#or if you are also running GlobalGamer2015's RumBot, use http://localhost:9843/api/ls
+#to use RumBot's API passthrough and reduce unnecessary API traffic.
 api = RumbleAPI(API_URL, refresh_rate = 10)
 
 print(api.username)
