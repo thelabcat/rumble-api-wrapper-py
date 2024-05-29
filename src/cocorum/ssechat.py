@@ -166,10 +166,18 @@ class SSEChatMessage(SSEChatObject):
         if hasattr(other, "text"):
             #Check if the other object's user ID matches our own, if it has one
             if hasattr(other, "user_id"):
+                #Check if the other object is a raid notification, if it says
+                if hasattr(other, "raid_notification"):
+                    return (self.user_id, self.text, self.raid_notification) == (other.user_id, other.text, other.raid_notification)
+
                 return (self.user_id, self.text) == (other.user_id, other.text)
 
             #Check if the other object's username matches our own, if it has one
             if hasattr(other, "username"):
+                #Check if the other object is a raid notification, if it says
+                if hasattr(other, "raid_notification"):
+                    return (self.user_id, self.text, self.raid_notification) == (other.user_id, other.text, other.raid_notification)
+
                 return (self.user.username, self.text) == (other.username, other.text)
 
             #No user identifying attributes, but the text does match
@@ -223,7 +231,7 @@ class SSEChatMessage(SSEChatObject):
     @property
     def is_rant(self):
         """Is this message a rant?"""
-        return "rant" in self._jsondata.keys()
+        return "rant" in self._jsondata
 
     @property
     def rant_price_cents(self):
@@ -245,6 +253,14 @@ class SSEChatMessage(SSEChatObject):
         if not self.is_rant:
             return self.time
         return utils.parse_timestamp(self["rant"]["expires_on"])
+
+    @property
+    def raid_notification(self):
+        """Are we a raid notification? Returns associated JSON data if yes, False if no"""
+        if "raid_notification" in self._jsondata:
+            return self["raid_notification"]
+
+        return False
 
 class SSEChat():
     """Access the Rumble SSE chat api"""
@@ -363,7 +379,7 @@ class SSEChat():
 
             #Pinned message
             elif jsondata["type"] == "pin_message":
-                self.pinned_message = SSEChatMessage(jsondata["data"]["message"])
+                self.pinned_message = SSEChatMessage(jsondata["data"]["message"], self)
 
             #New messages
             elif jsondata["type"] == "messages":
