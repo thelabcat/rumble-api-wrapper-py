@@ -51,3 +51,17 @@ DEFAULT_TIMEOUT = 20
 
 #How long to reuse old data from the API, in seconds
 DEFAULT_REFRESH_RATE = 10
+
+#Dictionary of badge slugs mapped to UTF-8 glyphs
+BADGES_AS_GLYPHS = {
+    "verified" : "✅",
+    "admin" : "👑",
+    "moderator" : "🛡",
+    "premium" : "🗲",
+    "locals" : "♖",
+    "recurring_subscription" : "♖",
+    "locals_supporter" : "⛋",
+    "whale-grey" : "🐳",
+    "whale-yellow" : "🐳",
+    "whale-blue" : "🐳",
+    }

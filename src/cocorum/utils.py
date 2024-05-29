@@ -57,3 +57,14 @@ def stream_id_ensure_b10(stream_id):
 
     #It is base 36:
     return stream_id_36_to_10(stream_id)
+
+def badges_to_glyph_string(badges):
+    """Convert a list of badges into a string of glyphs"""
+    out = ""
+    for badge in badges:
+        badge = str(badge)
+        if badge in BADGES_AS_GLYPHS:
+            out += BADGES_AS_GLYPHS[badge]
+        else:
+            out += "?"
+    return out
