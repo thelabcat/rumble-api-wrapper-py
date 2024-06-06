@@ -36,7 +36,6 @@ if livestream:
 S.D.G."""
 
 import time
-import calendar
 import requests
 
 from .localvars import *
