@@ -12,6 +12,7 @@ Most attributes that are not added features have the same name as the direct JSO
 ```
 from cocorum import RumbleAPI
 from cocorum.localvars import *
+import time
 
 #API_URL is either your Rumble Live Stream API URL with key,
 #or if you are also running GlobalGamer2015's RumBot, use http://localhost:9843/api/ls
@@ -30,9 +31,13 @@ livestream = api.latest_livestream #None if there is no stream running
 if livestream:
     if livestream.visibility != STREAM_VIS_PUBLIC:
         print("Stream is not public.")
-    message = livestream.chat.latest_message #None if there are no messages yet
-    if message:
-        print(message.username, "said", message)
+
+    #Get messages for one minute
+    start_time = time.time()
+    while time.time() - start_time < 60:
+        for message in livestream.chat.new_messages:
+            print(message.username, "said", message)
+        time.sleep(0.1)
 ```
 
 ## Experimental SSE chat submodule
@@ -41,12 +46,14 @@ This part of cocorum is not part of the official Rumble Live Stream API, but may
 ```
 from cocorum import ssechat
 
-chat = ssechat.SSEChat(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
+chat = ssechat.SSEChat(stream_id = stream_id) #Stream ID can be base 10 or 36
 chat.clear_mailbox() #Erase messages that were still visible before we connected
 
-while True:
+#Get messages for one minute
+start_time = time.time()
+while time.time() - start_time < 60:
     msg = chat.get_message() #Hangs until a new message arrives
-    print(msg.user.username, ":", msg)
+    print(msg.user.username, "said", msg)
 ```
 
 ## Conclusion
