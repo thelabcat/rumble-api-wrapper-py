@@ -390,7 +390,8 @@ class LiveChat():
         rem = self.recent_messages.copy()
         rem.sort(key = lambda x: x.created_on) #Sort the messages so the newest ones are last
 
-        if rem[-1].created_on < self.last_newmessage_time: #All messages are older than the last time we checked
+        #There are no recent messages, or all messages are older than the last time we checked
+        if not rem or rem[-1].created_on < self.last_newmessage_time:
             return []
 
         i = 0
@@ -420,7 +421,8 @@ class LiveChat():
         rera = self.recent_rants.copy()
         rera.sort(key = lambda x: x.created_on) #Sort the rants so the newest ones are last
 
-        if rera[-1].created_on < self.last_newrant_time: #All rants are older than the last time we checked
+        #There are no recent rants, or all rants are older than the last time we checked
+        if not rera or rera[-1].created_on < self.last_newrant_time:
             return []
 
         i = 0
