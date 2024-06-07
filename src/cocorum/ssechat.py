@@ -82,7 +82,12 @@ class SSEChatUser(SSEChatter):
     @property
     def badges(self):
         """Badges the user has"""
-        return [self.chat.badges[badge_slug] for badge_slug in self["badges"]]
+        try:
+            return [self.chat.badges[badge_slug] for badge_slug in self["badges"]]
+
+        #User has no badges
+        except KeyError:
+            return []
 
 class SSEChatChannel(SSEChatter):
     """A channel in the SSE chat"""
