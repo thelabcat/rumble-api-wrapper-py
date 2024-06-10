@@ -29,9 +29,13 @@ livestream = api.latest_livestream #None if there is no stream running
 if livestream:
     if livestream.visibility != STREAM_VIS_PUBLIC:
         print("Stream is not public.")
-    message = livestream.chat.latest_message #None if there are no messages yet
-    if message:
-        print(message.username, "said", message)
+
+    #Get messages for one minute
+    start_time = time.time()
+    while time.time() - start_time < 60 and livestream.is_live:
+        for message in livestream.chat.new_messages:
+            print(message.username, "said", message)
+        time.sleep(0.1)
 ```
 S.D.G."""
 

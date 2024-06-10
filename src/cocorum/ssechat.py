@@ -10,9 +10,10 @@ from cocorum import ssechat
 chat = ssechat.SSEChat(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
 chat.clear_mailbox() #Erase messages that were still visible before we connected
 
-while True:
-    msg = chat.get_message() #Hangs until a new message arrives
-    print(msg.user.username, ":", msg)
+#Get messages for one minute
+start_time = time.time()
+while time.time() - start_time < 60 and (msg := chat.get_message()):
+    print(msg.user.username, "said", msg)
 ```
 S.D.G."""
 
@@ -281,32 +282,35 @@ class SSEChat():
 
         #Connect to the API
         self.url = SSE_CHAT_URL.format(stream_id_b10 = self.stream_id_b10)
-        self.client = sseclient.SSEClient(self.url)
+        #Note: We do NOT want this request to have a timeout
+        response = requests.get(self.url, stream = True, headers = SSE_API_HEADERS)
+        self.client = sseclient.SSEClient(response)
+        self.event_generator = self.client.events()
         self.chat_running = True
         self.parse_init_data(self.next_jsondata())
 
     def next_jsondata(self):
-        """Wait for the next message from the SSE and parse the JSON"""
-        if not self.chat_running: #Do not try to query a new message if chat is closed
+        """Wait for the next event from the SSE and parse the JSON"""
+        if not self.chat_running: #Do not try to query a new event if chat is closed
             return
 
         try:
-            message = next(self.client, None)
+            event = next(self.event_generator, None)
         except requests.exceptions.ReadTimeout:
-            message = None
+            event = None
 
-        if not message:
+        if not event:
             self.chat_running = False #Chat has been closed
             return
-        if not message.data: #Blank SSE event
-            print("Blank SSE event:>", message, "<:")
+        if not event.data: #Blank SSE event
+            print("Blank SSE event:>", event, "<:")
             #Self recursion should work so long as we don't get dozens of blank events in a row
             return self.next_jsondata()
 
-        return json.loads(message.data)
+        return json.loads(event.data)
 
     def parse_init_data(self, jsondata):
-        """Extract initial chat data from the SSE init message JSON"""
+        """Extract initial chat data from the SSE init event JSON"""
         if jsondata["type"] != "init":
             print(jsondata)
             raise ValueError("That is not init json")

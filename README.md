@@ -34,7 +34,7 @@ if livestream:
 
     #Get messages for one minute
     start_time = time.time()
-    while time.time() - start_time < 60:
+    while time.time() - start_time < 60 and livestream.is_live:
         for message in livestream.chat.new_messages:
             print(message.username, "said", message)
         time.sleep(0.1)
@@ -51,8 +51,7 @@ chat.clear_mailbox() #Erase messages that were still visible before we connected
 
 #Get messages for one minute
 start_time = time.time()
-while time.time() - start_time < 60:
-    msg = chat.get_message() #Hangs until a new message arrives
+while time.time() - start_time < 60 and (msg := chat.get_message()):
     print(msg.user.username, "said", msg)
 ```
 
