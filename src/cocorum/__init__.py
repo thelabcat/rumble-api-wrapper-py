@@ -470,7 +470,7 @@ class RumbleAPI():
     def refresh(self):
         """Reload data from the API"""
         self.last_refresh_time = time.time()
-        response = requests.get(self.api_url, headers = HEADERS, timeout = self.request_timeout)
+        response = requests.get(self.api_url, headers = LS_API_HEADERS, timeout = self.request_timeout)
         assert response.status_code == 200, "Status code " + str(response.status_code)
 
         self._jsondata = response.json()

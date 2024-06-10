@@ -9,7 +9,7 @@ S.D.G."""
 TIMESTAMP_FORMAT = "%Y-%m-%dT%H:%M:%S"
 
 #Headers for the Rumble Live Stream API request (currently must fake a User-Agent string)
-HEADERS = {"User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"}
+LS_API_HEADERS = {"User-Agent" : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36"}
 
 #Keys of the API JSON that should not change unless the API URL changes, and so do not trigger a refresh
 STATIC_KEYS = [
