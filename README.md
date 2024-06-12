@@ -1,5 +1,7 @@
 <h1><img src="cocorum_icon.png" alt="" width="64"/> Cocorum: Rumble Live Stream API Python Wrapper</h1>
+
 A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality of life additions, such as:
+
 - Automatic refresh when past the refresh_rate delay when querying any non_static property.
 - All timespamps are parsed to seconds since Epoch, UTC timezone.
 - Chat has new_messages and new_rants properties that return only messages and rants since the last time they were read.
