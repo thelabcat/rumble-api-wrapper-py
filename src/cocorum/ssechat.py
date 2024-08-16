@@ -292,6 +292,7 @@ class SSEChat():
     def next_jsondata(self):
         """Wait for the next event from the SSE and parse the JSON"""
         if not self.chat_running: #Do not try to query a new event if chat is closed
+            print("Chat closed, cannot retrieve new JSON data.")
             return
 
         try:
@@ -301,6 +302,7 @@ class SSEChat():
 
         if not event:
             self.chat_running = False #Chat has been closed
+            print("Chat has closed.")
             return
         if not event.data: #Blank SSE event
             print("Blank SSE event:>", event, "<:")
