@@ -16,9 +16,7 @@ from cocorum import RumbleAPI
 from cocorum.localvars import *
 import time
 
-#API_URL is either your Rumble Live Stream API URL with key,
-#or if you are also running GlobalGamer2015's RumBot, use http://localhost:9843/api/ls
-#to use RumBot's API passthrough and reduce unnecessary API traffic.
+#API_URL is either Rumble Live Stream API URL with key
 api = RumbleAPI(API_URL, refresh_rate = 10)
 
 print(api.username)
