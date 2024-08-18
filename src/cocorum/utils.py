@@ -31,28 +31,34 @@ def stream_id_36_to_10(stream_id):
     """Convert a stream ID to the corresponding chat ID"""
     return int(stream_id, len(STREAM_ID_BASE))
 
-def stream_id_36_and_10(stream_id):
-    """Figure out if a stream ID is base 36 or 10, and return both forms in that order"""
+def stream_id_36_and_10(stream_id, assume_10 = False):
+    """Convert a stream ID to base 36 and 10.
+If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
     #It is base 10
-    if isinstance(stream_id, int) or (isinstance(stream_id, str) and stream_id.isnumeric()):
+    if isinstance(stream_id, int) or \
+        (isinstance(stream_id, str) and stream_id.isnumeric() and assume_10):
         return stream_id_10_to_36(stream_id), int(stream_id)
 
     #It is base 36:
     return stream_id, stream_id_36_to_10(stream_id)
 
-def stream_id_ensure_b36(stream_id):
-    """No matter wether a stream ID is base 36 or 10, return 36"""
+def stream_id_ensure_b36(stream_id, assume_10 = False):
+    """No matter wether a stream ID is base 36 or 10, return 36.
+If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
     #It is base 10
-    if isinstance(stream_id, int) or (isinstance(stream_id, str) and stream_id.isnumeric()):
+    if isinstance(stream_id, int) or \
+        (isinstance(stream_id, str) and stream_id.isnumeric() and assume_10):
         return stream_id_10_to_36(stream_id)
 
     #It is base 36:
     return stream_id
 
-def stream_id_ensure_b10(stream_id):
-    """No matter wether a stream ID is base 36 or 10, return 10"""
+def stream_id_ensure_b10(stream_id, assume_10 = False):
+    """No matter wether a stream ID is base 36 or 10, return 10.
+If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
     #It is base 10
-    if isinstance(stream_id, int) or (isinstance(stream_id, str) and stream_id.isnumeric()):
+    if isinstance(stream_id, int) or \
+        (isinstance(stream_id, str) and stream_id.isnumeric() and assume_10):
         return int(stream_id)
 
     #It is base 36:
