@@ -355,7 +355,7 @@ class SSEChat():
 
     def update_channels(self, jsondata):
         """Update our dictionary of channels from an SSE data JSON"""
-        for channel_json in jsondata["data"]["users"]:
+        for channel_json in jsondata["data"]["channels"]:
             try:
                 self.channels[channel_json["id"]]._jsondata = channel_json #Update an existing channel's JSON
             except KeyError: #Channel is new
