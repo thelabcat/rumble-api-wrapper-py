@@ -53,6 +53,7 @@ class SSEChatUser(SSEChatter):
         """Pass the object JSON, and the parent SSEChat object"""
         super().__init__(jsondata, chat)
         self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
+        self._set_channel_id = None #Channel ID set from message
 
     @property
     def user_id(self):
@@ -62,10 +63,15 @@ class SSEChatUser(SSEChatter):
     @property
     def channel_id(self):
         """The numeric channel ID that the user is appearing with"""
+
+        #Try to get our channel ID from our own JSON (may be deprecated)
         try:
             new = self["channel_id"]
-        except KeyError: #This user is not appearing as a channel and so has no channel ID
-            new = None
+
+        #Rely on messages to have assigned our channel ID
+        except KeyError:
+            new = self._set_channel_id
+
         if new not in self.previous_channel_ids: #Record the appearance of a new chanel appearance, including None
             self.previous_channel_ids.append(new)
         return new
@@ -163,6 +169,13 @@ class SSEChatUserBadge(SSEChatObject):
 
 class SSEChatMessage(SSEChatObject):
     """A single chat message from the SSE API"""
+    def __init__(self, jsondata, chat):
+        """Pass the object JSON, and the parent SSEChat object"""
+        super().__init__(jsondata, chat)
+
+        #Set the channel ID of our user
+        self.user._set_channel_id = self.channel_id
+
     def __eq__(self, other):
         """Compare this chat message with another"""
         if isinstance(other, str):
@@ -212,7 +225,8 @@ class SSEChatMessage(SSEChatObject):
     def channel_id(self):
         """The numeric ID of the channel who posted the message, if there is one"""
         try:
-            return self["channel_id"]
+            #Note: For some reason, channel IDs in messages alone show up as integers in the SSE events
+            return str(self["channel_id"])
         except KeyError: #This user is not appearing as a channel and so has no channel ID
             return None
 
@@ -317,10 +331,10 @@ class SSEChat():
             print(jsondata)
             raise ValueError("That is not init json")
 
-        #Parse pre-connection messages, users, and channels
-        self.update_mailbox(jsondata)
+        #Parse pre-connection users, channels, then messages
         self.update_users(jsondata)
         self.update_channels(jsondata)
+        self.update_mailbox(jsondata)
 
         #Load the chat badges
         self.load_badges(jsondata)
@@ -394,10 +408,10 @@ class SSEChat():
 
             #New messages
             elif jsondata["type"] == "messages":
-                #Parse messages, users, and channels
-                self.update_mailbox(jsondata)
+                #Parse users, channels, then messages
                 self.update_users(jsondata)
                 self.update_channels(jsondata)
+                self.update_mailbox(jsondata)
 
             #Unimplemented event type
             else:
