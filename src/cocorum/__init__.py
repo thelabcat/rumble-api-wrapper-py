@@ -261,6 +261,7 @@ class Livestream():
     @property
     def dislikes(self):
         """Number of dislikes on the stream"""
+        return self["dislikes"]
 
     @property
     def like_ratio(self):
