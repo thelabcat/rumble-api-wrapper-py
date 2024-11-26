@@ -42,7 +42,7 @@ S.D.G."""
 import time
 import requests
 
-from .localvars import *
+from . import static
 from . import utils
 
 class APISubObj():
@@ -94,7 +94,7 @@ class UserAction(APISubObj):
 
         if not self.__profile_pic: #We never queried the profile pic before
             #TODO make this timeout assignable
-            response = requests.get(self.profile_pic_url, timeout = DEFAULT_TIMEOUT)
+            response = requests.get(self.profile_pic_url, timeout = static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 
             self.__profile_pic = response.content
@@ -212,7 +212,7 @@ class Livestream():
         #The livestream has not disappeared from the API listing,
         #the key requested is not a value that doesn't change,
         #and it has been api.refresh rate since the last time we refreshed
-        if (not self.is_disappeared) and (key not in STATIC_KEYS_STREAM) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
+        if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.main_STREAM) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
             self.api.refresh()
 
         return self._jsondata[key]
@@ -439,7 +439,7 @@ class LiveChat():
 
 class RumbleAPI():
     """Rumble API wrapper"""
-    def __init__(self, api_url, refresh_rate = DEFAULT_REFRESH_RATE, request_timeout = DEFAULT_TIMEOUT):
+    def __init__(self, api_url, refresh_rate = static.Delays.api_refresh_default, request_timeout = static.Delays.request_timeout):
         """Pass the Rumble API URL, and how long to wait before refreshing on new queries"""
         self.refresh_rate = refresh_rate
         self.request_timeout = request_timeout
@@ -463,7 +463,7 @@ class RumbleAPI():
 
     def __getitem__(self, key):
         """Return a key from the JSON, refreshing if necessary"""
-        if key not in STATIC_KEYS and time.time() - self.last_refresh_time > self.refresh_rate:
+        if key not in static.StaticAPIEndpoints.main and time.time() - self.last_refresh_time > self.refresh_rate:
             self.refresh()
         return self._jsondata[key]
 
@@ -475,7 +475,7 @@ class RumbleAPI():
     def refresh(self):
         """Reload data from the API"""
         self.last_refresh_time = time.time()
-        response = requests.get(self.api_url, headers = LS_API_HEADERS, timeout = self.request_timeout)
+        response = requests.get(self.api_url, headers = static.RequestHeaders.user_agent, timeout = self.request_timeout)
         assert response.status_code == 200, "Status code " + str(response.status_code)
 
         self._jsondata = response.json()

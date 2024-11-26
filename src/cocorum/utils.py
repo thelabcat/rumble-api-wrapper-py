@@ -11,7 +11,8 @@ S.D.G."""
 import calendar
 import hashlib
 import time
-from .localvars import *
+import requests
+from . import static
 
 class MD5Ex:
     """MD5 extended hashing utilities"""
@@ -19,13 +20,13 @@ class MD5Ex:
     def hash(self, message: str) -> str:
         """Hash a string and return the hexdigest"""
         if isinstance(message, str):
-            message = message.encode(TEXT_ENCODING)
+            message = message.encode(static.Misc.text_encoding)
         return hashlib.md5(message).hexdigest()
 
     def hash_stretch(self, password: str, salt: str, iterations: int = 1024) -> str:
         """Stretch-hash a password with a salt"""
         #Start with the salt and password together
-        message = (salt + password).encode(TEXT_ENCODING)
+        message = (salt + password).encode(static.Misc.text_encoding)
 
         #Make one hash of it
         current = self.hash(message)
@@ -39,22 +40,22 @@ class MD5Ex:
 def parse_timestamp(timestamp):
     """Parse a Rumble timestamp to seconds since Epoch"""
     #Trims off the 6 TODO characters at the end
-    return calendar.timegm(time.strptime(timestamp[:-6], TIMESTAMP_FORMAT))
+    return calendar.timegm(time.strptime(timestamp[:-6], static.Misc.timestamp_format))
 
 def stream_id_10_to_36(stream_id_b10):
     """Convert a chat ID to the corresponding stream ID"""
     stream_id_b10 = int(stream_id_b10)
     stream_id = ""
-    base_len = len(STREAM_ID_BASE)
+    base_len = len(static.Misc.base36)
     while stream_id_b10:
-        stream_id = STREAM_ID_BASE[stream_id_b10 % base_len] + stream_id
+        stream_id = static.Misc.base36[stream_id_b10 % base_len] + stream_id
         stream_id_b10 //= base_len
 
     return stream_id
 
 def stream_id_36_to_10(stream_id):
     """Convert a stream ID to the corresponding chat ID"""
-    return int(stream_id, len(STREAM_ID_BASE))
+    return int(stream_id, len(static.Misc.base36))
 
 def stream_id_36_and_10(stream_id, assume_10 = False):
     """Convert a stream ID to base 36 and 10.
@@ -94,8 +95,8 @@ def badges_to_glyph_string(badges):
     out = ""
     for badge in badges:
         badge = str(badge)
-        if badge in BADGES_AS_GLYPHS:
-            out += BADGES_AS_GLYPHS[badge]
+        if badge in static.Misc.badges_as_glyphs:
+            out += static.Misc.badges_as_glyphs[badge]
         else:
             out += "?"
     return out
@@ -107,3 +108,32 @@ def calc_password_hashes(password, salts):
     stretched2 = md5.hash_stretch(password, salts[2], 128)
     final_hash1 = md5.hash(stretched1 + salts[1])
     return [final_hash1, stretched2, salts[1]]
+
+def login(username, password):
+    """Obtain a session token from username and password"""
+    #Get salts
+    r = requests.post(
+            static.URI.ServicePHP.get_salts,
+            data = {"username": username},
+            headers = static.RequestHeaders.user_agent,
+            timeout = static.Delays.request_timeout,
+            )
+    assert r.status_code == 200, f"Password salts request failed: {r}"
+    salts = r.json()["data"]["salts"]
+
+    #Get session token
+    r = requests.post(
+            static.URI.ServicePHP.login,
+            data = {
+                "username": username,
+
+                #Hash the password using the salts
+                "password_hashes": ",".join(calc_password_hashes(password, salts)),
+                },
+            timeout = static.Delays.request_timeout,
+            )
+    assert r.status_code == 200, f"Login request failed: {r}"
+    session_token = r.json()["data"]["session"]
+    assert session_token, "Login failed: No token returned"
+
+    return session_token

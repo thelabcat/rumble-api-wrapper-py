@@ -20,7 +20,7 @@ S.D.G."""
 import json #For parsing SSE message data
 import requests
 import sseclient
-from .localvars import *
+from . import static
 from . import utils
 from . import UserAction
 
@@ -153,14 +153,14 @@ class SSEChatUserBadge(SSEChatObject):
     @property
     def icon_url(self):
         """The URL of the badge's icon"""
-        return RUMBLE_BASE_URL + self["icons"][BADGE_ICON_SIZE]
+        return static.URI.rumble_base + self["icons"][static.Misc.badge_icon_size]
 
     @property
     def icon(self):
         """The badge's icon as a bytestring"""
         if not self.__icon: #We never queried the icon before
             #TODO make the timeout configurable
-            response = requests.get(self.icon_url, timeout = DEFAULT_TIMEOUT)
+            response = requests.get(self.icon_url, timeout = static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 
             self.__icon = response.content
@@ -295,9 +295,9 @@ class SSEChat():
         self.badges = {}
 
         #Connect to the API
-        self.url = SSE_CHAT_URL.format(stream_id_b10 = self.stream_id_b10)
+        self.url = static.URI.ChatAPI.sse_stream.format(stream_id_b10 = self.stream_id_b10)
         #Note: We do NOT want this request to have a timeout
-        response = requests.get(self.url, stream = True, headers = SSE_API_HEADERS)
+        response = requests.get(self.url, stream = True, headers = static.RequestHeaders.sse_api)
         self.client = sseclient.SSEClient(response)
         self.event_generator = self.client.events()
         self.chat_running = True
