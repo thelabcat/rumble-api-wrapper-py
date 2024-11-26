@@ -68,3 +68,6 @@ BADGES_AS_GLYPHS = {
     "whale-yellow" : "🐳",
     "whale-blue" : "🐳",
     }
+
+#Encoding for all text-bytes conversions
+TEXT_ENCODING = "utf-8"

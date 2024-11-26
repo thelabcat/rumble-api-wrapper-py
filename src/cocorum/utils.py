@@ -9,12 +9,37 @@ This submodule provides some utilities for working with the APIs:
 S.D.G."""
 
 import calendar
+import hashlib
 import time
 from .localvars import *
 
+class MD5Ex:
+    """MD5 extended hashing utilities"""
+
+    def hash(self, message: str) -> str:
+        """Hash a string and return the hexdigest"""
+        if isinstance(message, str):
+            message = message.encode(TEXT_ENCODING)
+        return hashlib.md5(message).hexdigest()
+
+    def hash_stretch(self, password: str, salt: str, iterations: int = 1024) -> str:
+        """Stretch-hash a password with a salt"""
+        #Start with the salt and password together
+        message = (salt + password).encode(TEXT_ENCODING)
+
+        #Make one hash of it
+        current = self.hash(message)
+
+        #Then keep re-adding the password and re-hashing
+        for _ in range(iterations):
+            current = self.hash(current + password)
+
+        return current
+
 def parse_timestamp(timestamp):
     """Parse a Rumble timestamp to seconds since Epoch"""
-    return calendar.timegm(time.strptime(timestamp[:-6], TIMESTAMP_FORMAT)) #Trims off the 6 TODO characters at the end
+    #Trims off the 6 TODO characters at the end
+    return calendar.timegm(time.strptime(timestamp[:-6], TIMESTAMP_FORMAT))
 
 def stream_id_10_to_36(stream_id_b10):
     """Convert a chat ID to the corresponding stream ID"""
@@ -74,3 +99,11 @@ def badges_to_glyph_string(badges):
         else:
             out += "?"
     return out
+
+def calc_password_hashes(password, salts):
+    """Hash a password given the salts using custom MD5 implementation"""
+    md5 = MD5Ex()
+    stretched1 = md5.hash_stretch(password, salts[0], 128)
+    stretched2 = md5.hash_stretch(password, salts[2], 128)
+    final_hash1 = md5.hash(stretched1 + salts[1])
+    return [final_hash1, stretched2, salts[1]]
