@@ -36,6 +36,9 @@ class URI:
     #Base URL to Rumble's website, for URLs that are relative to it
     rumble_base = "https://rumble.com"
 
+    #Test the session token by sending it here and checking the title
+    login_test = "https://rumble.com/login.php"
+
     class ChatAPI:
         """URIs of the chat API"""
 

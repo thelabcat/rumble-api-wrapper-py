@@ -11,7 +11,6 @@ S.D.G."""
 import calendar
 import hashlib
 import time
-import requests
 from . import static
 
 class MD5Ex:
@@ -108,32 +107,3 @@ def calc_password_hashes(password, salts):
     stretched2 = md5.hash_stretch(password, salts[2], 128)
     final_hash1 = md5.hash(stretched1 + salts[1])
     return [final_hash1, stretched2, salts[1]]
-
-def login(username, password):
-    """Obtain a session token from username and password"""
-    #Get salts
-    r = requests.post(
-            static.URI.ServicePHP.get_salts,
-            data = {"username": username},
-            headers = static.RequestHeaders.user_agent,
-            timeout = static.Delays.request_timeout,
-            )
-    assert r.status_code == 200, f"Password salts request failed: {r}"
-    salts = r.json()["data"]["salts"]
-
-    #Get session token
-    r = requests.post(
-            static.URI.ServicePHP.login,
-            data = {
-                "username": username,
-
-                #Hash the password using the salts
-                "password_hashes": ",".join(calc_password_hashes(password, salts)),
-                },
-            timeout = static.Delays.request_timeout,
-            )
-    assert r.status_code == 200, f"Login request failed: {r}"
-    session_token = r.json()["data"]["session"]
-    assert session_token, "Login failed: No token returned"
-
-    return session_token
