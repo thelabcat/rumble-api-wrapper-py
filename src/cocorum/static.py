@@ -84,6 +84,15 @@ class Delays:
     #How long to reuse old data from the API, in seconds
     api_refresh_default = 10
 
+class Message:
+    """For chat messages"""
+
+    #Maximum chat message length
+    max_len = 200
+
+    #How long to wait between sending messages
+    send_cooldown = 3
+
 class Misc:
     """No idea where else to put this data"""
     #Numerical base that the stream ID is in

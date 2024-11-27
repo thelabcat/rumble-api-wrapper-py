@@ -18,8 +18,10 @@ while time.time() - start_time < 60 and (msg := chat.get_message()):
 S.D.G."""
 
 import json #For parsing SSE message data
+import time
 import requests
 import sseclient
+from . import servicephp
 from . import static
 from . import utils
 from . import UserAction
@@ -174,7 +176,10 @@ class SSEChatMessage(SSEChatObject):
         super().__init__(jsondata, chat)
 
         #Set the channel ID of our user
-        self.user._set_channel_id = self.channel_id
+        try:
+            self.user._set_channel_id = self.channel_id
+        except KeyError:
+            print(f"ERROR: Message {self.message_id} could not set channel ID of user because user is not in chat records yet.")
 
     def __eq__(self, other):
         """Compare this chat message with another"""
@@ -205,6 +210,10 @@ class SSEChatMessage(SSEChatObject):
     def __str__(self):
         """The chat message in string form"""
         return self.text
+
+    def __int__(self):
+        """The chat message in integer (ID) form"""
+        return self.message_id
 
     @property
     def message_id(self):
@@ -282,9 +291,9 @@ class SSEChatMessage(SSEChatObject):
 
         return False
 
-class SSEChat():
-    """Access the Rumble SSE chat api"""
-    def __init__(self, stream_id):
+class ChatAPI():
+    """Access the Rumble internal chat api"""
+    def __init__(self, stream_id, username: str = "", password: str = ""):
         self.stream_id = utils.stream_id_ensure_b36(stream_id)
 
         self.__mailbox = [] #A mailbox if you will
@@ -294,14 +303,102 @@ class SSEChat():
         self.channels = {} #Dictionary of channels by channel ID
         self.badges = {}
 
-        #Connect to the API
-        self.url = static.URI.ChatAPI.sse_stream.format(stream_id_b10 = self.stream_id_b10)
+        #Generate our URLs
+        self.sse_url = static.URI.ChatAPI.sse_stream.format(stream_id_b10 = self.stream_id_b10)
+        self.message_api_url = static.URI.ChatAPI.message.format(stream_id_b10 = self.stream_id_b10)
+
+        #Connect to SSE stream
         #Note: We do NOT want this request to have a timeout
-        response = requests.get(self.url, stream = True, headers = static.RequestHeaders.sse_api)
+        response = requests.get(self.sse_url, stream = True, headers = static.RequestHeaders.sse_api)
         self.client = sseclient.SSEClient(response)
         self.event_generator = self.client.events()
         self.chat_running = True
         self.parse_init_data(self.next_jsondata())
+
+        #If we have credentials, log in
+        if username and password:
+            self.username = username
+            self.password = password
+            self.session_token = servicephp.login(self.username, self.password)
+            assert servicephp.test_session_token(self.session_token), "Session token invalid"
+        else:
+            self.username = None
+            self.password = None
+            self.session_token = None
+
+        #The last time we sent a message
+        self.last_send_time = 0
+
+    @property
+    def cookies(self):
+        """Cookies to be passed to requests that need them"""
+        return {"u_s" : self.session_token}
+
+    def options_check(self, url, method, origin = static.URI.rumble_base):
+        """Check of we are allowed to do method on url via an options request"""
+        # Send OPTIONS request first
+        r = requests.options(
+            url,
+            headers={
+                'Access-Control-Request-Method' : method.upper(),
+                'Access-Control-Request-Headers' : 'content-type',
+                'Origin' : origin,
+                },
+            timeout = static.Delays.request_timeout,
+            )
+        return r.status_code == 200
+
+    def send_message(self, text: str, channel_id: int = None):
+        """Send a message in chat
+    text: The message text
+    channel_id: Numeric ID of the channel to use,
+        defaults to None"""
+
+        assert self.session_token, "Not logged in, cannot send message"
+        assert len(text) <= static.Message.max_len, "Mesage is too long"
+        curtime = time.time()
+        assert self.last_send_time + static.Message.send_cooldown <= curtime, "Sending messages too fast"
+        assert self.options_check(self.message_api_url, "POST"), "Rumble denied options request to post message"
+        r = requests.post(
+            self.message_api_url,
+            cookies = self.cookies,
+            data = {
+                "data": {
+                    "request_id": utils.generate_request_id(),
+                    "message": {
+                        "text": text
+                    },
+                    "rant": None,
+                    "channel_id": channel_id
+                    }
+                },
+            timeout = static.Delays.request_timeout,
+            )
+
+        if r.status_code != 200:
+            print("Error: Sending message failed,", r, r.content.decode(static.Misc.text_encoding))
+            return
+
+        return SSEChatMessage(r.json()["data"], self)
+
+    def delete_message(self, message):
+        """Delete a message in chat
+    message: Object which when converted to integer is the target message ID"""
+
+        assert self.session_token, "Not logged in, cannot send message"
+        assert self.options_check(self.message_api_url, "DELETE"), "Rumble denied options request to delete message"
+
+        r = requests.delete(
+            self.message_api_url + f"/{int(message)}",
+            cookies = self.cookies,
+            timeout = static.Delays.request_timeout,
+            )
+
+        if r.status_code != 200:
+            print("Error: Deleting message failed,", r, r.content.decode(static.Misc.text_encoding))
+            return False
+
+        return True
 
     def next_jsondata(self):
         """Wait for the next event from the SSE and parse the JSON"""

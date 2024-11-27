@@ -8,7 +8,7 @@ import requests
 from . import static
 from . import utils
 
-def session_token_test(session_token):
+def test_session_token(session_token):
     """Test if a session token is valid"""
     r = requests.get(static.URI.login_test,
             cookies = {"u_s": session_token},

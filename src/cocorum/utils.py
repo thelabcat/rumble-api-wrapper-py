@@ -8,9 +8,11 @@ This submodule provides some utilities for working with the APIs:
 
 S.D.G."""
 
+import base64
 import calendar
 import hashlib
 import time
+import uuid
 from . import static
 
 class MD5Ex:
@@ -107,3 +109,9 @@ def calc_password_hashes(password, salts):
     stretched2 = md5.hash_stretch(password, salts[2], 128)
     final_hash1 = md5.hash(stretched1 + salts[1])
     return [final_hash1, stretched2, salts[1]]
+
+def generate_request_id():
+    """Generate a UUID for API requests"""
+    random_uuid = uuid.uuid4().bytes + uuid.uuid4().bytes
+    b64_encoded = base64.b64encode(random_uuid).decode(static.Misc.text_encoding)
+    return b64_encoded.rstrip('=')[:43]
