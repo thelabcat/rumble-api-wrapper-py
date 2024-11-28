@@ -425,7 +425,7 @@ class ChatAPI():
 
     def unmute_user(self, user):
         """Unmute a user"""
-        record_id = utils.get_muted_user_record(str(user))
+        record_id = utils.get_muted_user_record(self.session_cookie, str(user))
         assert record_id, "User was not in muted records"
         return servicephp.unmute_user(self.session_cookie, record_id)
 

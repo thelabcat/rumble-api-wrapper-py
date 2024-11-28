@@ -136,7 +136,7 @@ def get_muted_user_record(session_cookie, username: str = None):
         assert r.status_code == 200, f"Error: Getting mutes page #{pagenum} failed, {r}"
 
         #Parse the HTML and search for mute buttons
-        soup = bs4.BeautifulSoup(r.text)
+        soup = bs4.BeautifulSoup(r.text, features="lxml")
         elems = soup.find_all("button", attrs = {"class" : "unmute_action button-small"})
 
         #We reached the last page
@@ -158,17 +158,18 @@ def get_muted_user_record(session_cookie, username: str = None):
     if not username:
         return record_ids
 
-def get_channels(username):
+def get_channels(session_cookie, username):
     """Get dict of channel slug : {id, title} for a username"""
     #Get the page of channels, does not require login
     r = requests.get(
         static.URI.channels_page.format(username = username),
+        cookies = session_cookie,
         headers = static.RequestHeaders.user_agent,
         timeout = static.Delays.request_timeout,
         )
     assert r.status_code == 200, f"Error: Getting channels page failed, {r}"
 
     #Parse the HTML and search for channel
-    soup = bs4.BeautifulSoup(r.text)
+    soup = bs4.BeautifulSoup(r.text, features="lxml")
     elems = soup.find_all("div", attrs = {"data-type" : "channel"})
-    return {e.attrs["data-slug"] : {"id" : e.attrs["data-id"], "title" : e.attrs["data-title"]} for e in elems}
+    return {e.attrs["data-slug"] : {"id" : int(e.attrs["data-id"]), "title" : e.attrs["data-title"]} for e in elems}
