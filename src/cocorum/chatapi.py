@@ -98,6 +98,10 @@ class SSEChatUser(SSEChatter):
         except KeyError:
             return []
 
+    def __int__(self):
+        """The user in integer form, via its user ID"""
+        return self.user_id
+
 class SSEChatChannel(SSEChatter):
     """A channel in the SSE chat"""
     def __init__(self, jsondata, chat):
@@ -319,20 +323,15 @@ class ChatAPI():
         if username and password:
             self.username = username
             self.password = password
-            self.session_token = servicephp.login(self.username, self.password)
-            assert servicephp.test_session_token(self.session_token), "Session token invalid"
+            self.session_cookie = servicephp.login(self.username, self.password)
+            assert servicephp.test_session_cookie(self.session_cookie), "Session cookie invalid"
         else:
             self.username = None
             self.password = None
-            self.session_token = None
+            self.session_cookie = None
 
         #The last time we sent a message
         self.last_send_time = 0
-
-    @property
-    def cookies(self):
-        """Cookies to be passed to requests that need them"""
-        return {"u_s" : self.session_token}
 
     def options_check(self, url, method, origin = static.URI.rumble_base):
         """Check of we are allowed to do method on url via an options request"""
@@ -354,14 +353,14 @@ class ChatAPI():
     channel_id: Numeric ID of the channel to use,
         defaults to None"""
 
-        assert self.session_token, "Not logged in, cannot send message"
+        assert self.session_cookie, "Not logged in, cannot send message"
         assert len(text) <= static.Message.max_len, "Mesage is too long"
         curtime = time.time()
         assert self.last_send_time + static.Message.send_cooldown <= curtime, "Sending messages too fast"
         assert self.options_check(self.message_api_url, "POST"), "Rumble denied options request to post message"
         r = requests.post(
             self.message_api_url,
-            cookies = self.cookies,
+            cookies = self.session_cookie,
             json = {
                 "data": {
                     "request_id": utils.generate_request_id(),
@@ -386,12 +385,12 @@ class ChatAPI():
         """Delete a message in chat
     message: Object which when converted to integer is the target message ID"""
 
-        assert self.session_token, "Not logged in, cannot send message"
+        assert self.session_cookie, "Not logged in, cannot send message"
         assert self.options_check(self.message_api_url + f"/{int(message)}", "DELETE"), "Rumble denied options request to delete message"
 
         r = requests.delete(
             self.message_api_url + f"/{int(message)}",
-            cookies = self.cookies,
+            cookies = self.session_cookie,
             # headers = static.RequestHeaders.user_agent,
             timeout = static.Delays.request_timeout,
             )
@@ -401,6 +400,34 @@ class ChatAPI():
             return False
 
         return True
+
+    def pin_message(self, message):
+        """Pin a message"""
+        return servicephp.pin_message(self.session_cookie, self.stream_id_b10, message)
+
+    def unpin_message(self, message = None):
+        """Unpin the pinned message"""
+        if not message:
+            message = self.pinned_message
+        assert message, "No known pinned message and ID not provided"
+        return servicephp.unpin_message(self.session_cookie, self.stream_id_b10, message)
+
+    def mute_user(self, user, duration: int = None, total: bool = False):
+        """Mute a user"""
+        return servicephp.mute_user(
+            session_cookie = self.session_cookie,
+            username = str(user),
+            is_channel = False,
+            video = self.stream_id_b10,
+            duration = duration,
+            total = total
+            )
+
+    def unmute_user(self, user):
+        """Unmute a user"""
+        record_id = servicephp.get_muted_user_record(str(user))
+        assert record_id, "User was not in muted records"
+        return servicephp.unmute_user(self.session_cookie, record_id)
 
     def next_jsondata(self):
         """Wait for the next event from the SSE and parse the JSON"""

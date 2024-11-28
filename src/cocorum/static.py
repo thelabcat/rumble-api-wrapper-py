@@ -37,7 +37,10 @@ class URI:
     rumble_base = "https://rumble.com"
 
     #Test the session token by sending it here and checking the title
-    login_test = "https://rumble.com/login.php"
+    login_test = rumble_base + "/login.php"
+
+    #Webpage with all the mutes on it, format with page number
+    mutes_page = rumble_base + "/account/moderation/muting?pg={page}"
 
     class ChatAPI:
         """URIs of the chat API"""
