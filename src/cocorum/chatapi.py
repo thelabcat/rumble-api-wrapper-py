@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-"""SSE chat display client
+"""Internal chat API client
 
 This part of cocorum is not part of the official Rumble Live Stream API, but may provide a more reliable method of ensuring all chat messages are received.
+It also can do to-chat interactions, sometimes via Service.PHP.
 
 Example usage:
 ```
-from cocorum import ssechat
+from cocorum import chatapi
 
-chat = ssechat.SSEChat(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
+#Additionally pass username and password for to-chat interactions
+chat = chatapi.ChatAPI(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
 chat.clear_mailbox() #Erase messages that were still visible before we connected
 
 #Get messages for one minute
@@ -26,10 +28,10 @@ from . import static
 from . import utils
 from . import UserAction
 
-class SSEChatObject():
-    """Object in SSE chat API"""
+class ChatAPIObject():
+    """Object in the internal chat API"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent SSEChat object"""
+        """Pass the object JSON, and the parent ChatAPI object"""
         self._jsondata = jsondata
         self.chat = chat
 
@@ -37,22 +39,22 @@ class SSEChatObject():
         """Get a key from the JSON"""
         return self._jsondata[key]
 
-class SSEChatter(UserAction, SSEChatObject):
-    """A user or channel in the SSE chat"""
+class ChatAPIChatter(UserAction, ChatAPIObject):
+    """A user or channel in the internal chat API"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent SSEChat object"""
+        """Pass the object JSON, and the parent ChatAPI object"""
         UserAction.__init__(self, jsondata)
-        SSEChatObject.__init__(self, jsondata, chat)
+        ChatAPIObject.__init__(self, jsondata, chat)
 
     @property
     def link(self):
         """The user's subpage of Rumble.com"""
         return self["link"]
 
-class SSEChatUser(SSEChatter):
-    """User in SSE chat"""
+class ChatAPIUser(ChatAPIChatter):
+    """User in the internal chat API"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent SSEChat object"""
+        """Pass the object JSON, and the parent ChatAPI object"""
         super().__init__(jsondata, chat)
         self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
         self._set_channel_id = None #Channel ID set from message
@@ -102,10 +104,10 @@ class SSEChatUser(SSEChatter):
         """The user in integer form, via its user ID"""
         return self.user_id
 
-class SSEChatChannel(SSEChatter):
+class ChatAPIChannel(ChatAPIChatter):
     """A channel in the SSE chat"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent SSEChat object"""
+        """Pass the object JSON, and the parent ChatAPI object"""
         super().__init__(jsondata, chat)
 
         #Find the user who has this channel
@@ -129,10 +131,10 @@ class SSEChatChannel(SSEChatter):
         """The numeric ID of the user of this channel"""
         return self.user.user_id
 
-class SSEChatUserBadge(SSEChatObject):
+class ChatAPIUserBadge(ChatAPIObject):
     """A badge of a user"""
     def __init__(self, slug, jsondata, chat):
-        """Pass the slug, the object JSON, and the parent SSEChat object"""
+        """Pass the slug, the object JSON, and the parent ChatAPI object"""
         super().__init__(jsondata, chat)
         self.slug = slug #The unique identification for this badge
         self.__icon = None
@@ -173,10 +175,10 @@ class SSEChatUserBadge(SSEChatObject):
 
         return self.__icon
 
-class SSEChatMessage(SSEChatObject):
-    """A single chat message from the SSE API"""
+class ChatAPIMessage(ChatAPIObject):
+    """A single chat message in the internal chat API"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent SSEChat object"""
+        """Pass the object JSON, and the parent ChatAPI object"""
         super().__init__(jsondata, chat)
 
         #Set the channel ID of our user
@@ -379,7 +381,7 @@ class ChatAPI():
             print("Error: Sending message failed,", r, r.content.decode(static.Misc.text_encoding))
             return
 
-        return SSEChatMessage(r.json()["data"], self)
+        return ChatAPIMessage(r.json()["data"], self)
 
     def delete_message(self, message):
         """Delete a message in chat
@@ -403,10 +405,12 @@ class ChatAPI():
 
     def pin_message(self, message):
         """Pin a message"""
+        assert self.session_cookie, "Not logged in, cannot pin message"
         return servicephp.pin_message(self.session_cookie, self.stream_id_b10, message)
 
     def unpin_message(self, message = None):
         """Unpin the pinned message"""
+        assert self.session_cookie, "Not logged in, cannot unpin message"
         if not message:
             message = self.pinned_message
         assert message, "No known pinned message and ID not provided"
@@ -414,6 +418,7 @@ class ChatAPI():
 
     def mute_user(self, user, duration: int = None, total: bool = False):
         """Mute a user"""
+        assert self.session_cookie, "Not logged in, cannot mute user"
         return servicephp.mute_user(
             session_cookie = self.session_cookie,
             username = str(user),
@@ -425,6 +430,7 @@ class ChatAPI():
 
     def unmute_user(self, user):
         """Unmute a user"""
+        assert self.session_cookie, "Not logged in, cannot unmute user"
         record_id = utils.get_muted_user_record(self.session_cookie, str(user))
         assert record_id, "User was not in muted records"
         return servicephp.unmute_user(self.session_cookie, record_id)
@@ -473,7 +479,7 @@ class ChatAPI():
     def update_mailbox(self, jsondata):
         """Parse chat messages from an SSE data JSON"""
         #Add new messages
-        self.__mailbox += [SSEChatMessage(message_json, self) for message_json in jsondata["data"]["messages"] if message_json["id"] not in self.__mailbox]
+        self.__mailbox += [ChatAPIMessage(message_json, self) for message_json in jsondata["data"]["messages"] if message_json["id"] not in self.__mailbox]
 
     def clear_mailbox(self):
         """Delete anything in the mailbox"""
@@ -491,7 +497,7 @@ class ChatAPI():
             try:
                 self.users[user_json["id"]]._jsondata = user_json #Update an existing user's JSON
             except KeyError: #User is new
-                self.users[user_json["id"]] = SSEChatUser(user_json, self)
+                self.users[user_json["id"]] = ChatAPIUser(user_json, self)
 
     def update_channels(self, jsondata):
         """Update our dictionary of channels from an SSE data JSON"""
@@ -499,11 +505,11 @@ class ChatAPI():
             try:
                 self.channels[channel_json["id"]]._jsondata = channel_json #Update an existing channel's JSON
             except KeyError: #Channel is new
-                self.channels.update({channel_json["id"] : SSEChatChannel(channel_json, self)})
+                self.channels.update({channel_json["id"] : ChatAPIChannel(channel_json, self)})
 
     def load_badges(self, jsondata):
         """Create our dictionary of badges given a dictionary of badges"""
-        self.badges = {badge_slug : SSEChatUserBadge(badge_slug, jsondata["data"]["config"]["badges"][badge_slug], self) for badge_slug in jsondata["data"]["config"]["badges"].keys()}
+        self.badges = {badge_slug : ChatAPIUserBadge(badge_slug, jsondata["data"]["config"]["badges"][badge_slug], self) for badge_slug in jsondata["data"]["config"]["badges"].keys()}
 
     @property
     def stream_id_b10(self):
@@ -530,7 +536,7 @@ class ChatAPI():
 
             #Pinned message
             elif jsondata["type"] == "pin_message":
-                self.pinned_message = SSEChatMessage(jsondata["data"]["message"], self)
+                self.pinned_message = ChatAPIMessage(jsondata["data"]["message"], self)
 
             #New messages
             elif jsondata["type"] == "messages":

@@ -40,13 +40,16 @@ if livestream:
         time.sleep(0.1)
 ```
 
-## Experimental SSE chat submodule
+## Experimental internal chat API submodule
 This part of cocorum is not part of the official Rumble Live Stream API, but may provide a more reliable method of ensuring all chat messages are received.
+It also can do to-chat interactions, sometimes via Service.PHP.
 
+Example usage:
 ```
-from cocorum import ssechat
+from cocorum import chatapi
 
-chat = ssechat.SSEChat(stream_id = stream_id) #Stream ID can be base 10 or 36
+#Additionally pass username and password for to-chat interactions
+chat = chatapi.ChatAPI(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
 chat.clear_mailbox() #Erase messages that were still visible before we connected
 
 #Get messages for one minute

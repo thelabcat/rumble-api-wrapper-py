@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Cocorum local variable definitions
+"""Cocorum static variable definitions
 
-This submodule provides absolute variable definitions for Cocorum.
+Provides various data that, if changed, would change globally
 
 S.D.G."""
 

@@ -13,7 +13,6 @@ Most attributes that are not added features have the same name as the direct JSO
 Example usage:
 ```
 from cocorum import RumbleAPI
-from cocorum.localvars import *
 
 api = RumbleAPI(API_URL, refresh_rate = 10)
 
@@ -27,7 +26,7 @@ if api.latest_subscriber:
 livestream = api.latest_livestream #None if there is no stream running
 
 if livestream:
-    if livestream.visibility != STREAM_VIS_PUBLIC:
+    if livestream.visibility != "public":
         print("Stream is not public.")
 
     #Get messages for one minute
@@ -212,7 +211,7 @@ class Livestream():
         #The livestream has not disappeared from the API listing,
         #the key requested is not a value that doesn't change,
         #and it has been api.refresh rate since the last time we refreshed
-        if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.main_STREAM) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
+        if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.main) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
             self.api.refresh()
 
         return self._jsondata[key]
