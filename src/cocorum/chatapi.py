@@ -372,6 +372,7 @@ class ChatAPI():
                     "channel_id": channel_id
                     }
                 },
+            # headers = static.RequestHeaders.user_agent,
             timeout = static.Delays.request_timeout,
             )
 
@@ -391,6 +392,7 @@ class ChatAPI():
         r = requests.delete(
             self.message_api_url + f"/{int(message)}",
             cookies = self.cookies,
+            # headers = static.RequestHeaders.user_agent,
             timeout = static.Delays.request_timeout,
             )
 

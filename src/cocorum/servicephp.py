@@ -44,6 +44,7 @@ def login(username, password):
                 #Hash the password using the salts
                 "password_hashes": ",".join(utils.calc_password_hashes(password, salts)),
                 },
+            headers = static.RequestHeaders.user_agent,
             timeout = static.Delays.request_timeout,
             )
     assert r.status_code == 200, f"Login request failed: {r}"
