@@ -4,7 +4,6 @@
 Control Rumble via Service.PHP
 S.D.G."""
 
-import bs4
 import requests
 from . import static
 from . import utils
@@ -99,50 +98,6 @@ def mute_user(session_cookie, username: str, is_channel: bool = False, video: in
             timeout = static.Delays.request_timeout,
             )
     assert r.status_code == 200, f"Mute request failed: {r}"
-
-def get_muted_user_record(session_cookie, username: str = None):
-    """Get the record IDs for mutes
-    username: Username to find record ID for,
-        defaults to returning all record IDs."""
-
-    #The page we are on
-    pagenum = 1
-
-    record_ids = {}
-
-    #While there are more pages
-    while True:
-        #Get the next page of mutes
-        r = requests.get(
-            static.URI.mutes_page.format(page = pagenum),
-            cookies = session_cookie,
-            headers = static.RequestHeaders.user_agent,
-            timeout = static.Delays.request_timeout,
-            )
-        assert r.status_code == 200, f"Error: Getting mutes page #{pagenum} failed, {r}"
-
-        #Parse the HTML and search for mute buttons
-        soup = bs4.BeautifulSoup(r.text)
-        elems = soup.find_all("button", attrs = {"class" : "unmute_action button-small"})
-
-        #We reached the last page
-        if not elems:
-            break
-
-        #Get the record IDs per username from each button
-        for e in elems:
-            #We were searching for a specific username and found it
-            if username and e.attrs["data-username"] == username:
-                return e.attrs["data-record-id"]
-
-            record_ids[e.attrs["data-username"]] = int(e.attrs["data-record-id"])
-
-        #Turn the page
-        pagenum +=1
-
-    #Only return record IDs if we weren't searching for a particular one
-    if not username:
-        return record_ids
 
 def unmute_user(session_cookie, record_id: int):
     """Unmute a user by record ID"""

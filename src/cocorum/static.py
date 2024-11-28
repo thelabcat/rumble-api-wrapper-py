@@ -42,6 +42,9 @@ class URI:
     #Webpage with all the mutes on it, format with page number
     mutes_page = rumble_base + "/account/moderation/muting?pg={page}"
 
+    #Channels under a user, format with username
+    channels_page = rumble_base + "/user/{username}/channels"
+
     class ChatAPI:
         """URIs of the chat API"""
 

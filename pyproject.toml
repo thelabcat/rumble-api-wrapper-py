@@ -13,6 +13,7 @@ description = "An unofficial Python wrapper for the Rumble Live Stream API v1.0 
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
+  "beautifulsoup4",
   "requests",
   "sseclient-py", #Only for the Rumble chat SSE stream
   ]
