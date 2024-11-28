@@ -362,7 +362,7 @@ class ChatAPI():
         r = requests.post(
             self.message_api_url,
             cookies = self.cookies,
-            data = {
+            json = {
                 "data": {
                     "request_id": utils.generate_request_id(),
                     "message": {
@@ -387,7 +387,7 @@ class ChatAPI():
     message: Object which when converted to integer is the target message ID"""
 
         assert self.session_token, "Not logged in, cannot send message"
-        assert self.options_check(self.message_api_url, "DELETE"), "Rumble denied options request to delete message"
+        assert self.options_check(self.message_api_url + f"/{int(message)}", "DELETE"), "Rumble denied options request to delete message"
 
         r = requests.delete(
             self.message_api_url + f"/{int(message)}",
