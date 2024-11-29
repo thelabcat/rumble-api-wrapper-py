@@ -181,11 +181,9 @@ class ChatAPIMessage(ChatAPIObject):
         """Pass the object JSON, and the parent ChatAPI object"""
         super().__init__(jsondata, chat)
 
-        #Set the channel ID of our user
-        try:
+        #Set the channel ID of our user if we can
+        if self.user:
             self.user._set_channel_id = self.channel_id
-        except KeyError:
-            print(f"ERROR: Message {self.message_id} could not set channel ID of user because user is not in chat records yet.")
 
     def __eq__(self, other):
         """Compare this chat message with another"""
@@ -253,7 +251,10 @@ class ChatAPIMessage(ChatAPIObject):
     @property
     def user(self):
         """Reference to the user who posted this message"""
-        return self.chat.users[self.user_id]
+        try:
+            return self.chat.users[self.user_id]
+        except KeyError:
+            print(f"ERROR: Message {self.message_id} could not reference user {self.user_id} because chat has no records of them as of yet.")
 
     @property
     def channel(self):
@@ -353,7 +354,8 @@ class ChatAPI():
         """Send a message in chat
     text: The message text
     channel_id: Numeric ID of the channel to use,
-        defaults to None"""
+        defaults to None
+    Returns message ID, ChatAPIUser"""
 
         assert self.session_cookie, "Not logged in, cannot send message"
         assert len(text) <= static.Message.max_len, "Mesage is too long"
@@ -381,7 +383,7 @@ class ChatAPI():
             print("Error: Sending message failed,", r, r.content.decode(static.Misc.text_encoding))
             return
 
-        return ChatAPIMessage(r.json()["data"], self)
+        return r.json()["data"]["id"], ChatAPIUser(r.json()["data"]["user"], self)
 
     def delete_message(self, message):
         """Delete a message in chat
