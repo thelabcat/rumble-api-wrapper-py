@@ -16,23 +16,27 @@ from . import static
 class MD5Ex:
     """MD5 extended hashing utilities"""
 
-    def hash(self, message: str) -> str:
-        """Hash a string and return the hexdigest"""
+    @staticmethod
+    def hash(message: str) -> str:
+        """Hash a string and return the hexdigest string"""
+        #Actually, we can except bytes, but if we got string, encode the string
         if isinstance(message, str):
             message = message.encode(static.Misc.text_encoding)
+
         return hashlib.md5(message).hexdigest()
 
-    def hash_stretch(self, password: str, salt: str, iterations: int = 1024) -> str:
+    @staticmethod
+    def hash_stretch(password: str, salt: str, iterations: int = 1024) -> str:
         """Stretch-hash a password with a salt"""
         #Start with the salt and password together
         message = (salt + password).encode(static.Misc.text_encoding)
 
         #Make one hash of it
-        current = self.hash(message)
+        current = MD5Ex.hash(message)
 
         #Then keep re-adding the password and re-hashing
         for _ in range(iterations):
-            current = self.hash(current + password)
+            current = MD5Ex.hash(current + password)
 
         return current
 
@@ -101,11 +105,16 @@ def badges_to_glyph_string(badges):
     return out
 
 def calc_password_hashes(password, salts):
-    """Hash a password given the salts using custom MD5 implementation"""
-    md5 = MD5Ex()
-    stretched1 = md5.hash_stretch(password, salts[0], 128)
-    stretched2 = md5.hash_stretch(password, salts[2], 128)
-    final_hash1 = md5.hash(stretched1 + salts[1])
+    """Hash a password given the salts using custom MD5 extension"""
+    #Stretch-hash the password with the first salt
+    stretched1 = MD5Ex.hash_stretch(password, salts[0], 128)
+
+    #Add the second salt to that result, and hash one more time
+    final_hash1 = MD5Ex.hash(stretched1 + salts[1])
+
+    #Stretch-hash the password with the third salt
+    stretched2 = MD5Ex.hash_stretch(password, salts[2], 128)
+
     return [final_hash1, stretched2, salts[1]]
 
 def generate_request_id():
@@ -122,6 +131,7 @@ def get_muted_user_record(session_cookie, username: str = None):
     #The page we are on
     pagenum = 1
 
+    #username : record ID
     record_ids = {}
 
     #While there are more pages
@@ -158,9 +168,12 @@ def get_muted_user_record(session_cookie, username: str = None):
     if not username:
         return record_ids
 
+    #We were searching for a user and did not find them
+    return None
+
 def get_channels(session_cookie, username):
     """Get dict of channel slug : {id, title} for a username"""
-    #Get the page of channels, does not require login
+    #Get the page of channels
     r = requests.get(
         static.URI.channels_page.format(username = username),
         cookies = session_cookie,
@@ -172,4 +185,6 @@ def get_channels(session_cookie, username):
     #Parse the HTML and search for channel
     soup = bs4.BeautifulSoup(r.text, features="lxml")
     elems = soup.find_all("div", attrs = {"data-type" : "channel"})
-    return {e.attrs["data-slug"] : {"id" : int(e.attrs["data-id"]), "title" : e.attrs["data-title"]} for e in elems}
+    return {e.attrs["data-slug"] :
+        {"id" : int(e.attrs["data-id"]), "title" : e.attrs["data-title"]}
+        for e in elems}
