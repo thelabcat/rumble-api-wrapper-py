@@ -61,12 +61,22 @@ class ChatAPIUser(ChatAPIChatter):
 
     @property
     def user_id(self):
-        """The numeric ID of the user"""
-        return self["id"]
+        """The numeric ID of the user in base 10"""
+        return int(self["id"])
+
+    @property
+    def user_id_b10(self):
+        """The numeric ID of the user in base 10"""
+        return self.user_id
+
+    @property
+    def user_id_b36(self):
+        """The numeric ID of the user in base 36"""
+        return utils.base_10_to_36(self.user_id)
 
     @property
     def channel_id(self):
-        """The numeric channel ID that the user is appearing with"""
+        """The numeric channel ID that the user is appearing with in base 10"""
 
         #Try to get our channel ID from our own JSON (may be deprecated)
         try:
@@ -79,6 +89,18 @@ class ChatAPIUser(ChatAPIChatter):
         if new not in self.previous_channel_ids: #Record the appearance of a new chanel appearance, including None
             self.previous_channel_ids.append(new)
         return new
+
+    @property
+    def channel_id_b10(self):
+        """The numeric channel ID that the user is appearing with in base 10"""
+        return self.channel_id
+
+    @property
+    def channel_id_b36(self):
+        """The numeric channel ID that the user is appearing with in base 36"""
+        if not self.channel_id:
+            return
+        return utils.base_10_to_36(self.channel_id)
 
     @property
     def is_follower(self):
@@ -123,8 +145,18 @@ class ChatAPIChannel(ChatAPIChatter):
 
     @property
     def channel_id(self):
-        """The ID of this channel"""
+        """The ID of this channel in base 10"""
         return int(self["id"])
+
+    @property
+    def channel_id_b10(self):
+        """The ID of this channel in base 10"""
+        return self.channel_id
+
+    @property
+    def channel_id_b36(self):
+        """The ID of this channel in base 36"""
+        return utis.base_10_to_36(self.channel_id)
 
     @property
     def user_id(self):
@@ -221,8 +253,18 @@ class ChatAPIMessage(ChatAPIObject):
 
     @property
     def message_id(self):
-        """The unique numerical ID of the chat message"""
+        """The unique numerical ID of the chat message in base 10"""
         return int(self["id"])
+
+    @property
+    def message_id_b10(self):
+        """The unique numerical ID of the chat message in base 10"""
+        return self.message_id
+
+    @property
+    def message_id_b36(self):
+        """The unique numerical ID of the chat message in base 36"""
+        return utils.base_10_to_36(self.message_id)
 
     @property
     def time(self):
@@ -231,8 +273,18 @@ class ChatAPIMessage(ChatAPIObject):
 
     @property
     def user_id(self):
-        """The numerical ID of the user who posted the message"""
+        """The numerical ID of the user who posted the message in base 10"""
         return int(self["user_id"])
+
+    @property
+    def user_id_b10(self):
+        """The numeric ID of the user in base 10"""
+        return self.user_id
+
+    @property
+    def user_id_b36(self):
+        """The numeric ID of the user in base 36"""
+        return utils.base_10_to_36(self.user_id)
 
     @property
     def channel_id(self):
@@ -242,6 +294,18 @@ class ChatAPIMessage(ChatAPIObject):
             return int(self["channel_id"])
         except KeyError: #This user is not appearing as a channel and so has no channel ID
             return None
+
+    @property
+    def channel_id_b10(self):
+        """The ID of the channel who posted the message in base 10"""
+        return self.channel_id
+
+    @property
+    def channel_id_b36(self):
+        """The ID of the channel who posted the message in base 36"""
+        if not self.channel_id:
+            return
+        return utils.base_10_to_36(self.channel_id)
 
     @property
     def text(self):
@@ -383,7 +447,7 @@ class ChatAPI():
             print("Error: Sending message failed,", r, r.content.decode(static.Misc.text_encoding))
             return
 
-        return r.json()["data"]["id"], ChatAPIUser(r.json()["data"]["user"], self)
+        return int(r.json()["data"]["id"]), ChatAPIUser(r.json()["data"]["user"], self)
 
     def delete_message(self, message):
         """Delete a message in chat
@@ -481,7 +545,7 @@ class ChatAPI():
     def update_mailbox(self, jsondata):
         """Parse chat messages from an SSE data JSON"""
         #Add new messages
-        self.__mailbox += [ChatAPIMessage(message_json, self) for message_json in jsondata["data"]["messages"] if message_json["id"] not in self.__mailbox]
+        self.__mailbox += [ChatAPIMessage(message_json, self) for message_json in jsondata["data"]["messages"] if int(message_json["id"]) not in self.__mailbox]
 
     def clear_mailbox(self):
         """Delete anything in the mailbox"""
@@ -497,17 +561,17 @@ class ChatAPI():
         """Update our dictionary of users from an SSE data JSON"""
         for user_json in jsondata["data"]["users"]:
             try:
-                self.users[user_json["id"]]._jsondata = user_json #Update an existing user's JSON
+                self.users[int(user_json["id"])]._jsondata = user_json #Update an existing user's JSON
             except KeyError: #User is new
-                self.users[user_json["id"]] = ChatAPIUser(user_json, self)
+                self.users[int(user_json["id"])] = ChatAPIUser(user_json, self)
 
     def update_channels(self, jsondata):
         """Update our dictionary of channels from an SSE data JSON"""
         for channel_json in jsondata["data"]["channels"]:
             try:
-                self.channels[channel_json["id"]]._jsondata = channel_json #Update an existing channel's JSON
+                self.channels[int(channel_json["id"])]._jsondata = channel_json #Update an existing channel's JSON
             except KeyError: #Channel is new
-                self.channels.update({channel_json["id"] : ChatAPIChannel(channel_json, self)})
+                self.channels.update({int(channel_json["id"]) : ChatAPIChannel(channel_json, self)})
 
     def load_badges(self, jsondata):
         """Create our dictionary of badges given a dictionary of badges"""

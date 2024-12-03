@@ -13,7 +13,6 @@ Most attributes that are not added features have the same name as the direct JSO
 
 ```
 from cocorum import RumbleAPI
-from cocorum.localvars import *
 import time
 
 #API_URL is either Rumble Live Stream API URL with key
@@ -29,7 +28,7 @@ if api.latest_subscriber:
 livestream = api.latest_livestream #None if there is no stream running
 
 if livestream:
-    if livestream.visibility != STREAM_VIS_PUBLIC:
+    if livestream.visibility != "public":
         print("Stream is not public.")
 
     #Get messages for one minute
