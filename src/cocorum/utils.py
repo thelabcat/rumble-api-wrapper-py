@@ -45,8 +45,8 @@ def parse_timestamp(timestamp):
     #Trims off the 6 TODO characters at the end
     return calendar.timegm(time.strptime(timestamp[:-6], static.Misc.timestamp_format))
 
-def stream_id_10_to_36(stream_id_b10):
-    """Convert a chat ID to the corresponding stream ID"""
+def base_10_to_36(stream_id_b10):
+    """Convert a base 10 number to base 36"""
     stream_id_b10 = int(stream_id_b10)
     stream_id = ""
     base_len = len(static.Misc.base36)
@@ -56,34 +56,34 @@ def stream_id_10_to_36(stream_id_b10):
 
     return stream_id
 
-def stream_id_36_to_10(stream_id):
-    """Convert a stream ID to the corresponding chat ID"""
-    return int(stream_id, len(static.Misc.base36))
+def base_36_to_10(stream_id):
+    """Convert a base 36 number to base 10"""
+    return int(stream_id, 36)
 
-def stream_id_36_and_10(stream_id, assume_10 = False):
-    """Convert a stream ID to base 36 and 10.
+def base_36_and_10(stream_id, assume_10 = False):
+    """Take a base 36 or base 10 number, and return both base 36 and 10.
 If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
     #It is base 10
     if isinstance(stream_id, int) or \
         (isinstance(stream_id, str) and stream_id.isnumeric() and assume_10):
-        return stream_id_10_to_36(stream_id), int(stream_id)
+        return base_10_to_36(stream_id), int(stream_id)
 
     #It is base 36:
-    return stream_id, stream_id_36_to_10(stream_id)
+    return stream_id, base_36_to_10(stream_id)
 
-def stream_id_ensure_b36(stream_id, assume_10 = False):
-    """No matter wether a stream ID is base 36 or 10, return 36.
+def ensure_b36(stream_id, assume_10 = False):
+    """No matter wether a number is base 36 or 10, return 36.
 If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
     #It is base 10
     if isinstance(stream_id, int) or \
         (isinstance(stream_id, str) and stream_id.isnumeric() and assume_10):
-        return stream_id_10_to_36(stream_id)
+        return base_10_to_36(stream_id)
 
     #It is base 36:
     return stream_id
 
-def stream_id_ensure_b10(stream_id, assume_10 = False):
-    """No matter wether a stream ID is base 36 or 10, return 10.
+def ensure_b10(stream_id, assume_10 = False):
+    """No matter wether a number is base 36 or 10, return 10.
 If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
     #It is base 10
     if isinstance(stream_id, int) or \
@@ -91,7 +91,7 @@ If assume_10 is set to False, will assume a string is base 36 even if it looks l
         return int(stream_id)
 
     #It is base 36:
-    return stream_id_36_to_10(stream_id)
+    return base_36_to_10(stream_id)
 
 def badges_to_glyph_string(badges):
     """Convert a list of badges into a string of glyphs"""

@@ -218,13 +218,18 @@ class Livestream():
 
     @property
     def stream_id(self):
-        """The livestream ID"""
+        """The livestream ID in base 36"""
         return self["id"]
+
+    @property
+    def stream_id_b36(self):
+        """The livestream ID in base 36"""
+        return self.stream_id
 
     @property
     def stream_id_b10(self):
         """The livestream chat ID (stream ID in base 10)"""
-        return utils.stream_id_36_to_10(self.stream_id)
+        return utils.base_36_to_10(self.stream_id)
 
     @property
     def title(self):
@@ -508,8 +513,18 @@ class RumbleAPI():
 
     @property
     def user_id(self):
-        """The user ID"""
+        """The user ID in base 36"""
         return self["user_id"]
+
+    @property
+    def user_id_b36(self):
+        """The user ID in base 36"""
+        return self.user_id
+
+    @property
+    def user_id_b10(self):
+        """The user ID in base 10"""
+        return utils.base_36_to_10(self.user_id)
 
     @property
     def username(self):

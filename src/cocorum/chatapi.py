@@ -70,7 +70,7 @@ class ChatAPIUser(ChatAPIChatter):
 
         #Try to get our channel ID from our own JSON (may be deprecated)
         try:
-            new = self["channel_id"]
+            new = int(self["channel_id"])
 
         #Rely on messages to have assigned our channel ID
         except KeyError:
@@ -124,7 +124,7 @@ class ChatAPIChannel(ChatAPIChatter):
     @property
     def channel_id(self):
         """The ID of this channel"""
-        return self["id"]
+        return int(self["id"])
 
     @property
     def user_id(self):
@@ -222,7 +222,7 @@ class ChatAPIMessage(ChatAPIObject):
     @property
     def message_id(self):
         """The unique numerical ID of the chat message"""
-        return self["id"]
+        return int(self["id"])
 
     @property
     def time(self):
@@ -232,14 +232,14 @@ class ChatAPIMessage(ChatAPIObject):
     @property
     def user_id(self):
         """The numerical ID of the user who posted the message"""
-        return self["user_id"]
+        return int(self["user_id"])
 
     @property
     def channel_id(self):
         """The numeric ID of the channel who posted the message, if there is one"""
         try:
             #Note: For some reason, channel IDs in messages alone show up as integers in the SSE events
-            return str(self["channel_id"])
+            return int(self["channel_id"])
         except KeyError: #This user is not appearing as a channel and so has no channel ID
             return None
 
@@ -301,7 +301,7 @@ class ChatAPIMessage(ChatAPIObject):
 class ChatAPI():
     """Access the Rumble internal chat api"""
     def __init__(self, stream_id, username: str = "", password: str = ""):
-        self.stream_id = utils.stream_id_ensure_b36(stream_id)
+        self.stream_id = utils.ensure_b36(stream_id)
 
         self.__mailbox = [] #A mailbox if you will
         self.deleted_message_ids = [] #IDs of messages that were deleted, as reported by the client
@@ -516,7 +516,7 @@ class ChatAPI():
     @property
     def stream_id_b10(self):
         """The chat ID in user"""
-        return utils.stream_id_36_to_10(self.stream_id)
+        return utils.base_36_to_10(self.stream_id)
 
     def get_message(self):
         """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""
