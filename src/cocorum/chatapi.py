@@ -364,7 +364,8 @@ class ChatAPIMessage(ChatAPIObject):
 
 class ChatAPI():
     """Access the Rumble internal chat api"""
-    def __init__(self, stream_id, username: str = "", password: str = ""):
+    def __init__(self, stream_id, session_cookie: dict = None):
+        """Pass stream ID in base 10 or 36, and optionally a session cookie for login"""
         self.stream_id = utils.ensure_b36(stream_id)
 
         self.__mailbox = [] #A mailbox if you will
@@ -386,15 +387,12 @@ class ChatAPI():
         self.chat_running = True
         self.parse_init_data(self.next_jsondata())
 
-        #If we have credentials, log in
-        if username and password:
-            self.username = username
-            self.password = password
-            self.session_cookie = servicephp.login(self.username, self.password)
-            assert servicephp.test_session_cookie(self.session_cookie), "Session cookie invalid"
-        else:
-            self.username = None
-            self.password = None
+        #If we have a session cookie, test it
+        self.session_cookie = session_cookie
+
+        #We were passed a session cookie but it was invalid
+        if self.session_cookie and not servicephp.test_session_cookie(self.session_cookie):
+            print("ERROR: Session cookie invalid")
             self.session_cookie = None
 
         #The last time we sent a message
