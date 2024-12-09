@@ -23,7 +23,7 @@ import json #For parsing SSE message data
 import time
 import requests
 import sseclient
-from . import servicephp
+from .servicephp import ServicePHP
 from . import static
 from . import utils
 from . import UserAction
@@ -156,7 +156,7 @@ class ChatAPIChannel(ChatAPIChatter):
     @property
     def channel_id_b36(self):
         """The ID of this channel in base 36"""
-        return utis.base_10_to_36(self.channel_id)
+        return utils.base_10_to_36(self.channel_id)
 
     @property
     def user_id(self):
@@ -364,8 +364,8 @@ class ChatAPIMessage(ChatAPIObject):
 
 class ChatAPI():
     """Access the Rumble internal chat api"""
-    def __init__(self, stream_id, session_cookie: dict = None):
-        """Pass stream ID in base 10 or 36, and optionally a session cookie for login"""
+    def __init__(self, stream_id, username: str = None, password: str = None, session = None):
+        """Pass stream ID in base 10 or 36, and optionally login credentials / session token"""
         self.stream_id = utils.ensure_b36(stream_id)
 
         self.__mailbox = [] #A mailbox if you will
@@ -387,16 +387,21 @@ class ChatAPI():
         self.chat_running = True
         self.parse_init_data(self.next_jsondata())
 
-        #If we have a session cookie, test it
-        self.session_cookie = session_cookie
-
-        #We were passed a session cookie but it was invalid
-        if self.session_cookie and not servicephp.test_session_cookie(self.session_cookie):
-            print("ERROR: Session cookie invalid")
-            self.session_cookie = None
+        #If we have session login, use them
+        if (username and password) or session:
+            self.servicephp = ServicePHP(username, password, session)
+        else:
+            self.servicephp = None
 
         #The last time we sent a message
         self.last_send_time = 0
+
+    @property
+    def session_cookie(self):
+        """The session cookie we are logged in with"""
+        if self.servicephp:
+            return self.servicephp.session_cookie
+        return None
 
     def options_check(self, url, method, origin = static.URI.rumble_base):
         """Check of we are allowed to do method on url via an options request"""
@@ -451,7 +456,7 @@ class ChatAPI():
         """Delete a message in chat
     message: Object which when converted to integer is the target message ID"""
 
-        assert self.session_cookie, "Not logged in, cannot send message"
+        assert self.session_cookie, "Not logged in, cannot delete message"
         assert self.options_check(self.message_api_url + f"/{int(message)}", "DELETE"), "Rumble denied options request to delete message"
 
         r = requests.delete(
@@ -470,7 +475,7 @@ class ChatAPI():
     def pin_message(self, message):
         """Pin a message"""
         assert self.session_cookie, "Not logged in, cannot pin message"
-        return servicephp.pin_message(self.session_cookie, self.stream_id_b10, message)
+        return self.servicephp.chat_pin(self.stream_id_b10, message)
 
     def unpin_message(self, message = None):
         """Unpin the pinned message"""
@@ -478,13 +483,17 @@ class ChatAPI():
         if not message:
             message = self.pinned_message
         assert message, "No known pinned message and ID not provided"
-        return servicephp.unpin_message(self.session_cookie, self.stream_id_b10, message)
+        return self.servicephp.chat_pin(self.stream_id_b10, message, unpin = True)
 
     def mute_user(self, user, duration: int = None, total: bool = False):
-        """Mute a user"""
+        """Mute a user
+        user: Username to mute
+        duration: How long to mute the user in seconds.
+            Defaults to infinite.
+        total: Wether or not they are muted across all videos.
+            Defaults to False, just this video."""
         assert self.session_cookie, "Not logged in, cannot mute user"
-        return servicephp.mute_user(
-            session_cookie = self.session_cookie,
+        return self.servicephp.mute_user(
             username = str(user),
             is_channel = False,
             video = self.stream_id_b10,
@@ -497,7 +506,7 @@ class ChatAPI():
         assert self.session_cookie, "Not logged in, cannot unmute user"
         record_id = utils.get_muted_user_record(self.session_cookie, str(user))
         assert record_id, "User was not in muted records"
-        return servicephp.unmute_user(self.session_cookie, record_id)
+        return self.servicephp.unmute_user(record_id)
 
     def next_jsondata(self):
         """Wait for the next event from the SSE and parse the JSON"""

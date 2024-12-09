@@ -11,21 +11,6 @@ from . import utils
 from .chatapi import ChatAPIUserBadge as UserBadge
 from . import APISubObj
 
-def test_session_cookie(session_cookie):
-    """Test if a session token is valid"""
-    r = requests.get(static.URI.login_test,
-            cookies = session_cookie,
-            headers = static.RequestHeaders.user_agent,
-            timeout = static.Delays.request_timeout,
-        )
-
-    assert r.status_code == 200, f"Testing session token failed: {r}"
-
-    title = r.text.split("<title>")[1].split("</title>")[0]
-
-    #If the session token is invalid, it won't log us in and "Login" will still be shown
-    return "Login" not in title
-
 class Comment(APISubObj):
     """A comment on a video as returned by a successful attempt to make it"""
     def __init__(self, jsondata):
@@ -133,7 +118,7 @@ class ServicePHP:
         else:
             raise ValueError("Must pass either userame and password, or a session token")
 
-        assert test_session_cookie(self.session_cookie), "Session cookie is invalid."
+        assert utils.test_session_cookie(self.session_cookie), "Session cookie is invalid."
 
     def sphp_request(self, service_name: str, data: dict = {}, additional_params: dict = {}):
         """Make a POST request to Service.PHP with common settings

@@ -123,6 +123,21 @@ def generate_request_id():
     b64_encoded = base64.b64encode(random_uuid).decode(static.Misc.text_encoding)
     return b64_encoded.rstrip('=')[:43]
 
+def test_session_cookie(session_cookie):
+    """Test if a session cookie dict is valid"""
+    r = requests.get(static.URI.login_test,
+            cookies = session_cookie,
+            headers = static.RequestHeaders.user_agent,
+            timeout = static.Delays.request_timeout,
+        )
+
+    assert r.status_code == 200, f"Testing session token failed: {r}"
+
+    title = r.text.split("<title>")[1].split("</title>")[0]
+
+    #If the session token is invalid, it won't log us in and "Login" will still be shown
+    return "Login" not in title
+
 def get_muted_user_record(session_cookie, username: str = None):
     """Get the record IDs for mutes
     username: Username to find record ID for,
