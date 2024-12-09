@@ -8,8 +8,52 @@ import requests
 import bs4
 from . import static
 from . import utils
-from .chatapi import ChatAPIUserBadge as UserBadge
+#from .chatapi import ChatAPIUserBadge as UserBadge
 from . import APISubObj
+
+class UserBadge(APISubObj):
+    """A badge of a user"""
+    def __init__(self, slug, jsondata):
+        """Pass the slug, and the object JSON"""
+        super().__init__(jsondata)
+        self.slug = slug #The unique identification for this badge
+        self.__icon = None
+
+    def __eq__(self, other):
+        """Check if this badge is equal to another"""
+        #Check if the string is either our slug or our label in any language
+        if isinstance(other, str):
+            return other in (self.slug, self.label.values())
+
+        #Check if the compared object has the same slug, if it has one
+        if hasattr(other, "slug"):
+            return self.slug == other.slug
+
+    def __str__(self):
+        """The chat user badge in string form"""
+        return self.slug
+
+    @property
+    def label(self):
+        """A dictionary of lang:label pairs"""
+        return self["label"]
+
+    @property
+    def icon_url(self):
+        """The URL of the badge's icon"""
+        return static.URI.rumble_base + self["icons"][static.Misc.badge_icon_size]
+
+    @property
+    def icon(self):
+        """The badge's icon as a bytestring"""
+        if not self.__icon: #We never queried the icon before
+            #TODO make the timeout configurable
+            response = requests.get(self.icon_url, timeout = static.Delays.request_timeout)
+            assert response.status_code == 200, "Status code " + str(response.status_code)
+
+            self.__icon = response.content
+
+        return self.__icon
 
 class Comment(APISubObj):
     """A comment on a video as returned by a successful attempt to make it"""
@@ -18,7 +62,7 @@ class Comment(APISubObj):
         super().__init__(jsondata)
 
         #Badges of the user who commented
-        self.user_badges = {slug : UserBadge(slug, data, chat = None) for slug, data in self["comment_user_badges"].items()}
+        self.user_badges = {slug : UserBadge(slug, data) for slug, data in self["comment_user_badges"].items()}
 
     @property
     def comment_id(self):
@@ -120,20 +164,23 @@ class ServicePHP:
 
         assert utils.test_session_cookie(self.session_cookie), "Session cookie is invalid."
 
-    def sphp_request(self, service_name: str, data: dict = {}, additional_params: dict = {}):
+    def sphp_request(self, service_name: str, data: dict = {}, additional_params: dict = {}, logged_in = True):
         """Make a POST request to Service.PHP with common settings
         service_name: The name parameter of the specific PHP service
         data: Form data
-        additional_params: Any additional query string parameters"""
+        additional_params: Any additional query string parameters
+        logged_in: The request should use the session cookie"""
+        params = {"name" : service_name}
+        params.update(additional_params)
         r = requests.post(
                 static.URI.servicephp,
-                params = {"name" : service_name} + additional_params,
+                params = params,
                 data = data,
                 headers = static.RequestHeaders.user_agent,
-                cookies = self.session_cookie,
+                cookies = self.session_cookie if logged_in else None,
                 timeout = static.Delays.request_timeout,
                 )
-        assert r.status_code == 200, f"Service.PHP request for {service_name} failed: {r}"
+        assert r.status_code == 200, f"Service.PHP request for {service_name} failed: {r}\n{r.text}"
         #If the request json has a data -> success value, make sure it is True
         assert r.json().get("data", {}).get("success", True), f"Service.PHP request for {service_name} failed: \n{r.text}"
         return r
@@ -144,6 +191,7 @@ class ServicePHP:
         r = self.sphp_request(
                 "user.get_salts",
                 data = {"username": username},
+                logged_in = False,
                 )
         salts = r.json()["data"]["salts"]
 
@@ -156,6 +204,7 @@ class ServicePHP:
                     #Hash the password using the salts
                     "password_hashes": ",".join(utils.calc_password_hashes(password, salts)),
                     },
+                logged_in = False,
                 )
         session_token = r.json()["data"]["session"]
         assert session_token, f"Login failed: No token returned\n{r.json()}"
