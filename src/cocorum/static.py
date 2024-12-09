@@ -45,6 +45,9 @@ class URI:
     #Channels under a user, format with username
     channels_page = rumble_base + "/user/{username}/channels"
 
+    #The Service.PHP API
+    servicephp = "https://rumble.com/service.php"
+
     class ChatAPI:
         """URIs of the chat API"""
 
@@ -57,29 +60,23 @@ class URI:
         #Message actions
         message = base + "/message"
 
-    class ServicePHP:
-        """URIs of the service.php API"""
+        # #For getting password salts
+        # get_salts = base + "?name=user.get_salts"
 
-        #Base service.php location
-        base = "https://rumble.com/service.php"
+        # #For logging in
+        # login = base + "?name=user.login"
 
-        #For getting password salts
-        get_salts = base + "?name=user.get_salts"
+        # #For pinning a chat message
+        # pin = base + "?name=chat.message.pin"
 
-        #For logging in
-        login = base + "?name=user.login"
+        # #For unpinning a chat message
+        # unpin = base + "?name=chat.message.unpin"
 
-        #For pinning a chat message
-        pin = base + "?name=chat.message.pin"
+        # #For muting a user
+        # mute = base + "?name=moderation.mute"
 
-        #For unpinning a chat message
-        unpin = base + "?name=chat.message.unpin"
-
-        #For muting a user
-        mute = base + "?name=moderation.mute"
-
-        #For unmuting a user
-        unmute = base + "?name=moderation.unmute"
+        # #For unmuting a user
+        # unmute = base + "?name=moderation.unmute"
 
 class Delays:
     """Various times for delays and waits"""
@@ -126,3 +123,15 @@ class Misc:
 
     #Rumble timestamp format, not including the 6 TODO characters at the end
     timestamp_format = "%Y-%m-%dT%H:%M:%S"
+
+    #Key of the session token within the session cookie dict
+    session_token_key = "u_s"
+
+    class ContentTypes:
+        """Types of content that can be rumbled on"""
+
+        #A video or livestream
+        video = 1
+
+        #A comment
+        comment = 2
