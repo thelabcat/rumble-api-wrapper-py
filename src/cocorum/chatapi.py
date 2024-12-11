@@ -586,7 +586,7 @@ class ChatAPI():
 
     @property
     def stream_id_b10(self):
-        """The chat ID in user"""
+        """The chat ID in use"""
         return utils.base_36_to_10(self.stream_id)
 
     def get_message(self):

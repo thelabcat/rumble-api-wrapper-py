@@ -54,6 +54,11 @@ class APISubObj():
         """Get a key from the JSON"""
         return self._jsondata[key]
 
+    @property
+    def get(self):
+        """Get a key from the JSON with fallback"""
+        return self._jsondata.get
+
 class UserAction(APISubObj):
     """Abstract class for Rumble user actions"""
     def __init__(self, jsondata):
