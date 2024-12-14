@@ -271,39 +271,9 @@ class ScrapedContentVotes(ScrapedObj):
         return str(self.score)
 
     @property
-    def num_votes_up(self):
-        """Upvotes on the content"""
-        NotImplemented
-
-    @property
-    def num_votes_down(self):
-        """Downvotes on the content"""
-        NotImplemented
-
-    @property
     def score(self):
         """Summed score of the content"""
         return int(self._elem.find("span", attrs = {"class" : "rumbles-count"}).string)
-
-    @property
-    def votes(self):
-        """The total number of votes on the content"""
-        NotImplemented
-
-    @property
-    def num_votes_up_formatted(self):
-        """The upvotes on the content, formatted into a string"""
-        NotImplemented
-
-    @property
-    def num_votes_down_formatted(self):
-        """The downvotes on the content, formatted into a string"""
-        NotImplemented
-
-    @property
-    def score_formatted(self):
-        """The total votes on the content, formatted into a string"""
-        NotImplemented
 
     @property
     def content_type(self):

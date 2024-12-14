@@ -403,20 +403,6 @@ class ChatAPI():
             return self.servicephp.session_cookie
         return None
 
-    def options_check(self, url, method, origin = static.URI.rumble_base):
-        """Check of we are allowed to do method on url via an options request"""
-        # Send OPTIONS request first
-        r = requests.options(
-            url,
-            headers={
-                'Access-Control-Request-Method' : method.upper(),
-                'Access-Control-Request-Headers' : 'content-type',
-                'Origin' : origin,
-                },
-            timeout = static.Delays.request_timeout,
-            )
-        return r.status_code == 200
-
     def send_message(self, text: str, channel_id: int = None):
         """Send a message in chat
     text: The message text
@@ -428,7 +414,7 @@ class ChatAPI():
         assert len(text) <= static.Message.max_len, "Mesage is too long"
         curtime = time.time()
         assert self.last_send_time + static.Message.send_cooldown <= curtime, "Sending messages too fast"
-        assert self.options_check(self.message_api_url, "POST"), "Rumble denied options request to post message"
+        assert utils.options_check(self.message_api_url, "POST"), "Rumble denied options request to post message"
         r = requests.post(
             self.message_api_url,
             cookies = self.session_cookie,
@@ -457,7 +443,7 @@ class ChatAPI():
     message: Object which when converted to integer is the target message ID"""
 
         assert self.session_cookie, "Not logged in, cannot delete message"
-        assert self.options_check(self.message_api_url + f"/{int(message)}", "DELETE"), "Rumble denied options request to delete message"
+        assert utils.options_check(self.message_api_url + f"/{int(message)}", "DELETE"), "Rumble denied options request to delete message"
 
         r = requests.delete(
             self.message_api_url + f"/{int(message)}",

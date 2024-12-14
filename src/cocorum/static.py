@@ -48,6 +48,9 @@ class URI:
     #The Service.PHP API
     servicephp = "https://rumble.com/service.php"
 
+    #The video upload PHP
+    uploadphp = "https://web18.rumble.com/upload.php"
+
     class ChatAPI:
         """URIs of the chat API"""
 
@@ -95,6 +98,17 @@ class Message:
 
     #How long to wait between sending messages
     send_cooldown = 3
+
+class Upload:
+    """Data relating to uploading videos"""
+    #Size of upload chunks, not sure if this can be changed
+    chunksz = 10000000
+
+    #Upload API version to use
+    api_ver = "1.3"
+
+    #Maximum upload size is 15GB as stated by Rumble
+    max_filesize = 15 * (1000 ** 3)
 
 class Misc:
     """No idea where else to put this data"""

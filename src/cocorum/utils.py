@@ -45,6 +45,10 @@ def parse_timestamp(timestamp):
     #Trims off the 6 TODO characters at the end
     return calendar.timegm(time.strptime(timestamp[:-6], static.Misc.timestamp_format))
 
+def form_timestamp(seconds: float, suffix = "+00:00"):
+    """Form a Rumble timestamp from seconds since Epoch"""
+    return time.strftime(seconds, static.Misc.timestamp_format) + suffix
+
 def base_10_to_36(stream_id_b10):
     """Convert a base 10 number to base 36"""
     stream_id_b10 = int(stream_id_b10)
@@ -137,6 +141,21 @@ def test_session_cookie(session_cookie):
 
     #If the session token is invalid, it won't log us in and "Login" will still be shown
     return "Login" not in title
+
+def options_check(url, method, origin = static.URI.rumble_base, cookies: dict = {}, params: dict = {}):
+    """Check of we are allowed to do method on url via an options request"""
+    r = requests.options(
+        url,
+        headers={
+            'Access-Control-Request-Method' : method.upper(),
+            'Access-Control-Request-Headers' : 'content-type',
+            'Origin' : origin,
+            },
+        cookies = cookies,
+        params = params,
+        timeout = static.Delays.request_timeout,
+        )
+    return r.status_code == 200
 
 def get_muted_user_record(session_cookie, username: str = None):
     """Get the record IDs for mutes
