@@ -69,13 +69,15 @@ class UploadPHP:
 
     def get_categories(self):
         """Load the primary and secondary categories from Rumble"""
+        print("Loading categories")
         r = self.uphp_request({}, method = "GET")
-        soup = bs4.BeautifulSoup(r.json()["html"], features = "html.parser")
-        options_box1 = soup.find("input", attrs = {"name" : "primary-category"})
+        soup = bs4.BeautifulSoup(r.text, features = "html.parser")
+
+        options_box1 = soup.find("input", attrs = {"id" : "category_primary"}).parent
         options_elems1 = options_box1.find_all("div", attrs = {"class" : "select-option"})
         self.categories1 = {e.string.strip() : int(e.attrs["data-value"]) for e in options_elems1}
 
-        options_box2 = soup.find("input", attrs = {"name" : "secondary-category"})
+        options_box2 = soup.find("input", attrs = {"id" : "category_secondary"}).parent
         options_elems2 = options_box2.find_all("div", attrs = {"class" : "select-option"})
         self.categories2 = {e.string.strip() : int(e.attrs["data-value"]) for e in options_elems2}
 
@@ -86,13 +88,15 @@ class UploadPHP:
         """Our Rumble session cookie to authenticate requests"""
         return self.servicephp.session_cookie
 
-    def uphp_request(self, additional_params, method = "PUT", data: dict = None):
+    def uphp_request(self, additional_params, method = "PUT", data: dict = None, timeout = static.Delays.request_timeout):
         """Make a request to Upload.PHP with common settings
         additional_params: Query string parameters to add to the base ones
         method: What method to use for the request.
             Defaults to PUT.
         data: Form data for the request.
-            Defaults to None."""
+            Defaults to None.
+        timeout: Request timeout
+            Defaults to static.Delays.request_timeout"""
         params = {"api": static.Upload.api_ver}
         params.update(additional_params)
         r = requests.request(
@@ -102,7 +106,7 @@ class UploadPHP:
                 data = data,
                 headers = static.RequestHeaders.user_agent,
                 cookies = self.session_cookie,
-                timeout = static.Delays.request_timeout,
+                timeout = timeout,
                 )
         assert r.status_code == 200, f"Upload.PHP request failed: {r}\n{r.text}"
         #If the request json has a data -> success value, make sure it is True
@@ -111,6 +115,7 @@ class UploadPHP:
 
     def chunked_vidfile_upload(self, file_path):
         """Upload a video file to Rumble in chunks"""
+        print("Uploading video in", self.__cur_num_chunks, "chunks")
 
         #Base upload params
         upload_params = {
@@ -120,6 +125,7 @@ class UploadPHP:
 
         with open(file_path, "rb") as f:
             for i in range(self.__cur_num_chunks):
+                print(f"Uploading chunk {i + 1}/{self.__cur_num_chunks}")
                 #Parameters for this chunk upload
                 chunk_params = upload_params.copy()
                 chunk_params.update({
@@ -134,7 +140,7 @@ class UploadPHP:
                     params = chunk_params,
                     ), f"Chunk {i} upload failed at OPTIONS request."
                 #Upload the chunk
-                self.uphp_request(chunk_params, data = f.read(static.Upload.chunksz))
+                self.uphp_request(chunk_params, data = f.read(static.Upload.chunksz), timeout = 300) #Set static? TODO
 
         #Params for the merge request
         merge_params = upload_params.copy()
@@ -144,13 +150,15 @@ class UploadPHP:
             })
 
         #Tell the server to merge the chunks
+        print("Merging chunks at server")
         r = self.uphp_request(merge_params)
         merged_video_fn = r.text
-
+        print("Merged to", merged_video_fn)
         return merged_video_fn
 
     def unchunked_vidfile_upload(self, file_path):
         """Upload a video file to Rumble all at once"""
+        print("Uploading video")
 
         with open(file_path, "rb") as f:
             #Get permission to upload the file
@@ -161,14 +169,15 @@ class UploadPHP:
                 params = {"api": static.Upload.api_ver},
                 ), "File upload failed at OPTIONS request."
             #Upload the file
-            r = self.uphp_request({}, data = f.read())
+            r = self.uphp_request({}, data = f.read(), timeout = 300) #Set static? TODO
 
         uploaded_fn = r.text
-
+        print("Video file on server is", uploaded_fn)
         return uploaded_fn
 
     def upload_cthumb(self, file_path):
         """Upload a custom thumbnail"""
+        print("Uploading custom thumbnail")
         ext = file_path.split(".")[-1]
         ct_server_filename = "ct-" + self.__cur_upload_id + "." + ext
         with open(file_path, "rb") as f:
@@ -177,17 +186,22 @@ class UploadPHP:
                 data = {"customThumb" : f.read()},
                 ).text.strip() == ct_server_filename, "Unexpected thumbnail upload response"
 
+        print("Thumbnail file on server is", ct_server_filename)
         return ct_server_filename
 
-    def upload_video(self, file_path, title: str, **kwargs):
+    def upload_video(self, file_path, title: str, category1, **kwargs):
         """Upload a video to Rumble
         file_path: Path to video file
         title: The video title
-        info_who, _when, _where, _ext_user: Metadata about the video
-        tags: String of comma-separated tags
         category1: The primary category to upload to
+        info_who, _when, _where, _ext_user: Metadata about the video
+            Defaults to empty
+        tags: String of comma-separated tags
+            Defaults to empty
         category2: The secondary category to upload to
+            Defaults to empty
         channel_id: Numeric ID of the channel to upload to
+            Defaults to user page upload
         visibility: Public, unlisted, private
             Defaults to public
         availability: TODO
@@ -231,7 +245,7 @@ class UploadPHP:
         #thumbnail is an auto index
         if isinstance(thumbnail, int):
             assert 0 <= thumbnail <= len(auto_thumbnails), "Thumbnail index is invalid"
-            thumbnail = (auto_thumbnails.keys())[thumbnail]
+            thumbnail = list(auto_thumbnails.keys())[thumbnail]
 
         #Thumbnail is path string
         elif isinstance(thumbnail, str):
@@ -243,11 +257,9 @@ class UploadPHP:
             raise ValueError("Thumbnail argument is of unknown type")
 
         #Get the primary category
-        category1 = kwargs.get("category1")
-        assert category1, "Must pass category1"
         if isinstance(category1, str):
             category1 = category1.strip()
-            if category1.isnumeric:
+            if category1.isnumeric():
                 category1 = int(category1)
             else:
                 category1 = self.categories1[category1]
@@ -257,50 +269,54 @@ class UploadPHP:
         category2 = kwargs.get("category2")
         if isinstance(category2, str):
             category2 = category2.strip()
-            if category2.isnumeric:
+            if category2.isnumeric():
                 category2 = int(category1)
             else:
                 category2 = self.categories2[category2]
         assert isinstance(category2, (int, float)) or category2 is None, f"Secondary category must be number or str name, got {type(category1)}"
 
         #Publish the upload
-        r = self.uphp_request(
-            {"form" : 1},
-            data = {
-                "title": title,
-                "description": kwargs.get("description"),
-                "video[]": server_filename,
-                "featured": 6, #Never seems to change
-                "rights": 1,
-                "terms": 1,
-                "facebookUpload": None,
-                "vimeoUpload": None,
-                "infoWho": kwargs.get("info_who"),
-                "infoWhen": kwargs.get("info_when"),
-                "infoWhere": kwargs.get("info_where"),
-                "infoExtUser": kwargs.get("info_ext_user"),
-                "tags": kwargs.get("tags"),
-                "channelId": utils.ensure_b10(kwargs.get("channel_id", 0)),
-                "siteChannelId": category1,
-                "mediaChannelId": category2,
-                "isGamblingRelated": False,
-                "set_default_channel_id": 0, #Set to 1 to "Set this channel as default" on Rumble
-                #Scheduled visibility takes precedent over visibility setting
-                "visibility": kwargs.get("visibility", "public") if not kwargs.get("scheduled_publish") else "private",
-                "availability": kwargs.get("availability", "free"),
-                "file_meta": {
-                    "name": os.path.basename(file_path), #File name
-                    "modified": int(os.path.getmtime(file_path) * 1000), #Timestamp file was modified, miliseconds
-                    "size": self.__cur_file_size, #Exact length of entire MP4 file in bytes
-                    "type": mimetypes.guess_file_type(file_path)[0],
-                    "time_start": start_time, #Timestamp file started uploading, miliseconds
-                    "speed": int(self.__cur_file_size / (end_time - start_time) * 1000),
-                    "num_chunks": self.__cur_num_chunks,
-                    "time_end": end_time, #Timestamp we finished uploading, miliseconds
-                    },
-                "schedulerDatetime": utils.form_timestamp(kwargs.get("scheduled_publish")) if kwargs.get("scheduled_publish") else None,
-                "thumb": thumbnail,
+        updata = {
+            "title": title,
+            "description": kwargs.get("description", ""),
+            "video[]": server_filename,
+            "featured": "6", #Never seems to change
+            "rights": "1",
+            "terms": "1",
+            "facebookUpload": "",
+            "vimeoUpload": "",
+            "infoWho": kwargs.get("info_who", ""),
+            "infoWhen": kwargs.get("info_when", ""),
+            "infoWhere": kwargs.get("info_where", ""),
+            "infoExtUser": kwargs.get("info_ext_user", ""),
+            "tags": kwargs.get("tags", ""),
+            "channelId": str(utils.ensure_b10(kwargs.get("channel_id", 0))),
+            "siteChannelId": str(category1),
+            "mediaChannelId": str(category2),
+            "isGamblingRelated": "false",
+            "set_default_channel_id": "0", #Set to 1 to "Set this channel as default" on Rumble
+            #Scheduled visibility takes precedent over visibility setting
+            "visibility": kwargs.get("visibility", "public") if not kwargs.get("scheduled_publish") else "private",
+            "availability": kwargs.get("availability", "free"),
+            "file_meta": {
+                "name": os.path.basename(file_path), #File name
+                "modified": int(os.path.getmtime(file_path) * 1000), #Timestamp file was modified, miliseconds
+                "size": self.__cur_file_size, #Exact length of entire MP4 file in bytes
+                "type": mimetypes.guess_file_type(file_path)[0],
+                "time_start": start_time, #Timestamp file started uploading, miliseconds
+                "speed": int(self.__cur_file_size / (end_time - start_time) * 1000),
+                "num_chunks": self.__cur_num_chunks,
+                "time_end": end_time, #Timestamp we finished uploading, miliseconds
                 },
+            "schedulerDatetime": utils.form_timestamp(kwargs.get("scheduled_publish")) if kwargs.get("scheduled_publish") else "",
+            "thumb": str(thumbnail),
+            }
+
+        print("Publishing uploaded video")
+        r = self.uphp_request(
+            {"form" : "1"},
+            data = updata,
+            method = "POST",
             )
 
         #Extract the json from the response HTML, and return it as an APISubObj derivative
