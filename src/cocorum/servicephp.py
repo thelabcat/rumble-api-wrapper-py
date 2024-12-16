@@ -13,7 +13,7 @@ from . import APISubObj
 class ScrapedObj:
     """Abstract object scraped from bs4 HTML"""
     def __init__(self, elem):
-        """Pass the bs4 badge img element"""
+        """Pass the bs4 base element"""
         self._elem = elem
 
     def __getitem__(self, key):
@@ -157,6 +157,11 @@ class ScrapedComment(ScrapedObj):
         return self.comment_id
 
     @property
+    def is_first(self):
+        """Is this comment the first one?"""
+        return "comment-item-first" in self["class"]
+
+    @property
     def comment_id(self):
         """The numeric ID of the comment"""
         return int(self["data-comment-id"])
@@ -285,6 +290,213 @@ class ScrapedContentVotes(ScrapedObj):
         """The numerical ID of the content being voted on"""
         return int(self["data-id"])
 
+class APIUser(APISubObj):
+    """User data as returned by the API"""
+    def __init__(self, jsondata):
+        """Pass the JSON data of a user"""
+        super().__init__(jsondata)
+
+        #Our profile picture data
+        self.__picture = None
+
+    def __int__(self):
+        """The user as an integer (it's ID in base 10)"""
+        return self.user_id_b10
+
+    @property
+    def user_id(self):
+        """The numeric ID of the user in base 10"""
+        return self["id"]
+
+    @property
+    def user_id_b10(self):
+        """The numeric ID of the user in base 10"""
+        return self.user_id
+
+    @property
+    def user_id_b36(self):
+        """The numeric ID of the user in base 36"""
+        return utils.ensure_b36(self.user_id)
+
+    @property
+    def username(self):
+        """The username of the user"""
+        return self["username"]
+
+    @property
+    def picture_url(self):
+        """The URL of the user's profile picture"""
+        return self["picture"]
+
+    @property
+    def picture(self):
+        """The user's profile picture as a bytes string"""
+        if not self.picture_url: #The profile picture is blank
+            return b''
+
+        if not self.__picture: #We never queried the profile pic before
+            response = requests.get(self.picture_url, timeout = static.Delays.request_timeout)
+            assert response.status_code == 200, "Status code " + str(response.status_code)
+
+            self.__picture = response.content
+
+        return self.__picture
+
+    @property
+    def verified_badge(self):
+        """Is the user verified?"""
+        return self["verified_badge"]
+
+    @property
+    def followers(self):
+        """The number of followers this user has"""
+        return self["followers"]
+
+    @property
+    def followed(self):
+        """TODO -> Bool"""
+        return self["followed"]
+
+class APIPlaylist(APISubObj):
+    """Playlist as returned by the API"""
+    def __init__(self, jsondata):
+        """Pass the JSON data of a playlist"""
+        super().__init__(jsondata)
+        self.user = APIUser(jsondata["user"])
+
+    def __int__(self):
+        """The playlist as an integer (it's ID in base 10)"""
+        return self.playlist_id_b10
+
+    @property
+    def playlist_id(self):
+        """The numeric playlist ID in base 36"""
+        return self["id"]
+
+    @property
+    def playlist_id_b36(self):
+        """The numeric ID of the playlist in base 36"""
+        return self.playlist_id
+
+    @property
+    def playlist_id_b10(self):
+        """The numeric ID of the playlist in base 10"""
+        return utils.ensure_b10(self.playlist_id)
+
+    @property
+    def title(self):
+        """The title of the playlist"""
+        return self["title"]
+
+    @property
+    def description(self):
+        """The description of the playlist"""
+        return self["description"]
+
+    @property
+    def visibility(self):
+        """The visibility of the playlist"""
+        return self["visibility"]
+
+    @property
+    def url(self):
+        """The URL of the playlist"""
+        return self["url"]
+
+    @property
+    def channel(self):
+        """The channel the playlist is under, can be None"""
+        return self["channel"]
+
+    @property
+    def created_on(self):
+        """The time the playlist was created in seconds since epoch"""
+        return utils.parse_timestamp(self["created_on"])
+
+    @property
+    def updated_on(self):
+        """The time the playlist was last updated in seconds since epoch"""
+        return utils.parse_timestamp(self["updated_on"])
+
+    @property
+    def permissions(self):
+        """The permissions the ServicePHP user has on this playlist"""
+        return self["permissions"]
+
+    @property
+    def num_items(self):
+        """The number of items in the playlist"""
+        return self["num_items"]
+
+    @property
+    def is_following(self):
+        """TODO -> Bool"""
+        return self["is_following"]
+
+    @property
+    def items(self):
+        """The items of the playlist. TODO"""
+        return self["items"]
+
+    @property
+    def extra(self):
+        """TODO -> None, unknown"""
+        return self["extra"]
+
+class ScrapedPlaylist(ScrapedObj):
+    """A playlist as obtained from HTML data"""
+    def __init__(self, elem):
+        """Pass the playlist thumbnail__grid-item bs4 element"""
+        super().__init__(elem)
+
+        #The binary data of our thumbnail
+        self.__thumbnail = None
+
+    def __int__(self):
+        """The playlist as an integer (it's ID in base 10)"""
+        return self.playlist_id_b10
+
+    @property
+    def thumbnail_url(self):
+        """The url of the playlist's thumbnail image"""
+        return self._elem.find("img", attrs = {"class" : "thumbnail__image"}).get("src")
+
+    @property
+    def thumbnail(self):
+        """The playlist thumbnail as a binary string"""
+        if not self.__thumbnail: #We never queried the thumbnail before
+            response = requests.get(self.thumbnail_url, timeout = static.Delays.request_timeout)
+            assert response.status_code == 200, "Status code " + str(response.status_code)
+
+            self.__thumbnail = response.content
+
+        return self.__thumbnail
+
+    @property
+    def _playlist_url_raw(self):
+        """The URL of the playlist page (without Rumble base URL)"""
+        return self._elem.find("a", attrs = {"class" : "playlist__name link"}).get("href")
+
+    @property
+    def playlist_url(self):
+        """The URL of the playlist page """
+        return static.URI.rumble_base + self._playlist_url_raw
+
+    @property
+    def playlist_id(self):
+        """The numeric ID of the playlist in base 36"""
+        return self._playlist_url_raw.split("/")[-1]
+
+    @property
+    def playlist_id_b36(self):
+        """The numeric ID of the playlist in base 36"""
+        return self.playlist_id
+
+    @property
+    def playlist_id_b10(self):
+        """The numeric ID of the playlist in base 10"""
+        return utils.ensure_b10(self.playlist_id)
+
 class ServicePHP:
     """Interact with Rumble's service.php API"""
     def __init__(self, username: str = None, password: str = None, session = None):
@@ -296,17 +508,41 @@ class ServicePHP:
         elif isinstance(session, dict):
             assert session.get(static.Misc.session_token_key), f"Session cookie dict must have '{static.Misc.session_token_key}' as key."
             self.session_cookie = session
+            self.__user_id = None
         #Session was passed but it is not anything we can use
         elif session is not None:
             raise ValueError(f"Session must be a token str or cookie dict, got {type(session)}")
         #Session was not passed, but credentials were
         elif username and password:
-            self.session_cookie = self.login(username, password)
+            self.session_cookie, self.__user_id = self.login(username, password)
         #Neither session nor credentials were passed:
         else:
             raise ValueError("Must pass either userame and password, or a session token")
 
         assert utils.test_session_cookie(self.session_cookie), "Session cookie is invalid."
+
+    @property
+    def user_id(self):
+        """The numeric ID of the logged in user in base 10"""
+        #We do not have a user ID, extract it from the unread notifications response
+        if self.__user_id is None:
+            j = self.sphp_request(
+                "user.has_unread_notifications",
+                method = "GET",
+                ).json()
+            self.__user_id = utils.base_36_to_10(j["user"]["id"].removeprefix("_"))
+
+        return self.__user_id
+
+    @property
+    def user_id_b10(self):
+        """The numeric ID of the logged in user in base 10"""
+        return self.user_id
+
+    @property
+    def user_id_b36(self):
+        """The numeric ID of the logged in user in base 36"""
+        return utils.ensure_b36(self.user_id)
 
     def sphp_request(self, service_name: str, data: dict = {}, additional_params: dict = {}, logged_in = True, method = "POST"):
         """Make a request to Service.PHP with common settings
@@ -337,7 +573,7 @@ class ServicePHP:
         return r
 
     def login(self, username, password):
-        """Obtain a session cookie from username and password"""
+        """Obtain a session cookie and user ID from username and password"""
         #Get salts
         r = self.sphp_request(
                 "user.get_salts",
@@ -357,10 +593,12 @@ class ServicePHP:
                     },
                 logged_in = False,
                 )
-        session_token = r.json()["data"]["session"]
+        j = r.json()
+        session_token = j["data"]["session"]
+        user_id = utils.base_36_to_10(j["user"]["id"].removeprefix("_"))
         assert session_token, f"Login failed: No token returned\n{r.json()}"
 
-        return {static.Misc.session_token_key: session_token}
+        return {static.Misc.session_token_key: session_token}, user_id
 
     def chat_pin(self, stream_id, message, unpin: bool = False):
         """Pin or unpin a message in a chat
@@ -397,6 +635,10 @@ class ServicePHP:
                 }
             )
 
+    def is_comment_elem(self, e):
+        """Check if a beautifulsoup element is a comment"""
+        return e.name == "li" and "comment-item" in e.get("class") and "comments-create" not in e.get("class")
+
     def comment_list(self, video_id):
         """Get the list of comments under a video"""
         r = self.sphp_request(
@@ -407,8 +649,8 @@ class ServicePHP:
             method = "GET",
             )
         soup = bs4.BeautifulSoup(r.json()["html"], features = "html.parser")
-        comment_elems = soup.find_all("li", attrs = {"class" : "comment-item"})
-        return (ScrapedComment(e) for e in comment_elems)
+        comment_elems = soup.find_all(self.is_comment_elem)
+        return [ScrapedComment(e) for e in comment_elems]
 
     def comment_add(self, video_id: int, comment: str, reply_id: int = 0):
         """Post a comment on a video
@@ -480,25 +722,35 @@ class ServicePHP:
         elem = soup.find("div", attrs = {"class" : "fb-share-button share-fb"})
         return elem.attrs["data-url"]
 
+    def get_playlists(self, user_id: int, is_channel = False):
+        """Get the playlists under a user or channel"""
+        uc = ("user", "c")[is_channel]
+        url = f"{static.URI.rumble_base}/{uc}/{uc[0]}-{int(user_id)}/playlists/"
+        print(url)
+        r = requests.get(url, cookies = self.session_cookie, timeout = static.Delays.request_timeout)
+        assert r.status_code == 200, f"Fetching playlist page failed: {r}"
+        soup = bs4.BeautifulSoup(r.text, features = "html.parser")
+        return [ScrapedPlaylist(elem) for elem in soup.find_all("div", attrs = {"class" : "playlist"})]
+
     def playlist_add_video(self, playlist_id: str, video_id: str):
         """Add a video to a playlist"""
-        self.sphp_request(
+        print(self.sphp_request(
             "playlist.add_video",
             data = {
                 "playlist_id": str(playlist_id),
                 "video_id": utils.ensure_b10(video_id),
                 }
-            )
+            ).text)
 
     def playlist_delete_video(self, playlist_id: str, video_id: str):
         """Remove a video from a playlist"""
-        self.sphp_request(
+        print(self.sphp_request(
             "playlist.delete_video",
             data = {
                 "playlist_id": str(playlist_id),
                 "video_id": utils.ensure_b10(video_id),
                 }
-            )
+            ).text)
 
     def playlist_add(self, channel_id: int, title: str, description: str = "", visibility: str = "public"):
         """Create a new playlist
@@ -508,7 +760,7 @@ class ServicePHP:
             Defaults to nothing.
         visibility: Set to public, unlisted, or private via string.
             Defaults to public."""
-        self.sphp_request(
+        r = self.sphp_request(
             "playlist.add",
             additional_params = {
                 "title": str(title),
@@ -517,6 +769,7 @@ class ServicePHP:
                 "channel_id": str(utils.ensure_b10(channel_id)),
             }
         )
+        return APIPlaylist(r.json()["data"])
 
     def playlist_edit(self, channel_id: int, playlist_id: str, title: str, description: str = "", visibility: str = "public"):
         """Edit the details of an existing playlist
@@ -528,7 +781,7 @@ class ServicePHP:
         visibility: Set to public, unlisted, or private via string.
             Defaults to public."""
 
-        self.sphp_request(
+        print(self.sphp_request(
             "playlist.edit",
             additional_params = {
                 "title": str(title),
@@ -537,11 +790,11 @@ class ServicePHP:
                 "channel_id": str(utils.ensure_b10(channel_id)),
                 "playlist_id": utils.ensure_b36(playlist_id),
             }
-        )
+        ).text)
 
     def playlist_delete(self, playlist_id: str):
         """Delete a playlist"""
-        self.sphp_request(
+        print(self.sphp_request(
             "playlist.delete",
             additional_params = {"playlist_id" : utils.ensure_b36(playlist_id)},
-            )
+            ).text)
