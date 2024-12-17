@@ -8,9 +8,9 @@ import requests
 import bs4
 from . import static
 from . import utils
-from . import APISubObj
+from . import JSONObj
 
-class ScrapedObj:
+class HTMLObj:
     """Abstract object scraped from bs4 HTML"""
     def __init__(self, elem):
         """Pass the bs4 base element"""
@@ -20,7 +20,7 @@ class ScrapedObj:
         """Get a key from the element attributes"""
         return self._elem.attrs[key]
 
-class APIUserBadge(APISubObj):
+class APIUserBadge(JSONObj):
     """A badge of a user as returned by the API"""
     def __init__(self, slug, jsondata):
         """Pass the slug, and the object JSON"""
@@ -64,7 +64,7 @@ class APIUserBadge(APISubObj):
 
         return self.__icon
 
-class ScrapedUserBadge(ScrapedObj):
+class ScrapedUserBadge(HTMLObj):
     """A user badge as extracted from a bs4 HTML element"""
     def __init__(self, elem):
         """Pass the bs4 badge img element"""
@@ -108,7 +108,7 @@ class ScrapedUserBadge(ScrapedObj):
 
         return self.__icon
 
-class APIComment(APISubObj):
+class APIComment(JSONObj):
     """A comment on a video as returned by a successful attempt to make it"""
     def __init__(self, jsondata):
         """Pass the JSON block for a single comment"""
@@ -142,7 +142,7 @@ class APIComment(APISubObj):
         """TODO"""
         return self["comment_tree_size"]
 
-class ScrapedComment(ScrapedObj):
+class ScrapedComment(HTMLObj):
     """A comment on a video as returned by service.php comment.list"""
     def __init__(self, elem):
         """Pass the bs4 li element of the comment"""
@@ -206,7 +206,7 @@ class ScrapedComment(ScrapedObj):
         """The votes on this comment"""
         return ScrapedContentVotes(self._elem.find("div", attrs = {"class" : "rumbles-vote"}))
 
-class APIContentVotes(APISubObj):
+class APIContentVotes(JSONObj):
     """Votes made on content"""
     def __int__(self):
         """The integer form of the content votes"""
@@ -263,7 +263,7 @@ class APIContentVotes(APISubObj):
         """The numerical ID of the content being voted on"""
         return self["content_id"]
 
-class ScrapedContentVotes(ScrapedObj):
+class ScrapedContentVotes(HTMLObj):
     """Votes made on content"""
 
     def __int__(self):
@@ -290,7 +290,7 @@ class ScrapedContentVotes(ScrapedObj):
         """The numerical ID of the content being voted on"""
         return int(self["data-id"])
 
-class APIUser(APISubObj):
+class APIUser(JSONObj):
     """User data as returned by the API"""
     def __init__(self, jsondata):
         """Pass the JSON data of a user"""
@@ -316,7 +316,7 @@ class APIUser(APISubObj):
     @property
     def user_id_b36(self):
         """The numeric ID of the user in base 36"""
-        return utils.ensure_b36(self.user_id)
+        return utils.base_10_to_36(self.user_id)
 
     @property
     def username(self):
@@ -357,7 +357,7 @@ class APIUser(APISubObj):
         """TODO -> Bool"""
         return self["followed"]
 
-class APIPlaylist(APISubObj):
+class APIPlaylist(JSONObj):
     """Playlist as returned by the API"""
     def __init__(self, jsondata):
         """Pass the JSON data of a playlist"""
@@ -367,6 +367,10 @@ class APIPlaylist(APISubObj):
     def __int__(self):
         """The playlist as an integer (it's ID in base 10)"""
         return self.playlist_id_b10
+
+    def __str__(self):
+        """The playlist as a string (it's ID in base 36)"""
+        return self.playlist_id_b36
 
     @property
     def playlist_id(self):
@@ -381,7 +385,7 @@ class APIPlaylist(APISubObj):
     @property
     def playlist_id_b10(self):
         """The numeric ID of the playlist in base 10"""
-        return utils.ensure_b10(self.playlist_id)
+        return utils.base_36_to_10(self.playlist_id)
 
     @property
     def title(self):
@@ -443,7 +447,7 @@ class APIPlaylist(APISubObj):
         """TODO -> None, unknown"""
         return self["extra"]
 
-class ScrapedPlaylist(ScrapedObj):
+class ScrapedPlaylist(HTMLObj):
     """A playlist as obtained from HTML data"""
     def __init__(self, elem, sphp):
         """Pass the playlist thumbnail__grid-item bs4 element, and ServicePHP"""
@@ -460,6 +464,10 @@ class ScrapedPlaylist(ScrapedObj):
     def __int__(self):
         """The playlist as an integer (it's ID in base 10)"""
         return self.playlist_id_b10
+
+    def __str__(self):
+        """The playlist as a string (it's ID in base 36)"""
+        return self.playlist_id_b36
 
     @property
     def _pagesoup(self):
@@ -514,7 +522,7 @@ class ScrapedPlaylist(ScrapedObj):
     @property
     def playlist_id_b10(self):
         """The numeric ID of the playlist in base 10"""
-        return utils.ensure_b10(self.playlist_id)
+        return utils.base_36_to_10(self.playlist_id)
 
     @property
     def _channel_url_raw(self):
@@ -602,7 +610,7 @@ class ServicePHP:
     @property
     def user_id_b36(self):
         """The numeric ID of the logged in user in base 36"""
-        return utils.ensure_b36(self.user_id)
+        return utils.base_10_to_36(self.user_id)
 
     def sphp_request(self, service_name: str, data: dict = {}, additional_params: dict = {}, logged_in = True, method = "POST"):
         """Make a request to Service.PHP with common settings

@@ -44,7 +44,7 @@ import requests
 from . import static
 from . import utils
 
-class APISubObj():
+class JSONObj():
     """Abstract class for a Rumble API object"""
     def __init__(self, jsondata):
         """Pass the JSON block for a single Rumble API subobject"""
@@ -59,7 +59,7 @@ class APISubObj():
         """Get a key from the JSON with fallback"""
         return self._jsondata.get
 
-class UserAction(APISubObj):
+class UserAction(JSONObj):
     """Abstract class for Rumble user actions"""
     def __init__(self, jsondata):
         """Pass the JSON block for a single Rumble user action"""
@@ -153,7 +153,7 @@ class Subscriber(UserAction):
         """When the subscriber subscribed, in seconds since Epoch UTC"""
         return utils.parse_timestamp(self["subscribed_on"])
 
-class StreamCategory(APISubObj):
+class StreamCategory(JSONObj):
     """Category of a Rumble stream"""
 
     @property

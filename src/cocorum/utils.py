@@ -40,64 +40,72 @@ class MD5Ex:
 
         return current
 
-def parse_timestamp(timestamp):
+def parse_timestamp(timestamp: str) -> float:
     """Parse a Rumble timestamp to seconds since Epoch"""
     #Trims off the 6 TODO characters at the end
     return calendar.timegm(time.strptime(timestamp[:-6], static.Misc.timestamp_format))
 
-def form_timestamp(seconds: float, suffix = "+00:00"):
+def form_timestamp(seconds: float, suffix = "+00:00") -> str:
     """Form a Rumble timestamp from seconds since Epoch"""
     return time.strftime(seconds, static.Misc.timestamp_format) + suffix
 
-def base_10_to_36(stream_id_b10):
+def base_10_to_36(b10) -> str:
     """Convert a base 10 number to base 36"""
-    stream_id_b10 = int(stream_id_b10)
-    stream_id = ""
+    b10 = int(b10)
+    b36 = ""
     base_len = len(static.Misc.base36)
-    while stream_id_b10:
-        stream_id = static.Misc.base36[stream_id_b10 % base_len] + stream_id
-        stream_id_b10 //= base_len
+    while b10:
+        b36 = static.Misc.base36[b10 % base_len] + b36
+        b10 //= base_len
 
-    return stream_id
+    return b36
 
-def base_36_to_10(stream_id):
+def base_36_to_10(b36) -> int:
     """Convert a base 36 number to base 10"""
-    return int(stream_id, 36)
+    return int(str(b36), 36)
 
-def base_36_and_10(stream_id, assume_10 = False):
-    """Take a base 36 or base 10 number, and return both base 36 and 10.
-If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
-    #It is base 10
-    if isinstance(stream_id, int) or \
-        (isinstance(stream_id, str) and stream_id.isnumeric() and assume_10):
-        return base_10_to_36(stream_id), int(stream_id)
-
-    #It is base 36:
-    return stream_id, base_36_to_10(stream_id)
-
-def ensure_b36(stream_id, assume_10 = False):
+def ensure_b36(num, assume_10 = False) -> str:
     """No matter wether a number is base 36 or 10, return 36.
 If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
     #It is base 10
-    if isinstance(stream_id, int) or \
-        (isinstance(stream_id, str) and stream_id.isnumeric() and assume_10):
-        return base_10_to_36(stream_id)
+    if isinstance(num, int) or hasattr(num, "__int__"):
+        return base_10_to_36(int(num))
+
+    #It is a string or has a string conversion attribute
+    if isinstance(num, str) or hasattr(num, "__str__"):
+        num = str(num)
+
+        #The string number is in base 10
+        if num.isnumeric() and assume_10:
+            return base_10_to_36(num)
 
     #It is base 36:
-    return stream_id
+    return num
 
-def ensure_b10(stream_id, assume_10 = False):
+def ensure_b10(num, assume_10 = False) -> int:
     """No matter wether a number is base 36 or 10, return 10.
 If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
-    #It is base 10
-    if isinstance(stream_id, int) or \
-        (isinstance(stream_id, str) and stream_id.isnumeric() and assume_10):
-        return int(stream_id)
+    #It is base 10 or has an integer conversion method
+    if isinstance(num, int) or hasattr(num, "__int__"):
+        return int(num)
+
+    #It is a string or has a string conversion attribute
+    if isinstance(num, str) or hasattr(num, "__str__"):
+        num = str(num)
+
+        #The string number is in base 10
+        if num.isnumeric() and assume_10:
+            return base_10_to_36(num), int(num)
 
     #It is base 36:
-    return base_36_to_10(stream_id)
+    return base_36_to_10(num)
 
-def badges_to_glyph_string(badges):
+def base_36_and_10(num, assume_10 = False):
+    """Take a base 36 or base 10 number, and return both base 36 and 10.
+If assume_10 is set to False, will assume a string is base 36 even if it looks like base 10"""
+    return ensure_b36(num, assume_10), ensure_b10(num, assume_10)
+
+def badges_to_glyph_string(badges) -> str:
     """Convert a list of badges into a string of glyphs"""
     out = ""
     for badge in badges:
@@ -108,7 +116,7 @@ def badges_to_glyph_string(badges):
             out += "?"
     return out
 
-def calc_password_hashes(password, salts):
+def calc_password_hashes(password: str, salts):
     """Hash a password given the salts using custom MD5 extension"""
     #Stretch-hash the password with the first salt
     stretched1 = MD5Ex.hash_stretch(password, salts[0], 128)
@@ -119,15 +127,15 @@ def calc_password_hashes(password, salts):
     #Stretch-hash the password with the third salt
     stretched2 = MD5Ex.hash_stretch(password, salts[2], 128)
 
-    return [final_hash1, stretched2, salts[1]]
+    return final_hash1, stretched2, salts[1]
 
-def generate_request_id():
+def generate_request_id() -> str:
     """Generate a UUID for API requests"""
     random_uuid = uuid.uuid4().bytes + uuid.uuid4().bytes
     b64_encoded = base64.b64encode(random_uuid).decode(static.Misc.text_encoding)
     return b64_encoded.rstrip('=')[:43]
 
-def test_session_cookie(session_cookie):
+def test_session_cookie(session_cookie: dict) -> bool:
     """Test if a session cookie dict is valid"""
     r = requests.get(static.URI.login_test,
             cookies = session_cookie,
@@ -142,11 +150,11 @@ def test_session_cookie(session_cookie):
     #If the session token is invalid, it won't log us in and "Login" will still be shown
     return "Login" not in title
 
-def options_check(url, method, origin = static.URI.rumble_base, cookies: dict = {}, params: dict = {}):
+def options_check(url: str, method: str, origin = static.URI.rumble_base, cookies: dict = {}, params: dict = {}) -> bool:
     """Check of we are allowed to do method on url via an options request"""
     r = requests.options(
         url,
-        headers={
+        headers = {
             'Access-Control-Request-Method' : method.upper(),
             'Access-Control-Request-Headers' : 'content-type',
             'Origin' : origin,
@@ -157,7 +165,7 @@ def options_check(url, method, origin = static.URI.rumble_base, cookies: dict = 
         )
     return r.status_code == 200
 
-def get_muted_user_record(session_cookie, username: str = None):
+def get_muted_user_record(session_cookie: dict, username: str = None):
     """Get the record IDs for mutes
     username: Username to find record ID for,
         defaults to returning all record IDs."""

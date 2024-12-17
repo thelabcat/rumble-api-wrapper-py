@@ -39,9 +39,11 @@ if livestream:
         time.sleep(0.1)
 ```
 
-## Experimental internal chat API submodule
-This part of cocorum is not part of the official Rumble Live Stream API, but may provide a more reliable method of ensuring all chat messages are received.
-It also can do to-chat interactions, sometimes via Service.PHP.
+## Experimental internal API submodules
+This part of Cocorum is not part of the official Rumble Live Stream API. It includes the following submodules:
+- chatapi
+- servicephp
+- uploadphp
 
 Example usage:
 ```

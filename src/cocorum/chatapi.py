@@ -23,28 +23,25 @@ import json #For parsing SSE message data
 import time
 import requests
 import sseclient
+from . import JSONObj
+from . import UserAction
 from .servicephp import ServicePHP
 from . import static
 from . import utils
-from . import UserAction
 
-class ChatAPIObject():
+class ChatAPIObj(JSONObj):
     """Object in the internal chat API"""
     def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent ChatAPI object"""
-        self._jsondata = jsondata
+        super().__init__(jsondata)
         self.chat = chat
 
-    def __getitem__(self, key):
-        """Get a key from the JSON"""
-        return self._jsondata[key]
-
-class ChatAPIChatter(UserAction, ChatAPIObject):
+class ChatAPIChatter(UserAction, ChatAPIObj):
     """A user or channel in the internal chat API"""
     def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent ChatAPI object"""
         UserAction.__init__(self, jsondata)
-        ChatAPIObject.__init__(self, jsondata, chat)
+        ChatAPIObj.__init__(self, jsondata, chat)
 
     @property
     def link(self):
@@ -58,6 +55,10 @@ class ChatAPIUser(ChatAPIChatter):
         super().__init__(jsondata, chat)
         self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
         self._set_channel_id = None #Channel ID set from message
+
+    def __int__(self):
+        """The user as an integer (it's ID in base 10)"""
+        return self.user_id_b10
 
     @property
     def user_id(self):
@@ -122,10 +123,6 @@ class ChatAPIUser(ChatAPIChatter):
         except KeyError:
             return []
 
-    def __int__(self):
-        """The user in integer form, via its user ID"""
-        return self.user_id
-
 class ChatAPIChannel(ChatAPIChatter):
     """A channel in the SSE chat"""
     def __init__(self, jsondata, chat):
@@ -163,7 +160,7 @@ class ChatAPIChannel(ChatAPIChatter):
         """The numeric ID of the user of this channel"""
         return self.user.user_id
 
-class ChatAPIUserBadge(ChatAPIObject):
+class ChatAPIUserBadge(ChatAPIObj):
     """A badge of a user"""
     def __init__(self, slug, jsondata, chat):
         """Pass the slug, the object JSON, and the parent ChatAPI object"""
@@ -207,7 +204,7 @@ class ChatAPIUserBadge(ChatAPIObject):
 
         return self.__icon
 
-class ChatAPIMessage(ChatAPIObject):
+class ChatAPIMessage(ChatAPIObj):
     """A single chat message in the internal chat API"""
     def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent ChatAPI object"""

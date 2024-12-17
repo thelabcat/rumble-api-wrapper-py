@@ -11,11 +11,11 @@ import random
 import time
 import bs4
 import requests
-from . import APISubObj
+from . import JSONObj
 from . import static
 from . import utils
 
-class UploadResponse(APISubObj):
+class UploadResponse(JSONObj):
     """Response to a successful video upload"""
     @property
     def url(self):
@@ -319,5 +319,5 @@ class UploadPHP:
             method = "POST",
             )
 
-        #Extract the json from the response HTML, and return it as an APISubObj derivative
+        #Extract the json from the response HTML, and return it as an JSONObj derivative
         return UploadResponse(json.loads(r.text[r.text.find("{") : r.text.rfind("}") + 1]))
