@@ -445,16 +445,35 @@ class APIPlaylist(APISubObj):
 
 class ScrapedPlaylist(ScrapedObj):
     """A playlist as obtained from HTML data"""
-    def __init__(self, elem):
-        """Pass the playlist thumbnail__grid-item bs4 element"""
+    def __init__(self, elem, sphp):
+        """Pass the playlist thumbnail__grid-item bs4 element, and ServicePHP"""
         super().__init__(elem)
+
+        self.sphp = sphp
 
         #The binary data of our thumbnail
         self.__thumbnail = None
 
+        #The loaded page of the playlist
+        self.__pagesoup = None
+
     def __int__(self):
         """The playlist as an integer (it's ID in base 10)"""
         return self.playlist_id_b10
+
+    @property
+    def _pagesoup(self):
+        """The loaded page of the playlist"""
+        if not self.__pagesoup:
+            r = requests.get(
+                self.url,
+                cookies = self.sphp.session_cookie,
+                timeout = static.Delays.request_timeout,
+                headers = static.RequestHeaders.user_agent,
+                )
+            assert r.status_code == 200, "Request to playlist page failed: {r}"
+            self.__pagesoup = bs4.BeautifulSoup(r.text, features = "html.parser")
+        return self.__pagesoup
 
     @property
     def thumbnail_url(self):
@@ -473,19 +492,19 @@ class ScrapedPlaylist(ScrapedObj):
         return self.__thumbnail
 
     @property
-    def _playlist_url_raw(self):
+    def _url_raw(self):
         """The URL of the playlist page (without Rumble base URL)"""
         return self._elem.find("a", attrs = {"class" : "playlist__name link"}).get("href")
 
     @property
-    def playlist_url(self):
+    def url(self):
         """The URL of the playlist page """
-        return static.URI.rumble_base + self._playlist_url_raw
+        return static.URI.rumble_base + self._url_raw
 
     @property
     def playlist_id(self):
         """The numeric ID of the playlist in base 36"""
-        return self._playlist_url_raw.split("/")[-1]
+        return self._url_raw.split("/")[-1]
 
     @property
     def playlist_id_b36(self):
@@ -497,10 +516,49 @@ class ScrapedPlaylist(ScrapedObj):
         """The numeric ID of the playlist in base 10"""
         return utils.ensure_b10(self.playlist_id)
 
+    @property
+    def _channel_url_raw(self):
+        """The URL of the channel the playlist under (without base URL)"""
+        return self._elem.find("a", attrs = {"class" : "channel__link link"}).get("href")
+
+    @property
+    def channel_url(self):
+        """The URL of the base user or channel the playlist under"""
+        return static.URI.rumble_base + self._channel_url_raw
+
+    @property
+    def is_under_channel(self):
+        """Is this playlist under a channel?"""
+        return self._channel_url_raw.startswith("/c/")
+
+    @property
+    def title(self):
+        """The title of the playlist"""
+        return self._pagesoup.find("h1", attrs = {"class" : "playlist-control-panel__playlist-name"}).string.strip()
+
+    @property
+    def description(self):
+        """The description of the playlist"""
+        return self._pagesoup.find("div", attrs = {"class" : "playlist-control-panel__description"}).string.strip()
+
+    @property
+    def visibility(self):
+        """The visibility of the playlist"""
+        return self._pagesoup.find("span", attrs = {"class" : "playlist-control-panel__visibility-state"}).string.strip().lower()
+
+    @property
+    def num_items(self):
+        """The number of items in the playlist"""
+        #This is doable but I just don't care right now
+        NotImplemented
+
 class ServicePHP:
     """Interact with Rumble's service.php API"""
     def __init__(self, username: str = None, password: str = None, session = None):
         """Pass the username and password or a session token (accepts cookie dict or base string)"""
+        #Save the username and password
+        self.username, self.password = username, password
+
         #Session is the token directly
         if isinstance(session, str):
             self.session_cookie = {static.Misc.session_token_key, session}
@@ -508,18 +566,20 @@ class ServicePHP:
         elif isinstance(session, dict):
             assert session.get(static.Misc.session_token_key), f"Session cookie dict must have '{static.Misc.session_token_key}' as key."
             self.session_cookie = session
-            self.__user_id = None
         #Session was passed but it is not anything we can use
         elif session is not None:
             raise ValueError(f"Session must be a token str or cookie dict, got {type(session)}")
         #Session was not passed, but credentials were
         elif username and password:
-            self.session_cookie, self.__user_id = self.login(username, password)
+            self.session_cookie = self.login(username, password)
         #Neither session nor credentials were passed:
         else:
             raise ValueError("Must pass either userame and password, or a session token")
 
         assert utils.test_session_cookie(self.session_cookie), "Session cookie is invalid."
+
+        #Stored ID of the logged in user
+        self.__user_id = None
 
     @property
     def user_id(self):
@@ -595,10 +655,9 @@ class ServicePHP:
                 )
         j = r.json()
         session_token = j["data"]["session"]
-        user_id = utils.base_36_to_10(j["user"]["id"].removeprefix("_"))
         assert session_token, f"Login failed: No token returned\n{r.json()}"
 
-        return {static.Misc.session_token_key: session_token}, user_id
+        return {static.Misc.session_token_key: session_token}
 
     def chat_pin(self, stream_id, message, unpin: bool = False):
         """Pin or unpin a message in a chat
@@ -722,17 +781,20 @@ class ServicePHP:
         elem = soup.find("div", attrs = {"class" : "fb-share-button share-fb"})
         return elem.attrs["data-url"]
 
-    def get_playlists(self, user_id: int, is_channel = False):
-        """Get the playlists under a user or channel"""
-        uc = ("user", "c")[is_channel]
-        url = f"{static.URI.rumble_base}/{uc}/{uc[0]}-{int(user_id)}/playlists/"
-        print(url)
-        r = requests.get(url, cookies = self.session_cookie, timeout = static.Delays.request_timeout)
+    def get_playlists(self):
+        """Get the playlists under the logged in user"""
+        r = requests.get(
+            "https://rumble.com/my-library/playlists",
+            cookies = self.session_cookie,
+            timeout = static.Delays.request_timeout,
+            headers = static.RequestHeaders.user_agent,
+            )
+
         assert r.status_code == 200, f"Fetching playlist page failed: {r}"
         soup = bs4.BeautifulSoup(r.text, features = "html.parser")
-        return [ScrapedPlaylist(elem) for elem in soup.find_all("div", attrs = {"class" : "playlist"})]
+        return [ScrapedPlaylist(elem, self) for elem in soup.find_all("div", attrs = {"class" : "playlist"})]
 
-    def playlist_add_video(self, playlist_id: str, video_id: str):
+    def playlist_add_video(self, playlist_id: str, video_id: int):
         """Add a video to a playlist"""
         print(self.sphp_request(
             "playlist.add_video",
@@ -742,7 +804,7 @@ class ServicePHP:
                 }
             ).text)
 
-    def playlist_delete_video(self, playlist_id: str, video_id: str):
+    def playlist_delete_video(self, playlist_id: str, video_id: int):
         """Remove a video from a playlist"""
         print(self.sphp_request(
             "playlist.delete_video",
@@ -752,49 +814,52 @@ class ServicePHP:
                 }
             ).text)
 
-    def playlist_add(self, channel_id: int, title: str, description: str = "", visibility: str = "public"):
+    def playlist_add(self, title: str, description: str = "", visibility: str = "public", channel_id: int = None):
         """Create a new playlist
-        channel_id: The ID of the channel to create the playlist under. User ID is acceptable.
         title: The title of the playlist.
         description: Describe the playlist.
             Defaults to nothing.
         visibility: Set to public, unlisted, or private via string.
-            Defaults to public."""
+            Defaults to public.
+        channel_id: The ID of the channel to create the playlist under.
+            Defaults to none."""
         r = self.sphp_request(
             "playlist.add",
-            additional_params = {
+            data = {
                 "title": str(title),
                 "description": str(description),
                 "visibility": str(visibility),
-                "channel_id": str(utils.ensure_b10(channel_id)),
+                "channel_id": str(utils.ensure_b10(channel_id)) if channel_id else None,
             }
         )
         return APIPlaylist(r.json()["data"])
 
-    def playlist_edit(self, channel_id: int, playlist_id: str, title: str, description: str = "", visibility: str = "public"):
+    def playlist_edit(self, playlist_id: str, title: str, description: str = "", visibility: str = "public", channel_id: int = None):
         """Edit the details of an existing playlist
-        channel_id: The ID of the channel the playlist is under. User ID is acceptable.
         playlist_id: The ID of the playlist to edit.
         title: The title of the playlist.
         description: Describe the playlist.
             Defaults to nothing.
         visibility: Set to public, unlisted, or private via string.
-            Defaults to public."""
+            Defaults to public.
+        channel_id: The ID of the channel to create the playlist under.
+            Defaults to none."""
 
-        print(self.sphp_request(
+        r = self.sphp_request(
             "playlist.edit",
-            additional_params = {
+            data = {
                 "title": str(title),
                 "description": str(description),
                 "visibility": str(visibility),
-                "channel_id": str(utils.ensure_b10(channel_id)),
+                "channel_id": str(utils.ensure_b10(channel_id)) if channel_id else None,
                 "playlist_id": utils.ensure_b36(playlist_id),
             }
-        ).text)
+        )
+        return APIPlaylist(r.json()["data"])
 
     def playlist_delete(self, playlist_id: str):
         """Delete a playlist"""
         print(self.sphp_request(
             "playlist.delete",
-            additional_params = {"playlist_id" : utils.ensure_b36(playlist_id)},
+            data = {"playlist_id" : utils.ensure_b36(playlist_id)},
             ).text)
