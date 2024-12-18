@@ -47,7 +47,7 @@ def parse_timestamp(timestamp: str) -> float:
 
 def form_timestamp(seconds: float, suffix = "+00:00") -> str:
     """Form a Rumble timestamp from seconds since Epoch"""
-    return time.strftime(seconds, static.Misc.timestamp_format) + suffix
+    return time.strftime(static.Misc.timestamp_format, time.gmtime(seconds)) + suffix
 
 def base_10_to_36(b10) -> str:
     """Convert a base 10 number to base 36"""
