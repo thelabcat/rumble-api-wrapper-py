@@ -10,6 +10,18 @@ from . import static
 from . import utils
 from . import JSONObj
 
+def soupscrape_request(url: str, session_cookie: dict = None):
+    """Make a GET request to a URL, and return HTML beautiful soup for scraping"""
+    r = requests.get(
+        url,
+        cookies = session_cookie,
+        timeout = static.Delays.request_timeout,
+        headers = static.RequestHeaders.user_agent,
+        )
+
+    assert r.status_code == 200, f"Fetching page {url} failed: {r}\n{r.text}"
+    return bs4.BeautifulSoup(r.text, features = "html.parser")
+
 class HTMLObj:
     """Abstract object scraped from bs4 HTML"""
     def __init__(self, elem):
@@ -56,7 +68,6 @@ class APIUserBadge(JSONObj):
     def icon(self):
         """The badge's icon as a bytestring"""
         if not self.__icon: #We never queried the icon before
-            #TODO make the timeout configurable
             response = requests.get(self.icon_url, timeout = static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 
@@ -473,14 +484,8 @@ class ScrapedPlaylist(HTMLObj):
     def _pagesoup(self):
         """The loaded page of the playlist"""
         if not self.__pagesoup:
-            r = requests.get(
-                self.url,
-                cookies = self.sphp.session_cookie,
-                timeout = static.Delays.request_timeout,
-                headers = static.RequestHeaders.user_agent,
-                )
-            assert r.status_code == 200, "Request to playlist page failed: {r}"
-            self.__pagesoup = bs4.BeautifulSoup(r.text, features = "html.parser")
+            self.__pagesoup = soupscrape_request(self.url, self.sphp.session_cookie)
+
         return self.__pagesoup
 
     @property
@@ -559,6 +564,61 @@ class ScrapedPlaylist(HTMLObj):
         """The number of items in the playlist"""
         #This is doable but I just don't care right now
         NotImplemented
+
+class ScrapedVideo(HTMLObj):
+    """Video on a user or channel page as extracted from the page's HTML"""
+    def __init__(self, elem):
+        """Pass the video thumbnail__grid-item bs4 element"""
+        super().__init__(elem)
+
+        #The binary data of our thumbnail
+        self.__thumbnail = None
+
+    @property
+    def video_id(self):
+        """The numeric ID of the video in base 10"""
+        return int(self._elem.get("data-video-id"))
+
+    @property
+    def video_id_b10(self):
+        """The numeric ID of the video in base 10"""
+        return self.video_id
+
+    @property
+    def video_id_b36(self):
+        """The numeric ID of the video in base 36"""
+        return utils.base_10_to_36(self.video_id)
+
+    @property
+    def thumbnail_url(self):
+        """The URL of the video's thumbnail image"""
+        return self._elem.find("img", attrs = {"class" : "thumbnail__image"}).get("src")
+
+    @property
+    def thumbnail(self):
+        """The video thumbnail as a binary string"""
+        if not self.__thumbnail: #We never queried the thumbnail before
+            response = requests.get(self.thumbnail_url, timeout = static.Delays.request_timeout)
+            assert response.status_code == 200, "Status code " + str(response.status_code)
+
+            self.__thumbnail = response.content
+
+        return self.__thumbnail
+
+    @property
+    def video_url(self):
+        """The URL of the video's viewing page"""
+        return static.URI.rumble_base + self._elem.find("a", attrs = {"class" : "videostream__link link"}).get("href")
+
+    @property
+    def title(self):
+        """The title of the video"""
+        return self._elem.find("h3", attrs = {"class" : "thumbnail__title"}).get("title")
+
+    @property
+    def upload_date(self):
+        """The time that the video was uploaded, in seconds since epoch"""
+        return utils.parse_timestamp(self._elem.find("time", attrs = {"class" : "videostream__data--subitem videostream__time"}).get("datetime"))
 
 class ServicePHP:
     """Interact with Rumble's service.php API"""
@@ -789,17 +849,45 @@ class ServicePHP:
         elem = soup.find("div", attrs = {"class" : "fb-share-button share-fb"})
         return elem.attrs["data-url"]
 
+    def get_videos(self, username = None, is_channel = False):
+        """Get all the videos under a user, defaults to ourselves"""
+
+        #default to the logged-in username
+        if not username:
+            username = self.username
+
+        #If this is a channel username, we will need a slightly different URL
+        uc = ("user", "c")[is_channel]
+
+        #The base userpage URL currently has all their videos / livestreams on it
+        url_start = f"{static.URI.rumble_base}/{uc}/{username}"
+
+        #Start the loop with:
+        #- no videos found yet
+        #- the assumption that there will be new video elements
+        #- a current page number of 1
+        videos = []
+        new_video_elems = True
+        pagenum = 1
+        while new_video_elems:
+            #Get the next page of videos
+            soup = soupscrape_request(f"{url_start}?page={pagenum}")
+
+            #Search for video listings
+            new_video_elems = soup.find_all("div", attrs = {"class" : "videostream thumbnail__grid--item"})
+
+            #We found some video listings
+            if new_video_elems:
+                videos += [ScrapedVideo(e) for e in new_video_elems]
+
+            #Turn the page
+            pagenum += 1
+
+        return videos
+
     def get_playlists(self):
         """Get the playlists under the logged in user"""
-        r = requests.get(
-            "https://rumble.com/my-library/playlists",
-            cookies = self.session_cookie,
-            timeout = static.Delays.request_timeout,
-            headers = static.RequestHeaders.user_agent,
-            )
-
-        assert r.status_code == 200, f"Fetching playlist page failed: {r}"
-        soup = bs4.BeautifulSoup(r.text, features = "html.parser")
+        soup = soupscrape_request(static.URI.playlists_page, self.session_cookie)
         return [ScrapedPlaylist(elem, self) for elem in soup.find_all("div", attrs = {"class" : "playlist"})]
 
     def playlist_add_video(self, playlist_id: str, video_id: int):

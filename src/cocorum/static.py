@@ -45,6 +45,9 @@ class URI:
     #Channels under a user, format with username
     channels_page = rumble_base + "/user/{username}/channels"
 
+    #The logged-in user's playlist page
+    playlists_page = rumble_base + "/my-library/playlists"
+
     #The Service.PHP API
     servicephp = "https://rumble.com/service.php"
 
