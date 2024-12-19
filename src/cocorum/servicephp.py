@@ -133,10 +133,40 @@ class APIComment(JSONObj):
         """The comment in integer form (its ID)"""
         return self.comment_id
 
+    def __str__(self):
+        """The comment as a string (its text)"""
+        return self.text
+
+    def __eq__(self, other):
+        """Determine if this comment is equal to another"""
+        #Check for direct matches first
+        if isinstance(other, int):
+            return self.comment_id_b10 == other
+        if isinstance(other, str):
+            return str(self) == other
+
+        #Check for object attributes to match to
+        if hasattr(other, "comment_id"):
+            return self.comment_id_b10 == utils.ensure_b10(other.comment_id)
+
+        #Check conversion to integer last
+        if hasattr(other, "__int__"):
+            return self.comment_id_b10 == int(other)
+
     @property
     def comment_id(self):
         """The numeric ID of the comment"""
         return int(self["comment_id"])
+
+    @property
+    def comment_id_b10(self):
+        """The base 10 ID of the comment"""
+        return self.comment_id
+
+    @property
+    def comment_id_b36(self):
+        """The base 36 ID of the comment"""
+        return utils.base_10_to_36(self.comment_id)
 
     @property
     def text(self):
@@ -167,6 +197,26 @@ class ScrapedComment(HTMLObj):
         """The comment in integer form (its ID)"""
         return self.comment_id
 
+    def __str__(self):
+        """The comment as a string (its text)"""
+        return self.text
+
+    def __eq__(self, other):
+        """Determine if this comment is equal to another"""
+        #Check for direct matches first
+        if isinstance(other, int):
+            return self.comment_id_b10 == other
+        if isinstance(other, str):
+            return str(self) == other
+
+        #Check for object attributes to match to
+        if hasattr(other, "comment_id"):
+            return self.comment_id_b10 == utils.ensure_b10(other.comment_id)
+
+        #Check conversion to integer last
+        if hasattr(other, "__int__"):
+            return self.comment_id_b10 == int(other)
+
     @property
     def is_first(self):
         """Is this comment the first one?"""
@@ -174,8 +224,18 @@ class ScrapedComment(HTMLObj):
 
     @property
     def comment_id(self):
-        """The numeric ID of the comment"""
+        """The numeric ID of the comment in base 10"""
         return int(self["data-comment-id"])
+
+    @property
+    def comment_id_b10(self):
+        """The base 10 ID of the comment"""
+        return self.comment_id
+
+    @property
+    def comment_id_b36(self):
+        """The base 36 ID of the comment"""
+        return utils.base_10_to_36(self.comment_id)
 
     @property
     def text(self):
@@ -226,6 +286,24 @@ class APIContentVotes(JSONObj):
     def __str__(self):
         """The string form of the content votes"""
         return self.score_formatted
+
+    def __eq__(self, other):
+        """Determine if this content votes is equal to another"""
+        #Check for direct matches first
+        if isinstance(other, int):
+            return self.score == other
+        if isinstance(other, str):
+            return other in (str(self.score), self.score_formatted)
+
+        #Check for object attributes to match to
+        if hasattr(other, "score"):
+            #if hasattr(other, "content_id") and hasattr(other, "content_type"):
+            #    return self.score, self.content_id, self.content_type == other.score, other.content_id, other.content_type
+            return self.score == other.score
+
+        #Check conversion to integer last
+        if hasattr(other, "__int__"):
+            return self.score == int(other)
 
     @property
     def num_votes_up(self):
@@ -286,6 +364,24 @@ class ScrapedContentVotes(HTMLObj):
         #return self.score_formatted
         return str(self.score)
 
+    def __eq__(self, other):
+        """Determine if this content votes is equal to another"""
+        #Check for direct matches first
+        if isinstance(other, int):
+            return self.score == other
+        if isinstance(other, str):
+            return str(self) == other
+
+        #Check for object attributes to match to
+        if hasattr(other, "score"):
+            #if hasattr(other, "content_id") and hasattr(other, "content_type"):
+            #    return self.score, self.content_id, self.content_type == other.score, other.content_id, other.content_type
+            return self.score == other.score
+
+        #Check conversion to integer last
+        if hasattr(other, "__int__"):
+            return self.score == int(other)
+
     @property
     def score(self):
         """Summed score of the content"""
@@ -313,6 +409,22 @@ class APIUser(JSONObj):
     def __int__(self):
         """The user as an integer (it's ID in base 10)"""
         return self.user_id_b10
+
+    def __eq__(self, other):
+        """Determine if this user is equal to another"""
+        #Check for direct matches first
+        if isinstance(other, int):
+            return self.user_id_b10 == other
+        if isinstance(other, str):
+            return str(other) in (self.user_id_b36, self.username)
+
+        #Check for object attributes to match to
+        if hasattr(other, "user_id"):
+            return self.user_id_b10 == utils.ensure_b10(other.user_id)
+
+        #Check conversion to integer last, in case another ID or something happens to match
+        if hasattr(other, "__int__"):
+            return self.user_id_b10 == int(other)
 
     @property
     def user_id(self):
@@ -382,6 +494,22 @@ class APIPlaylist(JSONObj):
     def __str__(self):
         """The playlist as a string (it's ID in base 36)"""
         return self.playlist_id_b36
+
+    def __eq__(self, other):
+        """Determine if this playlist is equal to another"""
+        #Check for direct matches first
+        if isinstance(other, int):
+            return self.playlist_id_b10 == other
+        if isinstance(other, str):
+            return str(other) == self.playlist_id_b36
+
+        #Check for object attributes to match to
+        if hasattr(other, "playlist_id"):
+            return self.playlist_id_b10 == utils.ensure_b10(other.playlist_id)
+
+        #Check conversion to integer last, in case another ID or something happens to match
+        if hasattr(other, "__int__"):
+            return self.playlist_id_b10 == int(other)
 
     @property
     def playlist_id(self):
@@ -480,6 +608,22 @@ class ScrapedPlaylist(HTMLObj):
         """The playlist as a string (it's ID in base 36)"""
         return self.playlist_id_b36
 
+    def __eq__(self, other):
+        """Determine if this playlist is equal to another"""
+        #Check for direct matches first
+        if isinstance(other, int):
+            return self.playlist_id_b10 == other
+        if isinstance(other, str):
+            return str(other) == self.playlist_id_b36
+
+        #Check for object attributes to match to
+        if hasattr(other, "playlist_id"):
+            return self.playlist_id_b10 == utils.ensure_b10(other.playlist_id)
+
+        #Check conversion to integer last, in case another ID or something happens to match
+        if hasattr(other, "__int__"):
+            return self.playlist_id_b10 == int(other)
+
     @property
     def _pagesoup(self):
         """The loaded page of the playlist"""
@@ -574,6 +718,32 @@ class ScrapedVideo(HTMLObj):
         #The binary data of our thumbnail
         self.__thumbnail = None
 
+    def __int__(self):
+        """The video as an integer (it's numeric ID)"""
+        return self.video_id_b10
+
+    def __str__(self):
+        """The video as a string (it's ID in base 36)"""
+        return self.video_id_b36
+
+    def __eq__(self, other):
+        """Determine if this video is equal to another"""
+        #Check for direct matches first
+        if isinstance(other, int):
+            return self.video_id_b10 == other
+        if isinstance(other, str):
+            return str(other) == self.video_id_b36
+
+        #Check for object attributes to match to
+        if hasattr(other, "video_id"):
+            return self.video_id_b10 == utils.ensure_b10(other.video_id)
+        if hasattr(other, "stream_id"):
+            return self.video_id_b10 == utils.ensure_b10(other.stream_id)
+
+        #Check conversion to integer last, in case another ID or something happens to match
+        if hasattr(other, "__int__"):
+            return self.video_id_b10 == int(other)
+
     @property
     def video_id(self):
         """The numeric ID of the video in base 10"""
@@ -622,10 +792,10 @@ class ScrapedVideo(HTMLObj):
 
 class ServicePHP:
     """Interact with Rumble's service.php API"""
-    def __init__(self, username: str = None, password: str = None, session = None):
-        """Pass the username and password or a session token (accepts cookie dict or base string)"""
-        #Save the username and password
-        self.username, self.password = username, password
+    def __init__(self, username: str, password: str = None, session = None):
+        """Pass the username, and either a password or a session token (accepts cookie dict or base string)"""
+        #Save the username
+        self.username = username
 
         #Session is the token directly
         if isinstance(session, str):
