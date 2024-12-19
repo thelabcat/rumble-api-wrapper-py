@@ -1019,8 +1019,15 @@ class ServicePHP:
         elem = soup.find("div", attrs = {"class" : "fb-share-button share-fb"})
         return elem.attrs["data-url"]
 
-    def get_videos(self, username = None, is_channel = False):
-        """Get all the videos under a user, defaults to ourselves"""
+    def get_videos(self, username = None, is_channel = False, max_num = None):
+        """Get the videos under a user or channel:
+        username: The name of the user or channel to search under.
+            Defaults to ourselves.
+        is_channel: Is this a channel instead of a userpage?
+            Defaults false.
+        max_num: The maximum number of videos to retrieve, from latest back.
+            Defaults to None, return all videos.
+            Note, rounded up to the nearest page."""
 
         #default to the logged-in username
         if not username:
@@ -1039,9 +1046,9 @@ class ServicePHP:
         videos = []
         new_video_elems = True
         pagenum = 1
-        while new_video_elems:
+        while new_video_elems and (not max_num or len(videos) < max_num):
             #Get the next page of videos
-            soup = soupscrape_request(f"{url_start}?page={pagenum}")
+            soup = soupscrape_request(f"{url_start}?page={pagenum}", self.session_cookie)
 
             #Search for video listings
             new_video_elems = soup.find_all("div", attrs = {"class" : "videostream thumbnail__grid--item"})
