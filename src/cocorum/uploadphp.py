@@ -208,7 +208,7 @@ class UploadPHP:
             Defaults to free.
         scheduled_publish: Time to publish the video to public in seconds since epoch.
             Defaults to publish immediately.
-        thumbnail: Thumbnail to use. Set to index 0-2 for an auto thumbnail, or a file path for custom.
+        thumbnail: Thumbnail to use. Set to index 0-2 for an auto thumbnail, or a local file path for custom.
             Defaults to 0
         """
         assert os.path.exists(file_path), "Video file does not exist on disk"

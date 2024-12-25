@@ -1136,3 +1136,10 @@ class ServicePHP:
             "playlist.delete",
             data = {"playlist_id" : utils.ensure_b36(playlist_id)},
             ).text)
+
+    def raid_confirm(self, stream_id: int):
+        """Confirm a raid set up in the chat of the given livestream"""
+        self.sphp_request(
+            "raid.confirm",
+            data = {"video_id" : utils.ensure_b10(stream_id)},
+            )

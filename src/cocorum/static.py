@@ -66,23 +66,9 @@ class URI:
         #Message actions
         message = base + "/message"
 
-        # #For getting password salts
-        # get_salts = base + "?name=user.get_salts"
+        #Chat commands (does not use the base)
+        command = "https://rumble.com/chat/command"
 
-        # #For logging in
-        # login = base + "?name=user.login"
-
-        # #For pinning a chat message
-        # pin = base + "?name=chat.message.pin"
-
-        # #For unpinning a chat message
-        # unpin = base + "?name=chat.message.unpin"
-
-        # #For muting a user
-        # mute = base + "?name=moderation.mute"
-
-        # #For unmuting a user
-        # unmute = base + "?name=moderation.unmute"
 
 class Delays:
     """Various times for delays and waits"""
@@ -101,6 +87,9 @@ class Message:
 
     #How long to wait between sending messages
     send_cooldown = 3
+
+    #Prefix Rumble uses for native command
+    command_prefix = "/"
 
 class Upload:
     """Data relating to uploading videos"""

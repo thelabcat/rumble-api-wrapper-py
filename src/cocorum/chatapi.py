@@ -430,10 +430,26 @@ class ChatAPI():
             )
 
         if r.status_code != 200:
-            print("Error: Sending message failed,", r, r.content.decode(static.Misc.text_encoding))
+            print("Error: Sending message failed,", r, r.text)
             return
 
         return int(r.json()["data"]["id"]), ChatAPIUser(r.json()["data"]["user"], self)
+
+    def command(self, command_message: str):
+        """Send a native chat command, returns response JSON"""
+        assert command_message.startswith(static.Message.command_prefix), "Not a command message"
+        r = requests.post(
+            static.URI.ChatAPI.command,
+            data = {
+                "video_id" : self.stream_id_b10,
+                "message" : command_message,
+                },
+            cookies = self.session_cookie,
+            headers = static.RequestHeaders.user_agent,
+            timeout = static.Delays.request_timeout,
+            )
+        assert r.status_code == 200, f"Command failed: {r}\n{r.text}"
+        return r.json()
 
     def delete_message(self, message):
         """Delete a message in chat
