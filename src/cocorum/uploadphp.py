@@ -126,7 +126,7 @@ class UploadPHP:
 
         #Look for a channel match
         for c in self.channels:
-            if c.__eq__(channel_id):
+            if c == channel_id:
                 return c.channel_id_b10
 
         print(f"ERROR: No channel match for {channel_id}, defaulting to None")
