@@ -9,7 +9,6 @@ import calendar
 import hashlib
 import time
 import uuid
-import bs4
 import requests
 from . import static
 
@@ -164,69 +163,3 @@ def options_check(url: str, method: str, origin = static.URI.rumble_base, cookie
         timeout = static.Delays.request_timeout,
         )
     return r.status_code == 200
-
-def get_muted_user_record(session_cookie: dict, username: str = None):
-    """Get the record IDs for mutes
-    username: Username to find record ID for,
-        defaults to returning all record IDs."""
-
-    #The page we are on
-    pagenum = 1
-
-    #username : record ID
-    record_ids = {}
-
-    #While there are more pages
-    while True:
-        #Get the next page of mutes
-        r = requests.get(
-            static.URI.mutes_page.format(page = pagenum),
-            cookies = session_cookie,
-            headers = static.RequestHeaders.user_agent,
-            timeout = static.Delays.request_timeout,
-            )
-        assert r.status_code == 200, f"Error: Getting mutes page #{pagenum} failed, {r}"
-
-        #Parse the HTML and search for mute buttons
-        soup = bs4.BeautifulSoup(r.text, features="lxml")
-        elems = soup.find_all("button", attrs = {"class" : "unmute_action button-small"})
-
-        #We reached the last page
-        if not elems:
-            break
-
-        #Get the record IDs per username from each button
-        for e in elems:
-            #We were searching for a specific username and found it
-            if username and e.attrs["data-username"] == username:
-                return e.attrs["data-record-id"]
-
-            record_ids[e.attrs["data-username"]] = int(e.attrs["data-record-id"])
-
-        #Turn the page
-        pagenum +=1
-
-    #Only return record IDs if we weren't searching for a particular one
-    if not username:
-        return record_ids
-
-    #We were searching for a user and did not find them
-    return None
-
-def get_channels(session_cookie, username):
-    """Get dict of channel slug : {id, title} for a username"""
-    #Get the page of channels
-    r = requests.get(
-        static.URI.channels_page.format(username = username),
-        cookies = session_cookie,
-        headers = static.RequestHeaders.user_agent,
-        timeout = static.Delays.request_timeout,
-        )
-    assert r.status_code == 200, f"Error: Getting channels page failed, {r}"
-
-    #Parse the HTML and search for channel
-    soup = bs4.BeautifulSoup(r.text, features="lxml")
-    elems = soup.find_all("div", attrs = {"data-type" : "channel"})
-    return {e.attrs["data-slug"] :
-        {"id" : int(e.attrs["data-id"]), "title" : e.attrs["data-title"]}
-        for e in elems}

@@ -63,7 +63,7 @@ class UserAction(JSONObj):
     """Abstract class for Rumble user actions"""
     def __init__(self, jsondata):
         """Pass the JSON block for a single Rumble user action"""
-        super().__init__(jsondata)
+        JSONObj.__init__(self, jsondata)
         self.__profile_pic = None
 
     def __eq__(self, other):

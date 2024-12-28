@@ -26,6 +26,7 @@ import sseclient
 from . import JSONObj
 from . import UserAction
 from .servicephp import ServicePHP
+from . import scraping
 from . import static
 from . import utils
 
@@ -33,15 +34,15 @@ class ChatAPIObj(JSONObj):
     """Object in the internal chat API"""
     def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent ChatAPI object"""
-        super().__init__(jsondata)
+        JSONObj.__init__(self, jsondata)
         self.chat = chat
 
 class ChatAPIChatter(UserAction, ChatAPIObj):
     """A user or channel in the internal chat API"""
     def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent ChatAPI object"""
-        UserAction.__init__(self, jsondata)
         ChatAPIObj.__init__(self, jsondata, chat)
+        UserAction.__init__(self, jsondata)
 
     @property
     def link(self):
@@ -52,7 +53,7 @@ class ChatAPIUser(ChatAPIChatter):
     """User in the internal chat API"""
     def __init__(self, jsondata, chat):
         """Pass the object JSON, and the parent ChatAPI object"""
-        super().__init__(jsondata, chat)
+        ChatAPIChatter.__init__(self, jsondata, chat)
         self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
         self._set_channel_id = None #Channel ID set from message
 
@@ -387,6 +388,7 @@ class ChatAPI():
         #If we have session login, use them
         if (username and password) or session:
             self.servicephp = ServicePHP(username, password, session)
+            self.scraper = scraping.Scraper(self.servicephp)
         else:
             self.servicephp = None
 
@@ -503,7 +505,7 @@ class ChatAPI():
     def unmute_user(self, user):
         """Unmute a user"""
         assert self.session_cookie, "Not logged in, cannot unmute user"
-        record_id = utils.get_muted_user_record(self.session_cookie, str(user))
+        record_id = self.scraper.get_muted_user_record(str(user))
         assert record_id, "User was not in muted records"
         return self.servicephp.unmute_user(record_id)
 

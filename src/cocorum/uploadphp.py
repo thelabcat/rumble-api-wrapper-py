@@ -12,6 +12,7 @@ import time
 import bs4
 import requests
 from . import JSONObj
+from . import scraping
 from . import static
 from . import utils
 
@@ -63,9 +64,9 @@ class UploadPHP:
         self.categories2 = {}
         self.get_categories()
 
-        #List of channels we could use
-        self.channels_by_id = utils.get_channels(self.session_cookie, self.servicephp.username)
-        self.channels_by_title = {title : i for i, title in self.channels_by_id.items()}
+        #Get list of channels we could use
+        self.scraper = scraping.Scraper(self.servicephp)
+        self.channels = self.scraper.get_channels()
 
         self.__cur_file_size = None
         self.__cur_upload_id = None
@@ -119,37 +120,17 @@ class UploadPHP:
 
     def ensure_valid_channel_id(self, channel_id):
         """Ensure a channel ID is numeric and a valid channel or None"""
+        #No channel selected
+        if not channel_id:
+            return None
 
-        #We need to convert from string to numeric first
-        if isinstance(channel_id, str):
-            #Channel ID is already a number string
-            if channel_id.isnumeric():
-                channel_id = int(channel_id)
-            #Channel ID is possibly the name of a channel or base 36
-            else:
-                #Channel ID is valid name
-                if channel_id in self.channels_by_title:
-                    channel_id = self.channels_by_title[channel_id]
+        #Look for a channel match
+        for c in self.channels:
+            if channel_id == c:
+                return c.channel_id_b10
 
-                #Channel is not by name, but might be base 36
-                else:
-                    try:
-                        channel_id = utils.base_36_to_10(channel_id)
-
-                    #Failsafe, channel string was not base 36 or a known channel name
-                    except ValueError:
-                        print(f"ERROR: Could not find channel '{channel_id}', defaulting to user page.")
-                        channel_id = None
-
-        #Channel ID is numeric, ensure valid
-        if isinstance(channel_id, int):
-            if channel_id not in self.channels_by_id:
-                print(f"Channel ID {channel_id} was not valid, defaulting to userpage")
-                channel_id = None
-
-        assert isinstance(channel_id, int) or channel_id is None, f"Channel ID must be str, int, or None, got {type(channel_id)}"
-
-        return channel_id
+        print(f"ERROR: No channel match for {channel_id}, defaulting to None")
+        return None
 
     def chunked_vidfile_upload(self, file_path):
         """Upload a video file to Rumble in chunks"""
