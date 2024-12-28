@@ -63,6 +63,10 @@ class UploadPHP:
         self.categories2 = {}
         self.get_categories()
 
+        #List of channels we could use
+        self.channels_by_id = utils.get_channels(self.session_cookie, self.servicephp.username)
+        self.channels_by_title = {title : i for i, title in self.channels_by_id.items()}
+
         self.__cur_file_size = None
         self.__cur_upload_id = None
         self.__cur_num_chunks = None
@@ -112,6 +116,40 @@ class UploadPHP:
         #If the request json has a data -> success value, make sure it is True
 
         return r
+
+    def ensure_valid_channel_id(self, channel_id):
+        """Ensure a channel ID is numeric and a valid channel or None"""
+
+        #We need to convert from string to numeric first
+        if isinstance(channel_id, str):
+            #Channel ID is already a number string
+            if channel_id.isnumeric():
+                channel_id = int(channel_id)
+            #Channel ID is possibly the name of a channel or base 36
+            else:
+                #Channel ID is valid name
+                if channel_id in self.channels_by_title:
+                    channel_id = self.channels_by_title[channel_id]
+
+                #Channel is not by name, but might be base 36
+                else:
+                    try:
+                        channel_id = utils.base_36_to_10(channel_id)
+
+                    #Failsafe, channel string was not base 36 or a known channel name
+                    except ValueError:
+                        print(f"ERROR: Could not find channel '{channel_id}', defaulting to user page.")
+                        channel_id = None
+
+        #Channel ID is numeric, ensure valid
+        if isinstance(channel_id, int):
+            if channel_id not in self.channels_by_id:
+                print(f"Channel ID {channel_id} was not valid, defaulting to userpage")
+                channel_id = None
+
+        assert isinstance(channel_id, int) or channel_id is None, f"Channel ID must be str, int, or None, got {type(channel_id)}"
+
+        return channel_id
 
     def chunked_vidfile_upload(self, file_path):
         """Upload a video file to Rumble in chunks"""
@@ -194,13 +232,15 @@ class UploadPHP:
         file_path: Path to video file
         title: The video title
         category1: The primary category to upload to
+        description: Describe the video
+            Defaults to empty
         info_who, _when, _where, _ext_user: Metadata about the video
             Defaults to empty
         tags: String of comma-separated tags
             Defaults to empty
         category2: The secondary category to upload to
             Defaults to empty
-        channel_id: Numeric ID of the channel to upload to
+        channel_id: Numeric ID or name of the channel to upload to
             Defaults to user page upload
         visibility: Public, unlisted, private
             Defaults to public
@@ -290,7 +330,7 @@ class UploadPHP:
             "infoWhere": kwargs.get("info_where", ""),
             "infoExtUser": kwargs.get("info_ext_user", ""),
             "tags": kwargs.get("tags", ""),
-            "channelId": str(utils.ensure_b10(kwargs.get("channel_id", 0))),
+            "channelId": str(self.ensure_valid_channel_id(kwargs.get("channel_id", 0))),
             "siteChannelId": str(category1),
             "mediaChannelId": str(category2),
             "isGamblingRelated": "false",
