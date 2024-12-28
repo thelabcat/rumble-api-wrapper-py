@@ -255,7 +255,7 @@ class UploadPHP:
 
         #Get the uploaded duration
         r = self.uphp_request({"duration": server_filename})
-        checked_duration = int(r.text)
+        checked_duration = float(r.text)
         print("Server says video duration is", checked_duration)
 
         #Get thumbnails
