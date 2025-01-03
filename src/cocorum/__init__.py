@@ -39,6 +39,7 @@ if livestream:
 S.D.G."""
 
 import time
+import warnings
 import requests
 
 from . import static
@@ -458,6 +459,11 @@ class RumbleAPI():
         self.__livestreams = {}
         self._jsondata = {}
         self.api_url = api_url
+
+        #Warn about refresh rate being below minimum
+        if self.refresh_rate < static.Delays.api_refresh_minimum:
+            warnings.warn(f"Cocorum set to over-refresh, rate of {self.refresh_rate} seconds (less than {static.Delays.api_refresh_minimum})." + \
+                "Superscript must self-limit or Rumble will reject queries!")
 
     @property
     def api_url(self):

@@ -76,8 +76,11 @@ class Delays:
     #How long to wait before giving up on a network request, in seconds
     request_timeout = 20
 
-    #How long to reuse old data from the API, in seconds
+    #How long to reuse old data from the main API, in seconds
     api_refresh_default = 10
+
+    #Minimum refresh rate for the main API, as defined by Rumble
+    api_refresh_minimum = 5
 
 class Message:
     """For chat messages"""
