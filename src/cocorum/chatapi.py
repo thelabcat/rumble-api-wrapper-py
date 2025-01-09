@@ -23,8 +23,7 @@ import json #For parsing SSE message data
 import time
 import requests
 import sseclient
-from . import JSONObj
-from . import UserAction
+from .jsonhandles import JSONObj, JSONUserAction
 from .servicephp import ServicePHP
 from . import scraping
 from . import static
@@ -33,16 +32,27 @@ from . import utils
 class ChatAPIObj(JSONObj):
     """Object in the internal chat API"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent ChatAPI object"""
+        """Object in the internal chat API
+
+    Args:
+        jsondata (dict): The JSON data block for the object.
+        chat (ChatAPI): The ChatAPI object that spawned us.
+        """
+
         JSONObj.__init__(self, jsondata)
         self.chat = chat
 
-class ChatAPIChatter(UserAction, ChatAPIObj):
-    """A user or channel in the internal chat API"""
+class ChatAPIChatter(JSONUserAction, ChatAPIObj):
+    """A user or channel in the internal chat API (abstract)"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent ChatAPI object"""
+        """A user or channel in the internal chat API (abstract)
+
+    Args:
+        jsondata (dict): The JSON data block for the user/channel.
+        chat (ChatAPI): The ChatAPI object that spawned us.
+        """
         ChatAPIObj.__init__(self, jsondata, chat)
-        UserAction.__init__(self, jsondata)
+        JSONUserAction.__init__(self, jsondata)
 
     @property
     def link(self):
@@ -52,7 +62,13 @@ class ChatAPIChatter(UserAction, ChatAPIObj):
 class ChatAPIUser(ChatAPIChatter):
     """User in the internal chat API"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent ChatAPI object"""
+        """A user in the internal chat API
+
+    Args:
+        jsondata (dict): The JSON data block for the user.
+        chat (ChatAPI): The ChatAPI object that spawned us.
+        """
+
         ChatAPIChatter.__init__(self, jsondata, chat)
         self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
         self._set_channel_id = None #Channel ID set from message
@@ -127,7 +143,13 @@ class ChatAPIUser(ChatAPIChatter):
 class ChatAPIChannel(ChatAPIChatter):
     """A channel in the SSE chat"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent ChatAPI object"""
+        """A channel in the internal chat API
+
+    Args:
+        jsondata (dict): The JSON data block for the channel.
+        chat (ChatAPI): The ChatAPI object that spawned us.
+        """
+
         super().__init__(jsondata, chat)
 
         #Find the user who has this channel
@@ -161,16 +183,40 @@ class ChatAPIChannel(ChatAPIChatter):
         """The numeric ID of the user of this channel"""
         return self.user.user_id
 
+    @property
+    def user_id_b36(self):
+        """The numeric ID of the user of this channel in base 36"""
+        return self.user.user_id_b36
+
+    @property
+    def user_id_b10(self):
+        """The numeric ID of the user of this channel in base 10"""
+        return self.user.user_id_b10
+
 class ChatAPIUserBadge(ChatAPIObj):
     """A badge of a user"""
     def __init__(self, slug, jsondata, chat):
-        """Pass the slug, the object JSON, and the parent ChatAPI object"""
+        """A user badge in the internal chat API
+
+    Args:
+        jsondata (dict): The JSON data block for the user badge.
+        chat (ChatAPI): The ChatAPI object that spawned us.
+        """
+
         super().__init__(jsondata, chat)
         self.slug = slug #The unique identification for this badge
         self.__icon = None
 
     def __eq__(self, other):
-        """Check if this badge is equal to another"""
+        """Check if this badge is equal to another
+
+    Args:
+        other (str, ChatAPIUserBadge): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check if the string is either our slug or our label in any language
         if isinstance(other, str):
             return other in (self.slug, self.label.values())
@@ -197,7 +243,6 @@ class ChatAPIUserBadge(ChatAPIObj):
     def icon(self):
         """The badge's icon as a bytestring"""
         if not self.__icon: #We never queried the icon before
-            #TODO make the timeout configurable
             response = requests.get(self.icon_url, timeout = static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 
@@ -208,7 +253,13 @@ class ChatAPIUserBadge(ChatAPIObj):
 class ChatAPIMessage(ChatAPIObj):
     """A single chat message in the internal chat API"""
     def __init__(self, jsondata, chat):
-        """Pass the object JSON, and the parent ChatAPI object"""
+        """A single chat message in the internal chat API
+
+    Args:
+        jsondata (dict): The JSON data block for the message.
+        chat (ChatAPI): The ChatAPI object that spawned us.
+        """
+
         super().__init__(jsondata, chat)
 
         #Set the channel ID of our user if we can
@@ -216,7 +267,15 @@ class ChatAPIMessage(ChatAPIObj):
             self.user._set_channel_id = self.channel_id
 
     def __eq__(self, other):
-        """Compare this chat message with another"""
+        """Compare this chat message with another
+
+    Args:
+        other (str, ChatAPIMessage): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         if isinstance(other, str):
             return self.text == other
 
@@ -361,9 +420,20 @@ class ChatAPIMessage(ChatAPIObj):
         return False
 
 class ChatAPI():
-    """Access the Rumble internal chat api"""
+    """The Rumble internal chat API"""
     def __init__(self, stream_id, username: str = None, password: str = None, session = None):
-        """Pass stream ID in base 10 or 36, and optionally login credentials / session token"""
+        """The Rumble internal chat API
+
+    Args:
+        stream_id (int, str): Stream ID in base 10 or 36.
+        username (str): Username to login with.
+            Defaults to no login.
+        password (str): Password to log in with.
+            Defaults to no login.
+        session (str, dict): Session token or cookie dict to authenticate with.
+            Defaults to getting new session with username and password.
+            """
+
         self.stream_id = utils.ensure_b36(stream_id)
 
         self.__mailbox = [] #A mailbox if you will
@@ -403,11 +473,17 @@ class ChatAPI():
         return None
 
     def send_message(self, text: str, channel_id: int = None):
-        """Send a message in chat
-    text: The message text
-    channel_id: Numeric ID of the channel to use,
-        defaults to None
-    Returns message ID, ChatAPIUser"""
+        """Send a message in chat.
+
+    Args:
+        text (str): The message text.
+        channel_id (int): Numeric ID of the channel to use.
+            Defaults to None.
+
+    Returns:
+        Message ID (int): The ID of the sent message.
+        ChatAPIUser: Your current chat user information.
+        """
 
         assert self.session_cookie, "Not logged in, cannot send message"
         assert len(text) <= static.Message.max_len, "Mesage is too long"
@@ -438,7 +514,15 @@ class ChatAPI():
         return int(r.json()["data"]["id"]), ChatAPIUser(r.json()["data"]["user"], self)
 
     def command(self, command_message: str):
-        """Send a native chat command, returns response JSON"""
+        """Send a native chat command
+
+    Args:
+        command_message (str): The message you would send to launch this command in chat.
+
+    Returns:
+        Response JSON (dict): The JSON returned by the command.
+        """
+
         assert command_message.startswith(static.Message.command_prefix), "Not a command message"
         r = requests.post(
             static.URI.ChatAPI.command,
@@ -454,8 +538,11 @@ class ChatAPI():
         return r.json()
 
     def delete_message(self, message):
-        """Delete a message in chat
-    message: Object which when converted to integer is the target message ID"""
+        """Delete a message in chat.
+
+    Args:
+        message (int): Object which when converted to integer is the target message ID.
+        """
 
         assert self.session_cookie, "Not logged in, cannot delete message"
         assert utils.options_check(self.message_api_url + f"/{int(message)}", "DELETE"), "Rumble denied options request to delete message"
@@ -487,12 +574,16 @@ class ChatAPI():
         return self.servicephp.chat_pin(self.stream_id_b10, message, unpin = True)
 
     def mute_user(self, user, duration: int = None, total: bool = False):
-        """Mute a user
-        user: Username to mute
-        duration: How long to mute the user in seconds.
+        """Mute a user.
+
+    Args:
+        user (str): Username to mute.
+        duration (int): How long to mute the user in seconds.
             Defaults to infinite.
-        total: Wether or not they are muted across all videos.
-            Defaults to False, just this video."""
+        total (bool): Wether or not they are muted across all videos.
+            Defaults to False, just this video.
+            """
+
         assert self.session_cookie, "Not logged in, cannot mute user"
         return self.servicephp.mute_user(
             username = str(user),
@@ -503,8 +594,19 @@ class ChatAPI():
             )
 
     def unmute_user(self, user):
-        """Unmute a user"""
+        """Unmute a user.
+
+    Args:
+        user (str): Username to unmute
+        """
+
         assert self.session_cookie, "Not logged in, cannot unmute user"
+
+        #If the user object has a username attribute, use that
+        # because most user objects will __str__ into their base 36 ID
+        if hasattr(user, "username"):
+            user = user.username
+
         record_id = self.scraper.get_muted_user_record(str(user))
         assert record_id, "User was not in muted records"
         return self.servicephp.unmute_user(record_id)
@@ -532,7 +634,12 @@ class ChatAPI():
         return json.loads(event.data)
 
     def parse_init_data(self, jsondata):
-        """Extract initial chat data from the SSE init event JSON"""
+        """Extract initial chat data from the SSE init event JSON
+
+    Args:
+        jsondata (dict): The JSON data returned by the initial SSE connection.
+        """
+
         if jsondata["type"] != "init":
             print(jsondata)
             raise ValueError("That is not init json")
@@ -551,7 +658,12 @@ class ChatAPI():
         self.message_length_max = jsondata["data"]["config"]["message_length_max"]
 
     def update_mailbox(self, jsondata):
-        """Parse chat messages from an SSE data JSON"""
+        """Parse chat messages from an SSE data JSON
+
+    Args:
+        jsondata (dict): A JSON data block from an SSE event.
+        """
+
         #Add new messages
         self.__mailbox += [ChatAPIMessage(message_json, self) for message_json in jsondata["data"]["messages"] if int(message_json["id"]) not in self.__mailbox]
 
@@ -566,7 +678,12 @@ class ChatAPI():
         return del_m
 
     def update_users(self, jsondata):
-        """Update our dictionary of users from an SSE data JSON"""
+        """Update our dictionary of users from an SSE data JSON
+
+    Args:
+        jsondata (dict): A JSON data block from an SSE event.
+        """
+
         for user_json in jsondata["data"]["users"]:
             try:
                 self.users[int(user_json["id"])]._jsondata = user_json #Update an existing user's JSON
@@ -574,7 +691,12 @@ class ChatAPI():
                 self.users[int(user_json["id"])] = ChatAPIUser(user_json, self)
 
     def update_channels(self, jsondata):
-        """Update our dictionary of channels from an SSE data JSON"""
+        """Update our dictionary of channels from an SSE data JSON
+
+    Args:
+        jsondata (dict): A JSON data block from an SSE event.
+        """
+
         for channel_json in jsondata["data"]["channels"]:
             try:
                 self.channels[int(channel_json["id"])]._jsondata = channel_json #Update an existing channel's JSON
@@ -582,7 +704,12 @@ class ChatAPI():
                 self.channels.update({int(channel_json["id"]) : ChatAPIChannel(channel_json, self)})
 
     def load_badges(self, jsondata):
-        """Create our dictionary of badges given a dictionary of badges"""
+        """Create our dictionary of badges from an SSE data JSON
+
+    Args:
+        jsondata (dict): A JSON data block from an SSE event.
+        """
+
         self.badges = {badge_slug : ChatAPIUserBadge(badge_slug, jsondata["data"]["config"]["badges"][badge_slug], self) for badge_slug in jsondata["data"]["config"]["badges"].keys()}
 
     @property

@@ -9,18 +9,32 @@ import bs4
 from . import scraping
 from . import static
 from . import utils
-from . import JSONObj
+from .jsonhandles import JSONObj
 
 class APIUserBadge(JSONObj):
     """A badge of a user as returned by the API"""
     def __init__(self, slug, jsondata):
-        """Pass the slug, and the object JSON"""
+        """A badge of a user as returned by the API.
+
+    Args:
+        slug (str): The string identifier of the badge.
+        jsondata (dict): The JSON data block of the badge.
+        """
+
         super().__init__(jsondata)
         self.slug = slug #The unique identification for this badge
         self.__icon = None
 
     def __eq__(self, other):
-        """Check if this badge is equal to another"""
+        """Check if this badge is equal to another.
+
+    Args:
+        other (str, APIUserBadge): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check if the string is either our slug or our label in any language
         if isinstance(other, str):
             return other in (self.slug, self.label.values())
@@ -30,7 +44,7 @@ class APIUserBadge(JSONObj):
             return self.slug == other.slug
 
     def __str__(self):
-        """The chat user badge in string form"""
+        """The chat user badge in string form (its slug)"""
         return self.slug
 
     @property
@@ -57,7 +71,12 @@ class APIUserBadge(JSONObj):
 class APIComment(JSONObj):
     """A comment on a video as returned by a successful attempt to make it"""
     def __init__(self, jsondata):
-        """Pass the JSON block for a single comment"""
+        """A comment on a video as returned by a successful attempt to make it
+
+    Args:
+        jsondata (dict): The JSON block for a single comment.
+        """
+
         super().__init__(jsondata)
 
         #Badges of the user who commented if we have them
@@ -73,7 +92,15 @@ class APIComment(JSONObj):
         return self.text
 
     def __eq__(self, other):
-        """Determine if this comment is equal to another"""
+        """Determine if this comment is equal to another
+
+    Args:
+        other (int, str, APIComment): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.comment_id_b10 == other
@@ -129,7 +156,15 @@ class APIContentVotes(JSONObj):
         return self.score_formatted
 
     def __eq__(self, other):
-        """Determine if this content votes is equal to another"""
+        """Determine if this content votes is equal to another
+
+    Args:
+        other (int, str, APIContentVotes): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.score == other
@@ -196,7 +231,12 @@ class APIContentVotes(JSONObj):
 class APIUser(JSONObj):
     """User data as returned by the API"""
     def __init__(self, jsondata):
-        """Pass the JSON data of a user"""
+        """User data as returned by the API.
+
+    Args:
+        jsondata (dict): The JSON data block of a single user.
+        """
+
         super().__init__(jsondata)
 
         #Our profile picture data
@@ -207,7 +247,15 @@ class APIUser(JSONObj):
         return self.user_id_b10
 
     def __eq__(self, other):
-        """Determine if this user is equal to another"""
+        """Determine if this user is equal to another.
+
+    Args:
+        other (int, str, APIUser): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.user_id_b10 == other
@@ -279,7 +327,12 @@ class APIUser(JSONObj):
 class APIPlaylist(JSONObj):
     """Playlist as returned by the API"""
     def __init__(self, jsondata):
-        """Pass the JSON data of a playlist"""
+        """Playlist as returned by the API.
+
+    Args:
+        jsondata: The JSON data block of a playlist.
+        """
+
         super().__init__(jsondata)
         self.user = APIUser(jsondata["user"])
 
@@ -292,7 +345,15 @@ class APIPlaylist(JSONObj):
         return self.playlist_id_b36
 
     def __eq__(self, other):
-        """Determine if this playlist is equal to another"""
+        """Determine if this playlist is equal to another.
+
+    Args:
+        other (int, str, APIPlaylist): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.playlist_id_b10 == other
@@ -385,23 +446,36 @@ class APIPlaylist(JSONObj):
 class ServicePHP:
     """Interact with Rumble's service.php API"""
     def __init__(self, username: str, password: str = None, session = None):
-        """Pass the username, and either a password or a session token (accepts cookie dict or base string)"""
+        """Interact with Rumble's service.php API.
+
+    Args:
+        username (str): The username we will be under.
+        password (str): The password to use at login.
+            Defaults to using the session token/cookie instead.
+        session (str, dict): The session token or cookie dict to authenticate with.
+            Defaults to using the password instead.
+            """
+
         #Save the username
         self.username = username
 
         #Session is the token directly
         if isinstance(session, str):
             self.session_cookie = {static.Misc.session_token_key, session}
+
         #Session is a cookie dict
         elif isinstance(session, dict):
             assert session.get(static.Misc.session_token_key), f"Session cookie dict must have '{static.Misc.session_token_key}' as key."
             self.session_cookie = session
+
         #Session was passed but it is not anything we can use
         elif session is not None:
             raise ValueError(f"Session must be a token str or cookie dict, got {type(session)}")
+
         #Session was not passed, but credentials were
         elif username and password:
             self.session_cookie = self.login(username, password)
+
         #Neither session nor credentials were passed:
         else:
             raise ValueError("Must pass either userame and password, or a session token")
@@ -462,8 +536,17 @@ class ServicePHP:
 
         return r
 
-    def login(self, username, password):
-        """Obtain a session cookie and user ID from username and password"""
+    def login(self, username: str, password: str):
+        """Log in to Rumble
+
+    Args:
+        username (str): Username to sign in with.
+        password (str): Password to sign in with.
+
+    Returns:
+        Session cookie (dict): Cookie dict to be passed with requests, which authenticates them.
+        """
+
         #Get salts
         r = self.sphp_request(
                 "user.get_salts",
@@ -490,10 +573,14 @@ class ServicePHP:
         return {static.Misc.session_token_key: session_token}
 
     def chat_pin(self, stream_id, message, unpin: bool = False):
-        """Pin or unpin a message in a chat
-        stream_id: ID of the stream in base 10 or 36
-        message: int(this) must return a chat message ID
-        unpin: If true, unpins a message instead"""
+        """Pin or unpin a message in a chat.
+
+    Args:
+        stream_id (int, str): ID of the stream in base 10 or 36.
+        message (int): Converting this to int must return a chat message ID.
+        unpin (bool): If true, unpins a message instead of pinning it.
+        """
+
         self.sphp_request(
             f"chat.message.{"un" * unpin}pin",
             data = {
@@ -503,7 +590,19 @@ class ServicePHP:
             )
 
     def mute_user(self, username: str, is_channel: bool = False, video: int = None, duration: int = None, total: bool = False):
-        """Mute a user or channel by name"""
+        """Mute a user or channel by name.
+
+    Args:
+        username (str): The user to mute.
+        is_channel (bool): Is this a channel name rather than a username?
+        video (int): The video to mute the user on.
+            Defaults to None.
+        duration (int): How long the user will be muted for, in seconds.
+            Defaults to infinity.
+        total (bool): Is this a mute across all videos?
+            Defaults to False, requires video if False.
+            """
+
         self.sphp_request(
             "moderation.mute",
             data = {
@@ -516,7 +615,12 @@ class ServicePHP:
             )
 
     def unmute_user(self, record_id: int):
-        """Unmute a user by record ID"""
+        """Unmute a user.
+
+    Args:
+        record_id: The numeric ID of the mute record to undo.
+        """
+
         self.sphp_request(
             "moderation.unmute",
             data = {
@@ -524,12 +628,28 @@ class ServicePHP:
                 }
             )
 
-    def is_comment_elem(self, e):
-        """Check if a beautifulsoup element is a comment"""
+    def _is_comment_elem(self, e):
+        """Check if a beautifulsoup element is a comment.
+
+    Args:
+        e (bs4.Tag): The BeautifulSoup element to test.
+
+    Returns:
+        Is a comment (bool): Did the element fit the criteria for being a comment?
+        """
+
         return e.name == "li" and "comment-item" in e.get("class") and "comments-create" not in e.get("class")
 
     def comment_list(self, video_id):
-        """Get the list of comments under a video"""
+        """Get the list of comments under a video.
+
+    Args:
+        video_id (str, int): The numeric ID of a video in base 10 or 36.
+
+    Returns:
+        Comments (list): A list of scraping.HTMLComment objects.
+        """
+
         r = self.sphp_request(
             "comment.list",
             additional_params = {
@@ -538,19 +658,26 @@ class ServicePHP:
             method = "GET",
             )
         soup = bs4.BeautifulSoup(r.json()["html"], features = "html.parser")
-        comment_elems = soup.find_all(self.is_comment_elem)
+        comment_elems = soup.find_all(self._is_comment_elem)
         return [scraping.HTMLComment(e) for e in comment_elems]
 
-    def comment_add(self, video_id: int, comment: str, reply_id: int = 0):
-        """Post a comment on a video
-        video_id: The numeric ID of a video / stream
-        comment: What to say
-        reply_id: The ID of the comment to reply to
-            Defaults to zero (don't reply to anybody)"""
+    def comment_add(self, video_id, comment: str, reply_id: int = 0):
+        """Post a comment on a video.
+
+    Args:
+        video_id (int, str): The numeric ID of a video / stream in base 10 or 36.
+        comment (str): What to say.
+        reply_id (int): The ID of the comment to reply to.
+            Defaults to zero (don't reply to anybody).
+
+    Returns:
+        Comment (APIComment): The comment, as parsed from the response data.
+        """
+
         r = self.sphp_request(
                 "comment.add",
                 data = {
-                    "video": int(video_id),
+                    "video": int(utils.ensure_b10(video_id)),
                     "reply_id": int(reply_id),
                     "comment": str(comment),
                     "target": "comment-create-1",
@@ -559,23 +686,37 @@ class ServicePHP:
         return APIComment(r.json()["data"])
 
     def comment_pin(self, comment_id: int, unpin: bool = False):
-        """Pin or unpin a comment by ID
-        comment_id: Integer comment ID
-        unpin: If true, unpins instead of pinning comment"""
+        """Pin or unpin a comment by ID.
+
+    Args:
+        comment_id (int): The numeric ID of the comment to pin/unpin.
+        unpin (bool): If true, unpins instead of pinning comment.
+        """
+
         self.sphp_request(
             f"comment.{"un" * unpin}pin",
             data = {"comment_id": int(comment_id)},
             )
 
     def comment_delete(self, comment_id: int):
-        """Delete a comment by ID"""
+        """Delete a comment by ID.
+
+    Args:
+        comment_id (int): The numeric ID of the comment to delete.
+        """
+
         self.sphp_request(
             "comment.delete",
             data = {"comment_id": int(comment_id)},
             )
 
     def comment_restore(self, comment_id: int):
-        """Restore a deleted comment by ID"""
+        """Restore a deleted comment by ID.
+
+    Args:
+        comment_id (int): The numeric ID of the comment to restore.
+        """
+
         r = self.sphp_request(
             "comment.restore",
             data = {"comment_id": int(comment_id)},
@@ -583,10 +724,14 @@ class ServicePHP:
         return APIComment(r.json()["data"])
 
     def rumbles(self, vote: int, item_id, item_type: int):
-        """Post a like or dislike
-        vote: -1, 0, or 1
-        item_id: The numeric ID of whatever we are liking or disliking
-        item_type: 1 for video, 2 for comment"""
+        """Post a like or dislike.
+
+    Args:
+        vote (int): -1, 0, or 1 (0 means clear vote).
+        item_id (int): The numeric ID of whatever we are liking or disliking.
+        item_type (int): 1 for video, 2 for comment.
+        """
+
         r = self.sphp_request(
             "user.rumbles",
             data = {
@@ -598,7 +743,15 @@ class ServicePHP:
         return APIContentVotes(r.json()["data"])
 
     def get_video_url(self, video_id):
-        """Get the URL of a Rumble video from Service.PHP's media.share"""
+        """Get the URL of a Rumble video.
+
+    Args:
+        video_id (int, str): The numeric ID of the video.
+
+    Returns:
+        URL (str): The URL of the video.
+        """
+
         r = self.sphp_request(
             "media.share",
             additional_params = {
@@ -611,8 +764,14 @@ class ServicePHP:
         elem = soup.find("div", attrs = {"class" : "fb-share-button share-fb"})
         return elem.attrs["data-url"]
 
-    def playlist_add_video(self, playlist_id: str, video_id: int):
-        """Add a video to a playlist"""
+    def playlist_add_video(self, playlist_id: str, video_id):
+        """Add a video to a playlist.
+
+    Args:
+        playlist_id (str): The numeric ID of the playlist in base 36.
+        video_id (int, str): The numeric ID of the video to add, in base 10 or 36.
+        """
+
         print(self.sphp_request(
             "playlist.add_video",
             data = {
@@ -622,7 +781,13 @@ class ServicePHP:
             ).text)
 
     def playlist_delete_video(self, playlist_id: str, video_id: int):
-        """Remove a video from a playlist"""
+        """Remove a video from a playlist.
+
+    Args:
+        playlist_id (str): The numeric ID of the playlist in base 36.
+        video_id (int, str): The numeric ID of the video to remove, in base 10 or 36.
+        """
+
         print(self.sphp_request(
             "playlist.delete_video",
             data = {
@@ -631,15 +796,22 @@ class ServicePHP:
                 }
             ).text)
 
-    def playlist_add(self, title: str, description: str = "", visibility: str = "public", channel_id: int = None):
-        """Create a new playlist
-        title: The title of the playlist.
-        description: Describe the playlist.
+    def playlist_add(self, title: str, description: str = "", visibility: str = "public", channel_id = None):
+        """Create a new playlist.
+
+    Args:
+        title (str): The title of the playlist.
+        description (str): Describe the playlist.
             Defaults to nothing.
-        visibility: Set to public, unlisted, or private via string.
-            Defaults to public.
-        channel_id: The ID of the channel to create the playlist under.
-            Defaults to none."""
+        visibility (str): Set to public, unlisted, or private via string.
+            Defaults to 'public'.
+        channel_id (int, str): The ID of the channel to create the playlist under.
+            Defaults to none.
+
+    Returns:
+        Playlist (APIPlaylist): The playlist as parsed from the response data.
+        """
+
         r = self.sphp_request(
             "playlist.add",
             data = {
@@ -651,16 +823,22 @@ class ServicePHP:
         )
         return APIPlaylist(r.json()["data"])
 
-    def playlist_edit(self, playlist_id: str, title: str, description: str = "", visibility: str = "public", channel_id: int = None):
+    def playlist_edit(self, playlist_id: str, title: str, description: str = "", visibility: str = "public", channel_id = None):
         """Edit the details of an existing playlist
-        playlist_id: The ID of the playlist to edit.
-        title: The title of the playlist.
-        description: Describe the playlist.
+
+    Args:
+        playlist_id (str): The numeric ID of the playlist to edit in base 36.
+        title (str): The title of the playlist.
+        description (str): Describe the playlist.
             Defaults to nothing.
-        visibility: Set to public, unlisted, or private via string.
-            Defaults to public.
-        channel_id: The ID of the channel to create the playlist under.
-            Defaults to none."""
+        visibility (str): Set to public, unlisted, or private via string.
+            Defaults to 'public'.
+        channel_id (int, str): The ID of the channel to create the playlist under.
+            Defaults to none.
+
+    Returns:
+        Playlist (APIPlaylist): The playlist as parsed from the response data.
+        """
 
         r = self.sphp_request(
             "playlist.edit",
@@ -675,14 +853,24 @@ class ServicePHP:
         return APIPlaylist(r.json()["data"])
 
     def playlist_delete(self, playlist_id: str):
-        """Delete a playlist"""
+        """Delete a playlist.
+
+    Args:
+        playlist_id (str): The numeric ID of the playlist to delete in base 36.
+        """
+
         print(self.sphp_request(
             "playlist.delete",
             data = {"playlist_id" : utils.ensure_b36(playlist_id)},
             ).text)
 
-    def raid_confirm(self, stream_id: int):
-        """Confirm a raid set up in the chat of the given livestream"""
+    def raid_confirm(self, stream_id):
+        """Confirm a raid, previously set up by command.
+
+    Args:
+        stream_id (int, str): The numeric ID of the stream to confirm the raid from, in base 10 or 36.
+        """
+
         self.sphp_request(
             "raid.confirm",
             data = {"video_id" : utils.ensure_b10(stream_id)},

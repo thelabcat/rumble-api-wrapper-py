@@ -42,88 +42,37 @@ import time
 import warnings
 import requests
 
-from . import static
-from . import utils
+#Make all submodules available from base name
+from . import chatapi, servicephp, uploadphp, scraping, jsonhandles, utils, static
 
-class JSONObj():
-    """Abstract class for a Rumble API object"""
-    def __init__(self, jsondata):
-        """Pass the JSON block for a single Rumble API subobject"""
-        self._jsondata = jsondata
+from .jsonhandles import JSONObj, JSONUserAction
 
-    def __getitem__(self, key):
-        """Get a key from the JSON"""
-        return self._jsondata[key]
-
-    @property
-    def get(self):
-        """Get a key from the JSON with fallback"""
-        return self._jsondata.get
-
-class UserAction(JSONObj):
-    """Abstract class for Rumble user actions"""
-    def __init__(self, jsondata):
-        """Pass the JSON block for a single Rumble user action"""
-        JSONObj.__init__(self, jsondata)
-        self.__profile_pic = None
-
-    def __eq__(self, other):
-        """Is this follower equal to another"""
-        #Check if the compared string is our username
-        if isinstance(other, str):
-            return self.username == other
-
-        #Check if the compared object has a username and if it matches our own
-        if hasattr(other, "username"):
-            return self.username == other.username
-
-    def __str__(self):
-        """Follower as a string"""
-        return self.username
-
-    @property
-    def username(self):
-        """The follower's username"""
-        return self["username"]
-
-    @property
-    def profile_pic_url(self):
-        """The user's profile picture URL"""
-        return self["profile_pic_url"]
-
-    @property
-    def profile_pic(self):
-        """The user's profile picture as a bytes string"""
-        if not self.profile_pic_url: #The profile picture is blank
-            return b''
-
-        if not self.__profile_pic: #We never queried the profile pic before
-            #TODO make this timeout assignable
-            response = requests.get(self.profile_pic_url, timeout = static.Delays.request_timeout)
-            assert response.status_code == 200, "Status code " + str(response.status_code)
-
-            self.__profile_pic = response.content
-
-        return self.__profile_pic
-
-class Follower(UserAction):
+class Follower(JSONUserAction):
     """Rumble follower"""
     @property
     def followed_on(self):
         """When the follower followed, in seconds since Epoch UTC"""
         return utils.parse_timestamp(self["followed_on"])
 
-class Subscriber(UserAction):
+class Subscriber(JSONUserAction):
     """Rumble subscriber"""
     def __eq__(self, other):
-        """Is this subscriber equal to another"""
+        """Is this subscriber equal to another?
+
+    Args:
+        other (str, JSONUserAction, Subscriber): The other object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check if the compared string is our username
         if isinstance(other, str):
             return self.username == other
 
         #check if the compared number is our amount in cents
-        if isinstance(other, (int, float)):
-            return self.amount_cents == other
+        # if isinstance(other, (int, float)):
+            # return self.amount_cents == other
 
         #Check if the compared object's username matches our own, if it has one
         if hasattr(other, "username"):
@@ -168,7 +117,15 @@ class StreamCategory(JSONObj):
         return self["title"]
 
     def __eq__(self, other):
-        """Is this category equal to another"""
+        """Is this category equal to another?
+
+    Args:
+        other (str, StreamCategory): Other object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check if the compared string is our slug or title
         if isinstance(other, str):
             return other in (self.slug, self.title)
@@ -184,14 +141,28 @@ class StreamCategory(JSONObj):
 class Livestream():
     """Rumble livestream"""
     def __init__(self, jsondata, api):
-        """Pass the JSON block of a single Rumble livestream"""
+        """Rumble livestream
+
+    Args:
+        jsondata (dict): The JSON block for a single livestream.
+        api (RumbleAPI): The Rumble Live Stream API wrapper that spawned us.
+        """
+
         self._jsondata = jsondata
         self.api = api
         self.is_disappeared = False #The livestream is in the API listing
         self.__chat = LiveChat(self)
 
     def __eq__(self, other):
-        """Is this stream equal to another"""
+        """Is this stream equal to another?
+
+    Args:
+        other (str, int, Livestream): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check if the compared string is our stream ID
         if isinstance(other, str):
             return self.stream_id == other #or self.title == other
@@ -202,18 +173,23 @@ class Livestream():
 
         #Check if the compared object has the same stream ID
         if hasattr(other, "stream_id"):
-            return self.stream_id == other.stream_id
+            return self.stream_id == utils.ensure_b36(other.stream_id)
 
         #Check if the compared object has the same chat ID
         if hasattr(other, "stream_id_b10"):
             return self.stream_id_b10 == other.stream_id_b10
 
     def __str__(self):
-        """The livestream in string form"""
+        """The livestream in string form (it's ID in base 36)"""
         return self.stream_id
 
     def __getitem__(self, key):
-        """Return a key from the JSON, refreshing if necessary"""
+        """Return a key from the JSON, refreshing if necessary
+
+    Args:
+        key (str): A valid JSON key.
+        """
+
         #The livestream has not disappeared from the API listing,
         #the key requested is not a value that doesn't change,
         #and it has been api.refresh rate since the last time we refreshed
@@ -254,7 +230,7 @@ class Livestream():
 
     @property
     def visibility(self):
-        """TODO"""
+        """Is the stream public, unlisted, or private?"""
         return self["visibility"]
 
     @property
@@ -292,10 +268,18 @@ class Livestream():
         """The livestream chat"""
         return self.__chat
 
-class ChatMessage(UserAction):
+class ChatMessage(JSONUserAction):
     """A single message in a Rumble livestream chat"""
     def __eq__(self, other):
-        """Is this message equal to another"""
+        """Is this message equal to another?
+
+    Args:
+        other (str, ChatMessage): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check if the compared string is our message
         if isinstance(other, str):
             return self.text == other
@@ -313,7 +297,7 @@ class ChatMessage(UserAction):
             return self.text == other.text #the other object had no username attribute
 
     def __str__(self):
-        """Follower as a string"""
+        """Message as a string (its content)"""
         return self.text
 
     @property
@@ -334,7 +318,15 @@ class ChatMessage(UserAction):
 class Rant(ChatMessage):
     """A single rant in a Rumble livestream chat"""
     def __eq__(self, other):
-        """Is this category equal to another"""
+        """Is this category equal to another?
+
+    Args:
+        other (str, ChatMessage): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check if the compared string is our message
         if isinstance(other, str):
             return self.text == other
@@ -375,7 +367,12 @@ class Rant(ChatMessage):
 class LiveChat():
     """Reference for chat of a Rumble livestream"""
     def __init__(self, stream):
-        """Pass the JSON block of a single Rumble livestream"""
+        """Reference for chat of a Rumble livestream
+
+    Args:
+        stream (dict): The JSON block of a single Rumble livestream.
+        """
+
         self.stream = stream
         self.api = stream.api
         self.last_newmessage_time = 0 #Last time we were checked for "new" messages
@@ -448,11 +445,16 @@ class LiveChat():
         return rera[i:]
 
 class RumbleAPI():
-    """Rumble API wrapper"""
-    def __init__(self, api_url, refresh_rate = static.Delays.api_refresh_default, request_timeout = static.Delays.request_timeout):
-        """Pass the Rumble API URL, and how long to wait before refreshing on new queries"""
+    """Rumble Live Stream API wrapper"""
+    def __init__(self, api_url, refresh_rate = static.Delays.api_refresh_default):
+        """Rumble Live Stream API wrapper
+    Args:
+        api_url (str): The Rumble API URL, with the key.
+        refresh_rate (int, float): How long to reuse queried data before refreshing.
+            Defaults to static.Delays.api_refresh_default.
+        """
+
         self.refresh_rate = refresh_rate
-        self.request_timeout = request_timeout
         self.last_refresh_time = 0
         self.last_newfollower_time = time.time()
         self.last_newsubscriber_time = time.time()
@@ -472,14 +474,26 @@ class RumbleAPI():
 
     @api_url.setter
     def api_url(self, url):
-        """Set our API URL"""
+        """Set a new API URL, and refresh
+
+    Args:
+        url (str): The new API URL to use.
+        """
+
         self.__api_url = url
         self.refresh()
 
     def __getitem__(self, key):
-        """Return a key from the JSON, refreshing if necessary"""
+        """Return a key from the JSON, refreshing if necessary
+
+    Args:
+        key (str): A valid JSON key.
+        """
+
+        #This is not a static key, and it's time to refresh our data
         if key not in static.StaticAPIEndpoints.main and time.time() - self.last_refresh_time > self.refresh_rate:
             self.refresh()
+
         return self._jsondata[key]
 
     def check_refresh(self):
@@ -490,7 +504,7 @@ class RumbleAPI():
     def refresh(self):
         """Reload data from the API"""
         self.last_refresh_time = time.time()
-        response = requests.get(self.api_url, headers = static.RequestHeaders.user_agent, timeout = self.request_timeout)
+        response = requests.get(self.api_url, headers = static.RequestHeaders.user_agent, timeout = static.Delays.request_timeout)
         assert response.status_code == 200, "Status code " + str(response.status_code)
 
         self._jsondata = response.json()
@@ -577,7 +591,7 @@ class RumbleAPI():
 
     @property
     def new_followers(self):
-        """Followers that are newer than the last time this was checked (or RumbleAPI object creation)"""
+        """Followers that are newer than the last time this was checked (or newer than RumbleAPI object creation)"""
         recent_followers = self.recent_followers
 
         nf = [follower for follower in recent_followers if follower.followed_on > self.last_newfollower_time]
@@ -606,13 +620,13 @@ class RumbleAPI():
 
     @property
     def recent_subscribers(self):
-        """A list (technically a shallow generator object) of recent subscribers"""
+        """A list of recent subscribers (shallow)"""
         data = self["subscribers"]["recent_subscribers"].copy()
         return [Subscriber(jsondata_block) for jsondata_block in data]
 
     @property
     def new_subscribers(self):
-        """Subscribers that are newer than the last time this was checked (or RumbleAPI object creation)"""
+        """Subscribers that are newer than the last time this was checked (or newer than RumbleAPI object creation)"""
         recent_subscribers = self.recent_subscribers
 
         ns = [subscriber for subscriber in recent_subscribers if subscriber.subscribed_on > self.last_newsubscriber_time]

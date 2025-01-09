@@ -12,23 +12,46 @@ from . import utils
 class HTMLObj:
     """Abstract object scraped from bs4 HTML"""
     def __init__(self, elem):
-        """Pass the bs4 base element"""
+        """Abstract object scraped from bs4 HTML
+
+    Args:
+        elem (bs4.Tag): The BeautifulSoup element to base our data on.
+        """
+
         self._elem = elem
 
     def __getitem__(self, key):
-        """Get a key from the element attributes"""
+        """Get a key from the element attributes
+
+    Args:
+        key (str): A valid attribute name.
+        """
+
         return self._elem.attrs[key]
 
 class HTMLUserBadge(HTMLObj):
     """A user badge as extracted from a bs4 HTML element"""
     def __init__(self, elem):
-        """Pass the bs4 badge img element"""
+        """A user badge as extracted from a bs4 HTML element.
+
+    Args:
+        elem (bs4.Tag): The badge <img> element
+        """
+
         super().__init__(elem)
         self.slug = elem.attrs["src"].split("/")[-1:elem.attrs["src"].rfind("_")]
         self.__icon = None
 
     def __eq__(self, other):
-        """Check if this badge is equal to another"""
+        """Check if this badge is equal to another.
+
+    Args:
+        other (str, HTMLUserBadge): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check if the string is either our slug or our label in any language
         if isinstance(other, str):
             return other in (self.slug, self.label.values())
@@ -66,7 +89,12 @@ class HTMLUserBadge(HTMLObj):
 class HTMLComment(HTMLObj):
     """A comment on a video as returned by service.php comment.list"""
     def __init__(self, elem):
-        """Pass the bs4 li element of the comment"""
+        """A comment on a video as returned by service.php comment.list
+
+    Args:
+        elem (bs4.Tag): The <li> element of the comment.
+        """
+
         super().__init__(elem)
 
         #Badges of the user who commented if we have them
@@ -82,7 +110,15 @@ class HTMLComment(HTMLObj):
         return self.text
 
     def __eq__(self, other):
-        """Determine if this comment is equal to another"""
+        """Determine if this comment is equal to another.
+
+    Args:
+        other (int, str, HTMLComment): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.comment_id_b10 == other
@@ -170,7 +206,15 @@ class HTMLContentVotes(HTMLObj):
         return str(self.score)
 
     def __eq__(self, other):
-        """Determine if this content votes is equal to another"""
+        """Determine if this content votes is equal to another.
+
+    Args:
+        other (int, str, HTMLContentVotes): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.score == other
@@ -205,7 +249,13 @@ class HTMLContentVotes(HTMLObj):
 class HTMLPlaylist(HTMLObj):
     """A playlist as obtained from HTML data"""
     def __init__(self, elem, scraper):
-        """Pass the playlist thumbnail__grid-item bs4 element, and the parent scraper"""
+        """A playlist as obtained from HTML data.
+
+    Args:
+        elem (bs4.Tag): The playlist class = "thumbnail__grid-item" element.
+        scraper (Scraper): The HTML scraper object that spawned us.
+        """
+
         super().__init__(elem)
 
         #The Scraper object that created this one
@@ -226,7 +276,15 @@ class HTMLPlaylist(HTMLObj):
         return self.playlist_id_b36
 
     def __eq__(self, other):
-        """Determine if this playlist is equal to another"""
+        """Determine if this playlist is equal to another.
+
+    Args:
+        other (int, str, HTMLPlaylist): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.playlist_id_b10 == other
@@ -328,32 +386,6 @@ class HTMLPlaylist(HTMLObj):
 
 class HTMLChannel(HTMLObj):
     """Channel under a user as extracted from their channels page"""
-    # def __init__(self, elem):
-    #     """Pass the div data-type=channel element"""
-    #     super().__init__(elem)
-    #
-    #     #Stored channel profile picture data
-    #     self.__picture = None
-
-    # @property
-    # def picture_url(self):
-    #     """The URL of the channel's profile picture"""
-    #     NotImplemented
-    #     return static.URI.rumble_base + self._elem.parent.parent.find("a", attrs = {"class" : "creator-card__image-container"})...
-    #
-    # @property
-    # def picture(self):
-    #     """The user's profile picture as a bytes string"""
-    #     if not self.picture_url: #The profile picture is blank
-    #         return b''
-    #
-    #     if not self.__picture: #We never queried the profile pic before
-    #         response = requests.get(self.picture_url, timeout = static.Delays.request_timeout)
-    #         assert response.status_code == 200, "Status code " + str(response.status_code)
-    #
-    #         self.__picture = response.content
-    #
-    #     return self.__picture
 
     def __str__(self):
         """The channel as a string (its slug)"""
@@ -364,7 +396,15 @@ class HTMLChannel(HTMLObj):
         return self.channel_id_b10
 
     def __eq__(self, other):
-        """Determine if this channel is equal to another"""
+        """Determine if this channel is equal to another.
+
+    Args:
+        other (int, str, HTMLChannel): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.channel_id_b10 == other
@@ -409,7 +449,12 @@ class HTMLChannel(HTMLObj):
 class HTMLVideo(HTMLObj):
     """Video on a user or channel page as extracted from the page's HTML"""
     def __init__(self, elem):
-        """Pass the video thumbnail__grid-item bs4 element"""
+        """Video on a user or channel page as extracted from the page's HTML.
+
+    Args:
+        elem (bs4.Tag): The class = "thumbnail__grid-item" video element.
+        """
+
         super().__init__(elem)
 
         #The binary data of our thumbnail
@@ -424,7 +469,15 @@ class HTMLVideo(HTMLObj):
         return self.video_id_b36
 
     def __eq__(self, other):
-        """Determine if this video is equal to another"""
+        """Determine if this video is equal to another.
+
+    Args:
+        other (int, str, HTMLVideo): Object to compare to.
+
+    Returns:
+        Comparison (bool, None): Did it fit the criteria?
+        """
+
         #Check for direct matches first
         if isinstance(other, int):
             return self.video_id_b10 == other
@@ -490,7 +543,12 @@ class HTMLVideo(HTMLObj):
 class Scraper:
     """Scraper for general information"""
     def __init__(self, servicephp):
-        """Pass a ServicePHP instance"""
+        """Scraper for general information.
+
+    Args:
+        servicephp (ServicePHP): A ServicePHP instance, for authentication.
+        """
+
         self.servicephp = servicephp
 
     @property
@@ -504,7 +562,15 @@ class Scraper:
         return self.servicephp.username
 
     def soup_request(self, url: str):
-        """Make a GET request to a URL, and return HTML beautiful soup for scraping"""
+        """Make a GET request to a URL, and return HTML beautiful soup for scraping.
+
+    Args:
+        url (str): The URL to query.
+
+    Returns:
+        Soup (bs4.BeautifulSoup): The webpage at the URL, logged-in version.
+        """
+
         r = requests.get(
             url,
             cookies = self.session_cookie,
@@ -516,9 +582,15 @@ class Scraper:
         return bs4.BeautifulSoup(r.text, features = "html.parser")
 
     def get_muted_user_record(self, username: str = None):
-        """Get the record IDs for mutes
-        username: Username to find record ID for,
-            defaults to returning all record IDs."""
+        """Get the record IDs for mutes.
+
+    Args:
+        username (str): Username to find record ID for.
+            Defaults to None.
+
+    Returns:
+        Record[s] (int, dict): Either the single user's mute record ID, or a dict of all username:mute record ID pairs.
+        """
 
         #The page we are on
         pagenum = 1
@@ -555,7 +627,16 @@ class Scraper:
         return None
 
     def get_channels(self, username: str = None):
-        """Get all channels under a username, defaults to our own"""
+        """Get all channels under a username.
+
+    Args:
+        username (str): The username to get the channels under.
+            Defaults to None, use our own username.
+
+    Returns:
+        Channels (list): List of HTMLChannel objects.
+        """
+
         if not username:
             username = self.username
 
@@ -565,14 +646,20 @@ class Scraper:
         return [HTMLChannel(e) for e in elems]
 
     def get_videos(self, username = None, is_channel = False, max_num = None):
-        """Get the videos under a user or channel:
-        username: The name of the user or channel to search under.
+        """Get the videos under a user or channel.
+
+    Args:
+        username (str): The name of the user or channel to search under.
             Defaults to ourselves.
-        is_channel: Is this a channel instead of a userpage?
-            Defaults false.
-        max_num: The maximum number of videos to retrieve, from latest back.
+        is_channel (bool): Is this a channel instead of a userpage?
+            Defaults to False.
+        max_num (int): The maximum number of videos to retrieve, starting from the newest.
             Defaults to None, return all videos.
-            Note, rounded up to the nearest page."""
+            Note, rounded up to the nearest page.
+
+    Returns:
+        Videos (list): List of HTMLVideo objects.
+        """
 
         #default to the logged-in username
         if not username:

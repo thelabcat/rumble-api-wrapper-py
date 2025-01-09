@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Cocorum static variable definitions
 
-Provides various data that, if changed, would change globally
+Provides various data that, if changed, would need to change globally.
 
 S.D.G."""
 

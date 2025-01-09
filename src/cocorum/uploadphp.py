@@ -11,7 +11,7 @@ import random
 import time
 import bs4
 import requests
-from . import JSONObj
+from .jsonhandles import JSONObj
 from . import scraping
 from . import static
 from . import utils
@@ -56,7 +56,12 @@ class UploadResponse(JSONObj):
 class UploadPHP:
     """Upload videos to Rumble"""
     def __init__(self, servicephp):
-        """Pass a ServicePHP object"""
+        """Upload videos to Rumble.
+
+    Args:
+        servicephp (ServicePHP): ServicePHP object, for authentication.
+        """
+
         self.servicephp = servicephp
 
         #Primary and secondary video categories AKA site and media channels
@@ -74,6 +79,9 @@ class UploadPHP:
 
     def get_categories(self):
         """Load the primary and secondary categories from Rumble"""
+        #TODO: We may be able to get this from an internal API at studio.rumble.com instead
+        # See issue #13
+
         print("Loading categories")
         r = self.uphp_request({}, method = "GET")
         soup = bs4.BeautifulSoup(r.text, features = "html.parser")
@@ -93,15 +101,22 @@ class UploadPHP:
         """Our Rumble session cookie to authenticate requests"""
         return self.servicephp.session_cookie
 
-    def uphp_request(self, additional_params, method = "PUT", data: dict = None, timeout = static.Delays.request_timeout):
-        """Make a request to Upload.PHP with common settings
-        additional_params: Query string parameters to add to the base ones
-        method: What method to use for the request.
+    def uphp_request(self, additional_params: dict, method = "PUT", data: dict = None, timeout = static.Delays.request_timeout):
+        """Make a request to Upload.PHP with common settings.
+
+    Args:
+        additional_params (dict): Query string parameters to add to the base ones
+        method (str): What HTTP method to use for the request.
             Defaults to PUT.
-        data: Form data for the request.
+        data (dict): Form data for the request.
             Defaults to None.
-        timeout: Request timeout
-            Defaults to static.Delays.request_timeout"""
+        timeout (int, float): Request timeout.
+            Defaults to static.Delays.request_timeout
+
+    Returns:
+        Response (requests.models.Response): The response from the request.
+        """
+
         params = {"api": static.Upload.api_ver}
         params.update(additional_params)
         r = requests.request(
@@ -119,7 +134,15 @@ class UploadPHP:
         return r
 
     def ensure_valid_channel_id(self, channel_id):
-        """Ensure a channel ID is numeric and a valid channel or None"""
+        """Ensure a channel ID is numeric and a valid channel, or None
+
+    Args:
+        channel_id (int, None): The numeric ID of the channel.
+
+    Returns:
+        Result (int, None): Either the confirmed channel ID, or None if it didn't exist / wasn't specified.
+        """
+
         #No channel selected
         if not channel_id:
             return None
@@ -133,7 +156,15 @@ class UploadPHP:
         return None
 
     def chunked_vidfile_upload(self, file_path):
-        """Upload a video file to Rumble in chunks"""
+        """Upload a video file to Rumble in chunks
+
+    Args:
+        file_path (str): A valid, complete path to the video file for upload.
+
+    Returns:
+        Merged video filename (str): The filename of the merged video on the server after upload.
+        """
+
         print("Uploading video in", self.__cur_num_chunks, "chunks")
 
         #Base upload params
@@ -176,7 +207,15 @@ class UploadPHP:
         return merged_video_fn
 
     def unchunked_vidfile_upload(self, file_path):
-        """Upload a video file to Rumble all at once"""
+        """Upload a video file to Rumble all at once
+
+    Args:
+        file_path (str): A valid, complete path to the video file for upload.
+
+    Returns:
+        Uploaded filename (str): The filename of the video on the server after upload.
+        """
+
         print("Uploading video")
 
         with open(file_path, "rb") as f:
@@ -195,7 +234,15 @@ class UploadPHP:
         return uploaded_fn
 
     def upload_cthumb(self, file_path):
-        """Upload a custom thumbnail"""
+        """Upload a custom thumbnail for a video
+
+    Args:
+        file_path (str): A valid, complete path to the image file for upload.
+
+    Returns:
+        Thumbnail server filename (str): Filename of the image on the server after upload.
+        """
+
         print("Uploading custom thumbnail")
         ext = file_path.split(".")[-1]
         ct_server_filename = "ct-" + self.__cur_upload_id + "." + ext
@@ -210,28 +257,40 @@ class UploadPHP:
 
     def upload_video(self, file_path, title: str, category1, **kwargs):
         """Upload a video to Rumble
-        file_path: Path to video file
-        title: The video title
-        category1: The primary category to upload to
-        description: Describe the video
+
+    Args:
+        file_path (str): A valid, complete path to a video file.
+        title (str): The video title.
+        category1 (int, str): The primary category to upload to, by name or numeric ID.
+        description (str): Describe the video.
+            Defaults to empty.
+        info_who (str): Additional people appearing in the video.
+            Defaults to empty.
+        info_when (str): When this video was recorded.
+            Defaults to unspecified.
+        info_where (str): Where this video was recorded.
+            Defaults to unspecified.
+        info_ext_user (str): Your username on other platforms.
+            Defaults to unspecified.
+        tags (str): Comma-separated tagging for the video's topics.
+            Defaults to empty.
+        category2 (int, str): The secondary category to upload to, by name or numeric ID.
             Defaults to empty
-        info_who, _when, _where, _ext_user: Metadata about the video
-            Defaults to empty
-        tags: String of comma-separated tags
-            Defaults to empty
-        category2: The secondary category to upload to
-            Defaults to empty
-        channel_id: Numeric ID or name of the channel to upload to
-            Defaults to user page upload
-        visibility: Public, unlisted, private
-            Defaults to public
+        channel_id (int, str): Numeric ID or name of the channel to upload to.
+            Defaults to user page upload.
+        visibility (str): Visibility of the video, either public, unlisted, or private.
+            Defaults to 'public'.
         availability: TODO
             Defaults to free.
-        scheduled_publish: Time to publish the video to public in seconds since epoch.
+        scheduled_publish (int, float): When to publish the video to public later, in seconds since epoch.
             Defaults to publish immediately.
-        thumbnail: Thumbnail to use. Set to index 0-2 for an auto thumbnail, or a local file path for custom.
-            Defaults to 0
+        thumbnail (int, str): Thumbnail to use. Index 0-2 for an auto thumbnail, or a complete, valid local file path for custom.
+            Defaults to 0, first auto thumbnail.
+
+    Returns:
+        Upload response (UploadResponse): Data about the upload, parsed from the response.
         """
+
         assert os.path.exists(file_path), "Video file does not exist on disk"
 
         self.__cur_file_size = os.path.getsize(file_path)
