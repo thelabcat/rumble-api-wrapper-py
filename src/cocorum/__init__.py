@@ -6,7 +6,16 @@ A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality o
 - All timespamps are parsed to seconds since Epoch, UTC timezone.
 - Chat has new_messages and new_rants properties that return only messages and rants since the last time they were read.
 
-Note, you are only expected to create a RumbleAPI() and / or ssechat.SSEChat() object, and work with everything through them.
+
+Modules exported by this package:
+
+- `chatapi`: Provide the ChatAPI object for interacting with a livestream chat.
+- `servicephp`: Privide the ServicePHP object for interacting with the service.php API.
+- `uploadphp`: Provide the UploadPHP object for uploading videos.
+- `scraping`: Provide functions and the Scraper object for getting various data via HTML scraping.
+- `jsonhandles`: Abstract classes for handling JSON data blocks.
+- `utils`: Various utility functions for internal calculations and checks.
+- `static`: Global data that does not change across the package.
 
 Most attributes that are not added features have the same name as the direct JSON counterparts, with the exception of adding prefixes to some things that have the same name in the JSON as Python builtin functions. For example, thing/id in JSON is thing.thing_id in this Python wrapper.
 
