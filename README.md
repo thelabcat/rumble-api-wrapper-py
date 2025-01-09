@@ -15,7 +15,7 @@ Most attributes that are not added features have the same name as the direct JSO
 from cocorum import RumbleAPI
 import time
 
-#API_URL is either Rumble Live Stream API URL with key
+#API_URL is Rumble Live Stream API URL with key
 api = RumbleAPI(API_URL, refresh_rate = 10)
 
 print(api.username)
