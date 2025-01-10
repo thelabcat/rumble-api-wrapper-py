@@ -27,4 +27,5 @@ classifiers = [
 [project.urls]
 Homepage = "https://github.com/thelabcat/rumble-api-wrapper-py"
 Issues = "https://github.com/thelabcat/rumble-api-wrapper-py/issues"
+Documentation = "https://thelabcat.github.io/rumble-api-wrapper-py/"
 "Rumble Live Stream API docs" = "https://rumblefaq.groovehq.com/help/how-to-use-rumble-s-live-stream-api"
