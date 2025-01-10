@@ -1,18 +1,5 @@
 # Tutorials
 
-TODO. Will expand these more in the future.
-
-Notes for that:
-- Help newcomers with getting started
-- Teach readers about your library by making them
-    write code
-- Inspire confidence through examples that work for
-    everyone, repeatably
-- Give readers an immediate sense of achievement
-- Show concrete examples, no abstractions
-- Provide the minimum necessary explanation
-- Avoid any distractions
-
 ## Reading chat using the Rumble Live Stream API wrapper
 Class `cocorum.RumbleAPI` is the wrapper for [the Rumble Live Stream API](https://rumblefaq.groovehq.com/help/how-to-use-rumble-s-live-stream-api); the API Rumble has published for the public to use, furthermore referenced as the RLS API. To get started with it, you will first need an API "key" from Rumble (really it's a static URL with a key as a parameter, but you don't need to worry about that). You can get that URL with key [here](https://rumble.com/account/livestream-api).
 
