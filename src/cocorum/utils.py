@@ -42,7 +42,7 @@ class MD5Ex:
         iterations (int): Number of times to stretch the hashing.
 
     Returns:
-        Stretched hash (str): The completed stretched hash.
+        Hash (str): The completed stretched hash.
         """
 
         #Start with the salt and password together
@@ -74,7 +74,7 @@ def form_timestamp(seconds: float, suffix = "+00:00") -> str:
     """Form a Rumble timestamp.
 
     Args:
-        timestamp (float): Timestamp in seconds since Epoch, UTC.
+        seconds (float): Timestamp in seconds since Epoch, UTC.
 
     Returns:
         Timestamp (str): The same timestamp value, in Rumble's API format.

@@ -589,7 +589,7 @@ class Scraper:
             Defaults to None.
 
     Returns:
-        Record[s] (int, dict): Either the single user's mute record ID, or a dict of all username:mute record ID pairs.
+        Record (int, dict): Either the single user's mute record ID, or a dict of all username:mute record ID pairs.
         """
 
         #The page we are on

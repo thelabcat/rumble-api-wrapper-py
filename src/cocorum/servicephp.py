@@ -330,7 +330,7 @@ class APIPlaylist(JSONObj):
         """Playlist as returned by the API.
 
     Args:
-        jsondata: The JSON data block of a playlist.
+        jsondata (dict): The JSON data block of a playlist.
         """
 
         super().__init__(jsondata)
@@ -544,7 +544,7 @@ class ServicePHP:
         password (str): Password to sign in with.
 
     Returns:
-        Session cookie (dict): Cookie dict to be passed with requests, which authenticates them.
+        Cookie (dict): Cookie dict to be passed with requests, which authenticates them.
         """
 
         #Get salts
@@ -635,7 +635,7 @@ class ServicePHP:
         e (bs4.Tag): The BeautifulSoup element to test.
 
     Returns:
-        Is a comment (bool): Did the element fit the criteria for being a comment?
+        Result (bool): Did the element fit the criteria for being a comment?
         """
 
         return e.name == "li" and "comment-item" in e.get("class") and "comments-create" not in e.get("class")

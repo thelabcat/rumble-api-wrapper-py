@@ -481,8 +481,8 @@ class ChatAPI():
             Defaults to None.
 
     Returns:
-        Message ID (int): The ID of the sent message.
-        ChatAPIUser: Your current chat user information.
+        ID (int): The ID of the sent message.
+        User (ChatAPIUser): Your current chat user information.
         """
 
         assert self.session_cookie, "Not logged in, cannot send message"
@@ -520,7 +520,7 @@ class ChatAPI():
         command_message (str): The message you would send to launch this command in chat.
 
     Returns:
-        Response JSON (dict): The JSON returned by the command.
+        JSON (dict): The JSON returned by the command.
         """
 
         assert command_message.startswith(static.Message.command_prefix), "Not a command message"

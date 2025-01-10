@@ -162,7 +162,7 @@ class UploadPHP:
         file_path (str): A valid, complete path to the video file for upload.
 
     Returns:
-        Merged video filename (str): The filename of the merged video on the server after upload.
+        Filename (str): The filename of the merged video on the server after upload.
         """
 
         print("Uploading video in", self.__cur_num_chunks, "chunks")
@@ -213,7 +213,7 @@ class UploadPHP:
         file_path (str): A valid, complete path to the video file for upload.
 
     Returns:
-        Uploaded filename (str): The filename of the video on the server after upload.
+        Filename (str): The filename of the video on the server after upload.
         """
 
         print("Uploading video")
@@ -240,7 +240,7 @@ class UploadPHP:
         file_path (str): A valid, complete path to the image file for upload.
 
     Returns:
-        Thumbnail server filename (str): Filename of the image on the server after upload.
+        Filename (str): Filename of the image on the server after upload.
         """
 
         print("Uploading custom thumbnail")
@@ -288,7 +288,7 @@ class UploadPHP:
             Defaults to 0, first auto thumbnail.
 
     Returns:
-        Upload response (UploadResponse): Data about the upload, parsed from the response.
+        Response (UploadResponse): Data about the upload, parsed from the response.
         """
 
         assert os.path.exists(file_path), "Video file does not exist on disk"
