@@ -82,8 +82,7 @@
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="Cocorum Docs" class="md-header__button md-logo" aria-label="Cocorum Docs" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/cocorum_icon.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -140,8 +139,7 @@
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="Cocorum Docs" class="md-nav__button md-logo" aria-label="Cocorum Docs" data-md-component="logo">
       
-  
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <img src="../assets/cocorum_icon.png" alt="logo">
 
     </a>
     Cocorum Docs
@@ -160,7 +158,7 @@
         
   
   <span class="md-ellipsis">
-    Cocorum Docs
+    Home
   </span>
   
 
@@ -388,6 +386,7 @@ print(&quot;Latest follower:&quot;, api.latest_follower)
 <p>Now, let's try to get the <code>latest_subscriber/amount_dollars</code> endpoint:</p>
 <pre><code>if api.latest_subscriber:
     print(api.latest_subscriber, f&quot;subscribed for ${api.latest_subscriber.amount_dollars}&quot;)
+## Should display your latest subscriber if you have one.
 </code></pre>
 <p>Note: If there is no latest subscriber, this endpoint will be None, and NoneType has no attribute amount_dollars. I added the <code>if</code> statement in that code to avoid an AttributeError.</p>
 <p>You may have noticed by now that sometimes, querying data takes quite a bit longer than other times. This is <code>refresh_rate</code> in action. The way the Rumble Live Stream API currently works is by passing a big JSON data block of everything it knows, all at once. It would be very wasteful to ask it for this JSON block anew every time we wanted to read one value from it. But, after awhile we do want to check again and make sure it's up-to-date. The wrapper handles this by remembering the entire JSON block, and checking how old it is every time you make a query (with some exceptions). If the remembered JSON is older than <code>refresh_rate</code> (a value in seconds), the wrapper discards the JSON block and queries it again. Otherwise, it reuses the old data (it's not THAT old).</p>
