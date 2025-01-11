@@ -11,5 +11,13 @@ nav:
   - Home: index.md
   - tutorials.md
   - How-To Guides: how-to-guides.md
-  - reference.md
+  - Reference:
+    - modules_ref/cocorum_main.md
+    - modules_ref/cocorum_chatapi.md
+    - modules_ref/cocorum_servicephp.md
+    - modules_ref/cocorum_uploadphp.md
+    - modules_ref/cocorum_scraping.md
+    - modules_ref/cocorum_jsonhandles.md
+    - modules_ref/cocorum_utils.md
+    - modules_ref/cocorum_static.md
   - explanation.md
