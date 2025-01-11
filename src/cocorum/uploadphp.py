@@ -67,7 +67,7 @@ class UploadPHP:
         #Primary and secondary video categories AKA site and media channels
         self.categories1 = {}
         self.categories2 = {}
-        self.get_categories()
+        self._get_categories()
 
         #Get list of channels we could use
         self.scraper = scraping.Scraper(self.servicephp)
@@ -77,7 +77,7 @@ class UploadPHP:
         self.__cur_upload_id = None
         self.__cur_num_chunks = None
 
-    def get_categories(self):
+    def _get_categories(self):
         """Load the primary and secondary categories from Rumble"""
         #TODO: We may be able to get this from an internal API at studio.rumble.com instead
         # See issue #13
@@ -155,7 +155,7 @@ class UploadPHP:
         print(f"ERROR: No channel match for {channel_id}, defaulting to None")
         return None
 
-    def chunked_vidfile_upload(self, file_path):
+    def _chunked_vidfile_upload(self, file_path):
         """Upload a video file to Rumble in chunks
 
     Args:
@@ -206,7 +206,7 @@ class UploadPHP:
         print("Merged to", merged_video_fn)
         return merged_video_fn
 
-    def unchunked_vidfile_upload(self, file_path):
+    def _unchunked_vidfile_upload(self, file_path):
         """Upload a video file to Rumble all at once
 
     Args:
@@ -233,7 +233,7 @@ class UploadPHP:
         print("Video file on server is", uploaded_fn)
         return uploaded_fn
 
-    def upload_cthumb(self, file_path):
+    def _upload_cthumb(self, file_path):
         """Upload a custom thumbnail for a video
 
     Args:
@@ -306,9 +306,9 @@ class UploadPHP:
         if self.__cur_file_size > static.Upload.chunksz:
             #Number of chunks we will need to do, rounded up
             self.__cur_num_chunks = self.__cur_file_size // static.Upload.chunksz + 1
-            server_filename = self.chunked_vidfile_upload(file_path)
+            server_filename = self._chunked_vidfile_upload(file_path)
         else:
-            server_filename = self.unchunked_vidfile_upload(file_path)
+            server_filename = self._unchunked_vidfile_upload(file_path)
 
         end_time = int(time.time() * 1000)
 
@@ -330,7 +330,7 @@ class UploadPHP:
         #Thumbnail is path string
         elif isinstance(thumbnail, str):
             assert os.path.exists(thumbnail), "Thumbnail was a str but is not a valid path"
-            thumbnail = self.upload_cthumb(thumbnail)
+            thumbnail = self._upload_cthumb(thumbnail)
 
         #Unknown
         else:

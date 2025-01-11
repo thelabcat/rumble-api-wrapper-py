@@ -33,6 +33,7 @@ Now, let's try to get the `latest_subscriber/amount_dollars` endpoint:
 ```
 if api.latest_subscriber:
     print(api.latest_subscriber, f"subscribed for ${api.latest_subscriber.amount_dollars}")
+## Should display your latest subscriber if you have one.
 ```
 
 Note: If there is no latest subscriber, this endpoint will be None, and NoneType has no attribute amount_dollars. I added the `if` statement in that code to avoid an AttributeError.
