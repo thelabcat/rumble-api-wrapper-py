@@ -265,7 +265,7 @@ class ChatAPIMessage(ChatAPIObj):
         #Set the channel ID of our user if we can
         if self.user:
             self.user._set_channel_id = self.channel_id
-        
+
         #Remember if we were deleted
         self.deleted = False
 
@@ -442,7 +442,7 @@ class ChatAPI():
         self.stream_id = utils.ensure_b36(stream_id)
 
         self.__mailbox = [] #A mailbox if you will
-        self.history = [] #Chat history
+        self.__history = [] #Chat history
         self.history_len = history_len #How many messages to store in history
         self.pinned_message = None #If a message is pinned, it is assigned to this
         self.users = {} #Dictionary of users by user ID
@@ -477,6 +477,11 @@ class ChatAPI():
         if self.servicephp:
             return self.servicephp.session_cookie
         return None
+
+    @property
+    def history(self):
+        """The chat history, trimmed to history_len"""
+        return tuple(self.__history)
 
     def send_message(self, text: str, channel_id: int = None):
         """Send a message in chat.
@@ -730,10 +735,10 @@ class ChatAPI():
             #Messages were deleted
             if jsondata["type"] in ("delete_messages", "delete_non_rant_messages"):
                 #Flag the messages in our history as being deleted
-                for message in self.history:
+                for message in self.__history:
                     if message.message_id in jsondata["data"]["message_ids"]:
                         message.deleted = True
-                    
+
 
             #Re-initialize (could contain new messages)
             elif jsondata["type"] == "init":
@@ -756,11 +761,10 @@ class ChatAPI():
                 print(jsondata)
 
         m = self.__mailbox.pop(0) #Get the oldest message in the mailbox
-        self.history.append(m) #Add the message to the history
-        
-        #Make sure the history is not too long
-        while len(self.history) > self.history_len: 
-            del self.history[0] #Delete the oldest message in the history
-        
+        self.__history.append(m) #Add the message to the history
+
+        #Make sure the history is not too long, clipping off the oldest messages
+        del self.__history[ : max((len(self.__history) - self.history_len, 0))]
+
         #Return the next message from the mailbox
         return m
