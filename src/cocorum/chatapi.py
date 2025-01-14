@@ -265,6 +265,9 @@ class ChatAPIMessage(ChatAPIObj):
         #Set the channel ID of our user if we can
         if self.user:
             self.user._set_channel_id = self.channel_id
+        
+        #Remember if we were deleted
+        self.deleted = False
 
     def __eq__(self, other):
         """Compare this chat message with another
@@ -421,7 +424,7 @@ class ChatAPIMessage(ChatAPIObj):
 
 class ChatAPI():
     """The Rumble internal chat API"""
-    def __init__(self, stream_id, username: str = None, password: str = None, session = None):
+    def __init__(self, stream_id, username: str = None, password: str = None, session = None, history_len = 1000):
         """The Rumble internal chat API
 
     Args:
@@ -432,12 +435,15 @@ class ChatAPI():
             Defaults to no login.
         session (str, dict): Session token or cookie dict to authenticate with.
             Defaults to getting new session with username and password.
+        history_len (int): Length of message history to store.
+            Defaults to 1000.
             """
 
         self.stream_id = utils.ensure_b36(stream_id)
 
         self.__mailbox = [] #A mailbox if you will
-        self.deleted_message_ids = [] #IDs of messages that were deleted, as reported by the client
+        self.history = [] #Chat history
+        self.history_len = history_len #How many messages to store in history
         self.pinned_message = None #If a message is pinned, it is assigned to this
         self.users = {} #Dictionary of users by user ID
         self.channels = {} #Dictionary of channels by channel ID
@@ -453,7 +459,7 @@ class ChatAPI():
         self.client = sseclient.SSEClient(response)
         self.event_generator = self.client.events()
         self.chat_running = True
-        self.parse_init_data(self.next_jsondata())
+        self.parse_init_data(self.__next_event_json())
 
         #If we have session login, use them
         if (username and password) or session:
@@ -611,7 +617,7 @@ class ChatAPI():
         assert record_id, "User was not in muted records"
         return self.servicephp.unmute_user(record_id)
 
-    def next_jsondata(self):
+    def __next_event_json(self):
         """Wait for the next event from the SSE and parse the JSON"""
         if not self.chat_running: #Do not try to query a new event if chat is closed
             print("Chat closed, cannot retrieve new JSON data.")
@@ -629,7 +635,7 @@ class ChatAPI():
         if not event.data: #Blank SSE event
             print("Blank SSE event:>", event, "<:")
             #Self recursion should work so long as we don't get dozens of blank events in a row
-            return self.next_jsondata()
+            return self.__next_event_json()
 
         return json.loads(event.data)
 
@@ -670,12 +676,6 @@ class ChatAPI():
     def clear_mailbox(self):
         """Delete anything in the mailbox"""
         self.__mailbox = []
-
-    def clear_deleted_message_ids(self):
-        """Clear and return the list of deleted message IDs"""
-        del_m = self.deleted_message_ids.copy()
-        self.deleted_message_ids = []
-        return del_m
 
     def update_users(self, jsondata):
         """Update our dictionary of users from an SSE data JSON
@@ -721,7 +721,7 @@ class ChatAPI():
         """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""
         #We don't already have messages
         while not self.__mailbox:
-            jsondata = self.next_jsondata()
+            jsondata = self.__next_event_json()
 
             #The chat has closed
             if not jsondata:
@@ -729,7 +729,11 @@ class ChatAPI():
 
             #Messages were deleted
             if jsondata["type"] in ("delete_messages", "delete_non_rant_messages"):
-                self.deleted_message_ids += jsondata["data"]["message_ids"]
+                #Flag the messages in our history as being deleted
+                for message in self.history:
+                    if message.message_id in jsondata["data"]["message_ids"]:
+                        message.deleted = True
+                    
 
             #Re-initialize (could contain new messages)
             elif jsondata["type"] == "init":
@@ -751,4 +755,12 @@ class ChatAPI():
                 print("API sent an unimplemented SSE event type")
                 print(jsondata)
 
-        return self.__mailbox.pop(0) #Return the first message in the mailbox, and then remove it from there
+        m = self.__mailbox.pop(0) #Get the oldest message in the mailbox
+        self.history.append(m) #Add the message to the history
+        
+        #Make sure the history is not too long
+        while len(self.history) > self.history_len: 
+            del self.history[0] #Delete the oldest message in the history
+        
+        #Return the next message from the mailbox
+        return m
