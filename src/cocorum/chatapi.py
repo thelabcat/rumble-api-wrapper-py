@@ -676,7 +676,7 @@ class ChatAPI():
         """
 
         #Add new messages
-        self.__mailbox += [ChatAPIMessage(message_json, self) for message_json in jsondata["data"]["messages"] if int(message_json["id"]) not in self.__mailbox]
+        self.__mailbox += [ChatAPIMessage(message_json, self) for message_json in jsondata["data"].get("messages", []) if int(message_json["id"]) not in self.__mailbox]
 
     def clear_mailbox(self):
         """Delete anything in the mailbox"""
@@ -689,7 +689,7 @@ class ChatAPI():
         jsondata (dict): A JSON data block from an SSE event.
         """
 
-        for user_json in jsondata["data"]["users"]:
+        for user_json in jsondata["data"].get("users", []):
             try:
                 self.users[int(user_json["id"])]._jsondata = user_json #Update an existing user's JSON
             except KeyError: #User is new
@@ -702,7 +702,7 @@ class ChatAPI():
         jsondata (dict): A JSON data block from an SSE event.
         """
 
-        for channel_json in jsondata["data"]["channels"]:
+        for channel_json in jsondata["data"].get("channels", []):
             try:
                 self.channels[int(channel_json["id"])]._jsondata = channel_json #Update an existing channel's JSON
             except KeyError: #Channel is new
