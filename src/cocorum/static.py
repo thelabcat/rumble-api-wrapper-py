@@ -30,6 +30,14 @@ class StaticAPIEndpoints:
         "created_on"
         ]
 
+    # #Endpoints of the subscriptions gift object
+    # gifted_subs = [
+    #     "total_gifts",
+    #     "gift_type",
+    #     "video_id",
+    #     "purchased_by",
+    #     ]
+
 class URI:
     """URIs to various Rumble services"""
 

@@ -218,7 +218,7 @@ class Livestream():
         #The livestream has not disappeared from the API listing,
         #the key requested is not a value that doesn't change,
         #and it has been api.refresh rate since the last time we refreshed
-        if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.main) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
+        if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.stream) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
             self.api.refresh()
 
         return self._jsondata[key]
@@ -469,6 +469,72 @@ class LiveChat():
         self.last_newrant_time = time.time()
         return rera[i:]
 
+class GiftedSub(JSONObj):
+    """A single gift containing one or more subscriptions"""
+#     def __init__(self, jsondata, api):
+#         """A single gift containing one or more subscriptions
+#
+#     Args:
+#         jsondata (dict): The JSON block for a single livestream.
+#         api (RumbleAPI): The Rumble Live Stream API wrapper that spawned us.
+#         """
+#
+#         self._jsondata = jsondata
+#         self.api = api
+#         self.is_disappeared = False #The gift is in the API listing
+#
+#
+#     def __getitem__(self, key):
+#         """Return a key from the JSON, refreshing if necessary
+#
+#     Args:
+#         key (str): A valid JSON key.
+#         """
+#
+#         #The gift has not disappeared from the API listing,
+#         #the key requested is not a value that doesn't change,
+#         #and it has been api.refresh rate since the last time we refreshed
+#         if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.gifted_subs) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
+#             self.api.refresh()
+#
+#         return self._jsondata[key]
+
+    @property
+    def total_gifts(self) -> int:
+        """The number of subscriptions in this gift"""
+        return self["total_gifts"]
+
+    @property
+    def gift_type(self) -> str:
+        """TODO"""
+        return self["gift_type"]
+
+    @property
+    def remaining_gifts(self) -> int:
+        """Subscriptions from the gift that have yet to apply to a user
+    WARNING: This is shallow! I have no way to reliably ID particular gifts to update the GiftedSub data."""
+        return self["remaining_gifts"]
+
+    @property
+    def video_id(self) -> int:
+        """The numeric ID of the stream this gift was sent on, in base 10"""
+        return self["video_id"]
+
+    @property
+    def video_id_b10(self) -> int:
+        """The numeric ID of the stream this gift was sent on, in base 10"""
+        return self.video_id
+
+    @property
+    def video_id_b36(self) -> str:
+        """The numeric ID of the stream this gift was sent on, in base 36"""
+        return utils.base_10_to_36(self.video_id)
+
+    @property
+    def purchased_by(self) -> str:
+        """The username of who purchased this gift"""
+        return self["purchased_by"]
+
 class RumbleAPI():
     """Rumble Live Stream API wrapper"""
     def __init__(self, api_url, refresh_rate = static.Delays.api_refresh_default):
@@ -484,6 +550,7 @@ class RumbleAPI():
         self.last_newfollower_time = time.time()
         self.last_newsubscriber_time = time.time()
         self.__livestreams = {}
+#        self.__gifted_subs = {}
         self._jsondata = {}
         self.api_url = api_url
 
@@ -673,3 +740,15 @@ class RumbleAPI():
         if not self.livestreams:
             return None #No livestreams are running
         return max(self.livestreams.values(), key = lambda x: x.created_on)
+
+    @property
+    def latest_gifted_sub(self):
+        """The latest subscriptions gift sent on the user or channel.
+    WARNING: This is shallow! I have no way to reliably ID particular gifts to update the GiftedSub data."""
+        return GiftedSub(self["latest_gifted_sub"])
+
+    @property
+    def recent_gifted_subs(self):
+        """The most recent subscriptions gifts sent on the user or channel.
+    WARNING: This is shallow! I have no way to reliably ID particular gifts to update the GiftedSub data."""
+        return [GiftedSub(jsondata) for jsondata in self["recent_gifted_subs"]]
