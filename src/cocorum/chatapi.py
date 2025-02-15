@@ -417,10 +417,16 @@ class ChatAPIMessage(ChatAPIObj):
     @property
     def raid_notification(self):
         """Are we a raid notification? Returns associated JSON data if yes, False if no"""
-        if "raid_notification" in self._jsondata:
-            return self["raid_notification"]
+        return self.get("raid_notification", False)
 
-        return False
+    @property
+    def gift_purchase_notification(self):
+        """Are we a gifted subs notification? Returns associated JSON data if yes, False if no
+
+    Returns:
+        Data (dict): {'gift_type': 'rumble', 'total_gifts': 1, 'creator_user_id': 123456789, 'creator_channel_id': None}"""
+
+        return self.get("gift_purchase_notification", False)
 
 class ChatAPI():
     """The Rumble internal chat API"""
