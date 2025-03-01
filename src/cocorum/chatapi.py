@@ -250,6 +250,79 @@ class ChatAPIUserBadge(ChatAPIObj):
 
         return self.__icon
 
+class GiftPurchaseNotification(ChatAPIObj):
+    """A subscription gift under a message"""
+    def __init__(self, jsondata, message):
+        """A subscription gift under a message
+
+    Args:
+        jsondata (dict): The JSON data block for the message.
+        message (ChatAPIMessage): The ChatAPI message object we are under
+        """
+
+        super().__init__(jsondata, message.chat)
+        self.message = message
+
+    @property
+    def total_gifts(self) -> int:
+        """The number of subscriptions in this gift"""
+        return self["total_gifts"]
+
+    @property
+    def gift_type(self) -> str:
+        """TODO"""
+        return self["gift_type"]
+
+    @property
+    def video_id(self) -> int:
+        """The numeric ID of the stream this gift was sent on, in base 10"""
+        return self.chat.stream_id_b10
+
+    @property
+    def video_id_b10(self) -> int:
+        """The numeric ID of the stream this gift was sent on, in base 10"""
+        return self.video_id
+
+    @property
+    def video_id_b36(self) -> str:
+        """The numeric ID of the stream this gift was sent on, in base 36"""
+        return utils.base_10_to_36(self.video_id)
+
+    @property
+    def purchased_by(self) -> str:
+        """The username of who purchased this gift"""
+        return self.message.user.username
+
+    @property
+    def creator_user_id(self) -> int:
+        """The numeric ID of the user whose stream this gift was given on, in base 10"""
+        return self["creator_user_id"]
+
+    @property
+    def creator_user_id_b10(self) -> int:
+        """The numeric ID of the user whose stream this gift was given on, in base 10"""
+        return self.creator_user_id
+
+    @property
+    def creator_user_id_b36(self) -> str:
+        """The numeric ID of the user whose stream this gift was given on, in base 36"""
+        return utils.base_10_to_36(self.creator_user_id)
+
+    @property
+    def creator_channel_id(self) -> int:
+        """The numeric ID of the channel whose stream this gift was given on, in base 10 (can be zero)"""
+        return self["creator_channel_id"] if self["creator_channel_id"] else 0
+
+    @property
+    def creator_channel_id_b10(self) -> int:
+        """The numeric ID of the channel whose stream this gift was given on, in base 10 (can be zero)"""
+        return self.creator_channel_id
+
+    @property
+    def creator_channel_id_b36(self) -> str:
+        """The numeric ID of the channel whose stream this gift was given on, in base 36 (can be zero)"""
+        return utils.base_10_to_36(self.creator_channel_id)
+
 class ChatAPIMessage(ChatAPIObj):
     """A single chat message in the internal chat API"""
     def __init__(self, jsondata, chat):
@@ -424,9 +497,12 @@ class ChatAPIMessage(ChatAPIObj):
         """Are we a gifted subs notification? Returns associated JSON data if yes, False if no
 
     Returns:
-        Data (dict): {'gift_type': 'rumble', 'total_gifts': 1, 'creator_user_id': 123456789, 'creator_channel_id': None}"""
+        Data (GiftPurchaseNotification | bool): A simple container for the data, or False"""
 
-        return self.get("gift_purchase_notification", False)
+        if self.get("gift_purchase_notification"):
+            return GiftPurchaseNotification(self["gift_purchase_notification"], self)
+
+        return False
 
 class ChatAPI():
     """The Rumble internal chat API"""
