@@ -42,7 +42,7 @@ class ChatAPIObj(JSONObj):
         JSONObj.__init__(self, jsondata)
         self.chat = chat
 
-class ChatAPIChatter(JSONUserAction, ChatAPIObj):
+class Chatter(JSONUserAction, ChatAPIObj):
     """A user or channel in the internal chat API (abstract)"""
     def __init__(self, jsondata, chat):
         """A user or channel in the internal chat API (abstract)
@@ -59,7 +59,7 @@ class ChatAPIChatter(JSONUserAction, ChatAPIObj):
         """The user's subpage of Rumble.com"""
         return self["link"]
 
-class ChatAPIUser(ChatAPIChatter):
+class User(Chatter):
     """User in the internal chat API"""
     def __init__(self, jsondata, chat):
         """A user in the internal chat API
@@ -69,7 +69,7 @@ class ChatAPIUser(ChatAPIChatter):
         chat (ChatAPI): The ChatAPI object that spawned us.
         """
 
-        ChatAPIChatter.__init__(self, jsondata, chat)
+        Chatter.__init__(self, jsondata, chat)
         self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
         self._set_channel_id = None #Channel ID set from message
 
@@ -140,7 +140,7 @@ class ChatAPIUser(ChatAPIChatter):
         except KeyError:
             return []
 
-class ChatAPIChannel(ChatAPIChatter):
+class Channel(Chatter):
     """A channel in the SSE chat"""
     def __init__(self, jsondata, chat):
         """A channel in the internal chat API
@@ -193,7 +193,7 @@ class ChatAPIChannel(ChatAPIChatter):
         """The numeric ID of the user of this channel in base 10"""
         return self.user.user_id_b10
 
-class ChatAPIUserBadge(ChatAPIObj):
+class UserBadge(ChatAPIObj):
     """A badge of a user"""
     def __init__(self, slug, jsondata, chat):
         """A user badge in the internal chat API
@@ -211,7 +211,7 @@ class ChatAPIUserBadge(ChatAPIObj):
         """Check if this badge is equal to another
 
     Args:
-        other (str, ChatAPIUserBadge): Object to compare to.
+        other (str, UserBadge): Object to compare to.
 
     Returns:
         Comparison (bool, None): Did it fit the criteria?
@@ -257,7 +257,7 @@ class GiftPurchaseNotification(ChatAPIObj):
 
     Args:
         jsondata (dict): The JSON data block for the message.
-        message (ChatAPIMessage): The ChatAPI message object we are under
+        message (Message): The ChatAPI message object we are under
         """
 
         super().__init__(jsondata, message.chat)
@@ -323,7 +323,7 @@ class GiftPurchaseNotification(ChatAPIObj):
         """The numeric ID of the channel whose stream this gift was given on, in base 36 (can be zero)"""
         return utils.base_10_to_36(self.creator_channel_id)
 
-class ChatAPIMessage(ChatAPIObj):
+class Message(ChatAPIObj):
     """A single chat message in the internal chat API"""
     def __init__(self, jsondata, chat):
         """A single chat message in the internal chat API
@@ -346,7 +346,7 @@ class ChatAPIMessage(ChatAPIObj):
         """Compare this chat message with another
 
     Args:
-        other (str, ChatAPIMessage): Object to compare to.
+        other (str, Message): Object to compare to.
 
     Returns:
         Comparison (bool, None): Did it fit the criteria?
@@ -575,7 +575,7 @@ class ChatAPI():
 
     Returns:
         ID (int): The ID of the sent message.
-        User (ChatAPIUser): Your current chat user information.
+        User (User): Your current chat user information.
         """
 
         assert self.session_cookie, "Not logged in, cannot send message"
@@ -604,7 +604,7 @@ class ChatAPI():
             print("Error: Sending message failed,", r, r.text)
             return
 
-        return int(r.json()["data"]["id"]), ChatAPIUser(r.json()["data"]["user"], self)
+        return int(r.json()["data"]["id"]), User(r.json()["data"]["user"], self)
 
     def command(self, command_message: str):
         """Send a native chat command
@@ -758,7 +758,7 @@ class ChatAPI():
         """
 
         #Add new messages
-        self.__mailbox += [ChatAPIMessage(message_json, self) for message_json in jsondata["data"].get("messages", []) if int(message_json["id"]) not in self.__mailbox]
+        self.__mailbox += [Message(message_json, self) for message_json in jsondata["data"].get("messages", []) if int(message_json["id"]) not in self.__mailbox]
 
     def clear_mailbox(self):
         """Delete anything in the mailbox"""
@@ -775,7 +775,7 @@ class ChatAPI():
             try:
                 self.users[int(user_json["id"])]._jsondata = user_json #Update an existing user's JSON
             except KeyError: #User is new
-                self.users[int(user_json["id"])] = ChatAPIUser(user_json, self)
+                self.users[int(user_json["id"])] = User(user_json, self)
 
     def update_channels(self, jsondata):
         """Update our dictionary of channels from an SSE data JSON
@@ -788,7 +788,7 @@ class ChatAPI():
             try:
                 self.channels[int(channel_json["id"])]._jsondata = channel_json #Update an existing channel's JSON
             except KeyError: #Channel is new
-                self.channels.update({int(channel_json["id"]) : ChatAPIChannel(channel_json, self)})
+                self.channels.update({int(channel_json["id"]) : Channel(channel_json, self)})
 
     def load_badges(self, jsondata):
         """Create our dictionary of badges from an SSE data JSON
@@ -797,7 +797,7 @@ class ChatAPI():
         jsondata (dict): A JSON data block from an SSE event.
         """
 
-        self.badges = {badge_slug : ChatAPIUserBadge(badge_slug, jsondata["data"]["config"]["badges"][badge_slug], self) for badge_slug in jsondata["data"]["config"]["badges"].keys()}
+        self.badges = {badge_slug : UserBadge(badge_slug, jsondata["data"]["config"]["badges"][badge_slug], self) for badge_slug in jsondata["data"]["config"]["badges"].keys()}
 
     @property
     def stream_id_b10(self):
@@ -828,7 +828,7 @@ class ChatAPI():
 
             #Pinned message
             elif jsondata["type"] == "pin_message":
-                self.pinned_message = ChatAPIMessage(jsondata["data"]["message"], self)
+                self.pinned_message = Message(jsondata["data"]["message"], self)
 
             #New messages
             elif jsondata["type"] == "messages":
