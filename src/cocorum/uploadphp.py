@@ -4,13 +4,13 @@ UploadPHP
 Interact with Rumble's Upload.PHP API to upload videos.
 S.D.G."""
 
-import json
 import mimetypes
 import os
 import random
 import time
 import bs4
 import requests
+import json5 as json
 from .jsonhandles import JSONObj
 from . import scraping
 from . import static

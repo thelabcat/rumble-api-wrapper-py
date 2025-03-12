@@ -19,9 +19,9 @@ while time.time() - start_time < 60 and (msg := chat.get_message()):
 ```
 S.D.G."""
 
-import json #For parsing SSE message data
 import time
 import requests
+import json5 as json #For parsing SSE message data
 import sseclient
 from .jsonhandles import JSONObj, JSONUserAction
 from .servicephp import ServicePHP
