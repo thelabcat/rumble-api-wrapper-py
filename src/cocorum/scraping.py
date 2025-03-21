@@ -698,3 +698,26 @@ class Scraper:
         """Get the playlists under the logged in user"""
         soup = self.soup_request(static.URI.playlists_page)
         return [HTMLPlaylist(elem, self) for elem in soup.find_all("div", attrs = {"class" : "playlist"})]
+
+    def get_categories(self):
+        """Load the primary and secondary upload categories from Rumble
+
+        Returns:
+            categories1 (dict): The primary categories, name : numeric ID
+            categories2 (dict): The secondary categories, name : numeric ID"""
+
+        #TODO: We may be able to get this from an internal API at studio.rumble.com instead
+        # See issue #13
+
+        print("Loading categories")
+        soup = self.soup_request(static.URI.uploadphp)
+
+        options_box1 = soup.find("input", attrs = {"id" : "category_primary"}).parent
+        options_elems1 = options_box1.find_all("div", attrs = {"class" : "select-option"})
+        categories1 = {e.string.strip() : int(e.attrs["data-value"]) for e in options_elems1}
+
+        options_box2 = soup.find("input", attrs = {"id" : "category_secondary"}).parent
+        options_elems2 = options_box2.find_all("div", attrs = {"class" : "select-option"})
+        categories2 = {e.string.strip() : int(e.attrs["data-value"]) for e in options_elems2}
+
+        return categories1, categories2

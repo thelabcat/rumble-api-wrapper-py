@@ -8,7 +8,6 @@ import mimetypes
 import os
 import random
 import time
-import bs4
 import requests
 import json5 as json
 from .jsonhandles import JSONObj
@@ -64,37 +63,18 @@ class UploadPHP:
 
         self.servicephp = servicephp
 
-        #Primary and secondary video categories AKA site and media channels
-        self.categories1 = {}
-        self.categories2 = {}
-        self._get_categories()
+        #Create a scraper to get some extra data we need
+        self.scraper = scraping.Scraper(self.servicephp)
 
         #Get list of channels we could use
-        self.scraper = scraping.Scraper(self.servicephp)
         self.channels = self.scraper.get_channels()
+
+        #Primary and secondary video categories AKA site and media channels
+        self.categories1, self.categories2 = self.scraper.get_categories()
 
         self.__cur_file_size = None
         self.__cur_upload_id = None
         self.__cur_num_chunks = None
-
-    def _get_categories(self):
-        """Load the primary and secondary categories from Rumble"""
-        #TODO: We may be able to get this from an internal API at studio.rumble.com instead
-        # See issue #13
-
-        print("Loading categories")
-        r = self.uphp_request({}, method = "GET")
-        soup = bs4.BeautifulSoup(r.text, features = "html.parser")
-
-        options_box1 = soup.find("input", attrs = {"id" : "category_primary"}).parent
-        options_elems1 = options_box1.find_all("div", attrs = {"class" : "select-option"})
-        self.categories1 = {e.string.strip() : int(e.attrs["data-value"]) for e in options_elems1}
-
-        options_box2 = soup.find("input", attrs = {"id" : "category_secondary"}).parent
-        options_elems2 = options_box2.find_all("div", attrs = {"class" : "select-option"})
-        self.categories2 = {e.string.strip() : int(e.attrs["data-value"]) for e in options_elems2}
-
-        return self.categories1, self.categories2
 
     @property
     def session_cookie(self):
