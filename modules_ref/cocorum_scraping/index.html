@@ -1126,6 +1126,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cocorum.scraping.Scraper.get_categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_categories
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cocorum.scraping.Scraper.get_channels" class="md-nav__link">
     <span class="md-ellipsis">
       get_channels
@@ -2040,6 +2049,15 @@
   <a href="#cocorum.scraping.Scraper.__init__" class="md-nav__link">
     <span class="md-ellipsis">
       __init__
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cocorum.scraping.Scraper.get_categories" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_categories
     </span>
   </a>
   
@@ -6064,7 +6082,30 @@ S.D.G.</p>
 <span class="normal">697</span>
 <span class="normal">698</span>
 <span class="normal">699</span>
-<span class="normal">700</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Scraper</span><span class="p">:</span>
+<span class="normal">700</span>
+<span class="normal">701</span>
+<span class="normal">702</span>
+<span class="normal">703</span>
+<span class="normal">704</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span>
+<span class="normal">720</span>
+<span class="normal">721</span>
+<span class="normal">722</span>
+<span class="normal">723</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Scraper</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Scraper for general information&quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">servicephp</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Scraper for general information.</span>
@@ -6222,6 +6263,29 @@ S.D.G.</p>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Get the playlists under the logged in user&quot;&quot;&quot;</span>
         <span class="n">soup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup_request</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">playlists_page</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">[</span><span class="n">HTMLPlaylist</span><span class="p">(</span><span class="n">elem</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">soup</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;playlist&quot;</span><span class="p">})]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the primary and secondary upload categories from Rumble</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            categories1 (dict): The primary categories, name : numeric ID</span>
+<span class="sd">            categories2 (dict): The secondary categories, name : numeric ID&quot;&quot;&quot;</span>
+
+        <span class="c1">#TODO: We may be able to get this from an internal API at studio.rumble.com instead</span>
+        <span class="c1"># See issue #13</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading categories&quot;</span><span class="p">)</span>
+        <span class="n">soup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup_request</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">uploadphp</span><span class="p">)</span>
+
+        <span class="n">options_box1</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span> <span class="p">:</span> <span class="s2">&quot;category_primary&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">options_elems1</span> <span class="o">=</span> <span class="n">options_box1</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;select-option&quot;</span><span class="p">})</span>
+        <span class="n">categories1</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;data-value&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">options_elems1</span><span class="p">}</span>
+
+        <span class="n">options_box2</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span> <span class="p">:</span> <span class="s2">&quot;category_secondary&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">parent</span>
+        <span class="n">options_elems2</span> <span class="o">=</span> <span class="n">options_box2</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;select-option&quot;</span><span class="p">})</span>
+        <span class="n">categories2</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;data-value&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">options_elems2</span><span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">categories1</span><span class="p">,</span> <span class="n">categories2</span>
 </code></pre></div></td></tr></table></div>
               </details>
 
@@ -6340,6 +6404,103 @@ S.D.G.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">servicephp</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="cocorum.scraping.Scraper.get_categories" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_categories</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Load the primary and secondary upload categories from Rumble</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>categories1</code></td>            <td>
+                  <code>dict</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The primary categories, name : numeric ID</p>
+              </div>
+            </td>
+          </tr>
+          <tr class="doc-section-item">
+<td><code>categories2</code></td>            <td>
+                  <code>dict</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>The secondary categories, name : numeric ID</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
+            <details class="quote">
+              <summary>Source code in <code>cocorum/scraping.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">702</span>
+<span class="normal">703</span>
+<span class="normal">704</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span>
+<span class="normal">720</span>
+<span class="normal">721</span>
+<span class="normal">722</span>
+<span class="normal">723</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the primary and secondary upload categories from Rumble</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        categories1 (dict): The primary categories, name : numeric ID</span>
+<span class="sd">        categories2 (dict): The secondary categories, name : numeric ID&quot;&quot;&quot;</span>
+
+    <span class="c1">#TODO: We may be able to get this from an internal API at studio.rumble.com instead</span>
+    <span class="c1"># See issue #13</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading categories&quot;</span><span class="p">)</span>
+    <span class="n">soup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">soup_request</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">uploadphp</span><span class="p">)</span>
+
+    <span class="n">options_box1</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span> <span class="p">:</span> <span class="s2">&quot;category_primary&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">options_elems1</span> <span class="o">=</span> <span class="n">options_box1</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;select-option&quot;</span><span class="p">})</span>
+    <span class="n">categories1</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;data-value&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">options_elems1</span><span class="p">}</span>
+
+    <span class="n">options_box2</span> <span class="o">=</span> <span class="n">soup</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;id&quot;</span> <span class="p">:</span> <span class="s2">&quot;category_secondary&quot;</span><span class="p">})</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">options_elems2</span> <span class="o">=</span> <span class="n">options_box2</span><span class="o">.</span><span class="n">find_all</span><span class="p">(</span><span class="s2">&quot;div&quot;</span><span class="p">,</span> <span class="n">attrs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;class&quot;</span> <span class="p">:</span> <span class="s2">&quot;select-option&quot;</span><span class="p">})</span>
+    <span class="n">categories2</span> <span class="o">=</span> <span class="p">{</span><span class="n">e</span><span class="o">.</span><span class="n">string</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">e</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;data-value&quot;</span><span class="p">])</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">options_elems2</span><span class="p">}</span>
+
+    <span class="k">return</span> <span class="n">categories1</span><span class="p">,</span> <span class="n">categories2</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
