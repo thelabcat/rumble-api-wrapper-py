@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Scraping for Cocorum
 
-Classes and utilities for extracting data from HTML, including that returned by the API.
+Classes and utilities for extracting data from HTML, including that returned by
+the API.
 S.D.G."""
 
 import requests
@@ -9,8 +10,10 @@ import bs4
 from . import static
 from . import utils
 
+
 class HTMLObj:
     """Abstract object scraped from bs4 HTML"""
+
     def __init__(self, elem):
         """Abstract object scraped from bs4 HTML
 
@@ -29,8 +32,10 @@ class HTMLObj:
 
         return self._elem.attrs[key]
 
+
 class HTMLUserBadge(HTMLObj):
     """A user badge as extracted from a bs4 HTML element"""
+
     def __init__(self, elem):
         """A user badge as extracted from a bs4 HTML element.
 
@@ -52,11 +57,11 @@ class HTMLUserBadge(HTMLObj):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check if the string is either our slug or our label in any language
+        # Check if the string is either our slug or our label in any language
         if isinstance(other, str):
             return other in (self.slug, self.label.values())
 
-        #Check if the compared object has the same slug, if it has one
+        # Check if the compared object has the same slug, if it has one
         if hasattr(other, "slug"):
             return self.slug == other.slug
 
@@ -66,7 +71,8 @@ class HTMLUserBadge(HTMLObj):
 
     @property
     def label(self):
-        """The string label of the badge in whatever language the Service.PHP agent used"""
+        """The string label of the badge in whatever language the Service.PHP
+        agent used"""
         return self["title"]
 
     @property
@@ -77,8 +83,8 @@ class HTMLUserBadge(HTMLObj):
     @property
     def icon(self):
         """The badge's icon as a bytestring"""
-        if not self.__icon: #We never queried the icon before
-            #TODO make the timeout configurable
+        if not self.__icon:  # We never queried the icon before
+            # TODO make the timeout configurable
             response = requests.get(self.icon_url, timeout = static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 
@@ -86,8 +92,10 @@ class HTMLUserBadge(HTMLObj):
 
         return self.__icon
 
+
 class HTMLComment(HTMLObj):
     """A comment on a video as returned by service.php comment.list"""
+
     def __init__(self, elem):
         """A comment on a video as returned by service.php comment.list
 
@@ -97,9 +105,10 @@ class HTMLComment(HTMLObj):
 
         super().__init__(elem)
 
-        #Badges of the user who commented if we have them
-        badges_unkeyed = (HTMLUserBadge(badge_elem) for badge_elem in self._elem.find_all("li", attrs = {"class" : "comments-meta-user-badge"}))
-        self.user_badges = {badge.slug : badge for badge in badges_unkeyed}
+        # Badges of the user who commented if we have them
+        badges_unkeyed = (HTMLUserBadge(badge_elem) for badge_elem in self._elem.find_all("li", attrs={"class": "comments-meta-user-badge"}))
+
+        self.user_badges = {badge.slug: badge for badge in badges_unkeyed}
 
     def __int__(self):
         """The comment in integer form (its ID)"""
@@ -119,17 +128,17 @@ class HTMLComment(HTMLObj):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check for direct matches first
+        # Check for direct matches first
         if isinstance(other, int):
             return self.comment_id_b10 == other
         if isinstance(other, str):
             return str(self) == other
 
-        #Check for object attributes to match to
+        # Check for object attributes to match to
         if hasattr(other, "comment_id"):
             return self.comment_id_b10 == utils.ensure_b10(other.comment_id)
 
-        #Check conversion to integer last
+        # Check conversion to integer last
         if hasattr(other, "__int__"):
             return self.comment_id_b10 == int(other)
 
@@ -156,7 +165,7 @@ class HTMLComment(HTMLObj):
     @property
     def text(self):
         """The text of the comment"""
-        return self._elem.find("p", attrs = {"class" : "comment-text"}).string
+        return self._elem.find("p", attrs={"class": "comment-text"}).string
 
     @property
     def username(self):
@@ -185,13 +194,15 @@ class HTMLComment(HTMLObj):
 
     @property
     def actions(self):
-        """Allowed actions on this comment based on the login used to retrieve it"""
+        """Allowed actions on this comment based on the login used to retrieve
+        it"""
         return self["data-actions"].split(",")
 
     @property
     def rumbles(self):
         """The votes on this comment"""
-        return HTMLContentVotes(self._elem.find("div", attrs = {"class" : "rumbles-vote"}))
+        return HTMLContentVotes(self._elem.find("div", attrs={"class": "rumbles-vote"}))
+
 
 class HTMLContentVotes(HTMLObj):
     """Votes made on content"""
@@ -202,7 +213,7 @@ class HTMLContentVotes(HTMLObj):
 
     def __str__(self):
         """The string form of the content votes"""
-        #return self.score_formatted
+        # return self.score_formatted
         return str(self.score)
 
     def __eq__(self, other):
@@ -215,26 +226,26 @@ class HTMLContentVotes(HTMLObj):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check for direct matches first
+        # Check for direct matches first
         if isinstance(other, int):
             return self.score == other
         if isinstance(other, str):
             return str(self) == other
 
-        #Check for object attributes to match to
+        # Check for object attributes to match to
         if hasattr(other, "score"):
-            #if hasattr(other, "content_id") and hasattr(other, "content_type"):
+            # if hasattr(other, "content_id") and hasattr(other, "content_type"):
             #    return self.score, self.content_id, self.content_type == other.score, other.content_id, other.content_type
             return self.score == other.score
 
-        #Check conversion to integer last
+        # Check conversion to integer last
         if hasattr(other, "__int__"):
             return self.score == int(other)
 
     @property
     def score(self):
         """Summed score of the content"""
-        return int(self._elem.find("span", attrs = {"class" : "rumbles-count"}).string)
+        return int(self._elem.find("span", attrs={"class": "rumbles-count"}).string)
 
     @property
     def content_type(self):
@@ -246,8 +257,10 @@ class HTMLContentVotes(HTMLObj):
         """The numerical ID of the content being voted on"""
         return int(self["data-id"])
 
+
 class HTMLPlaylist(HTMLObj):
     """A playlist as obtained from HTML data"""
+
     def __init__(self, elem, scraper):
         """A playlist as obtained from HTML data.
 
@@ -258,13 +271,13 @@ class HTMLPlaylist(HTMLObj):
 
         super().__init__(elem)
 
-        #The Scraper object that created this one
+        # The Scraper object that created this one
         self.scraper = scraper
 
-        #The binary data of our thumbnail
+        # The binary data of our thumbnail
         self.__thumbnail = None
 
-        #The loaded page of the playlist
+        # The loaded page of the playlist
         self.__pagesoup = None
 
     def __int__(self):
@@ -285,17 +298,17 @@ class HTMLPlaylist(HTMLObj):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check for direct matches first
+        # Check for direct matches first
         if isinstance(other, int):
             return self.playlist_id_b10 == other
         if isinstance(other, str):
             return str(other) == self.playlist_id_b36
 
-        #Check for object attributes to match to
+        # Check for object attributes to match to
         if hasattr(other, "playlist_id"):
             return self.playlist_id_b10 == utils.ensure_b10(other.playlist_id)
 
-        #Check conversion to integer last, in case another ID or something happens to match
+        # Check conversion to integer last, in case another ID or something happens to match
         if hasattr(other, "__int__"):
             return self.playlist_id_b10 == int(other)
 
@@ -310,13 +323,13 @@ class HTMLPlaylist(HTMLObj):
     @property
     def thumbnail_url(self):
         """The url of the playlist's thumbnail image"""
-        return self._elem.find("img", attrs = {"class" : "thumbnail__image"}).get("src")
+        return self._elem.find("img", attrs={"class": "thumbnail__image"}).get("src")
 
     @property
     def thumbnail(self):
         """The playlist thumbnail as a binary string"""
-        if not self.__thumbnail: #We never queried the thumbnail before
-            response = requests.get(self.thumbnail_url, timeout = static.Delays.request_timeout)
+        if not self.__thumbnail:  # We never queried the thumbnail before
+            response = requests.get(self.thumbnail_url, timeout=static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 
             self.__thumbnail = response.content
@@ -326,7 +339,7 @@ class HTMLPlaylist(HTMLObj):
     @property
     def _url_raw(self):
         """The URL of the playlist page (without Rumble base URL)"""
-        return self._elem.find("a", attrs = {"class" : "playlist__name link"}).get("href")
+        return self._elem.find("a", attrs={"class": "playlist__name link"}).get("href")
 
     @property
     def url(self):
@@ -351,7 +364,7 @@ class HTMLPlaylist(HTMLObj):
     @property
     def _channel_url_raw(self):
         """The URL of the channel the playlist under (without base URL)"""
-        return self._elem.find("a", attrs = {"class" : "channel__link link"}).get("href")
+        return self._elem.find("a", attrs={"class": "channel__link link"}).get("href")
 
     @property
     def channel_url(self):
@@ -366,23 +379,24 @@ class HTMLPlaylist(HTMLObj):
     @property
     def title(self):
         """The title of the playlist"""
-        return self._pagesoup.find("h1", attrs = {"class" : "playlist-control-panel__playlist-name"}).string.strip()
+        return self._pagesoup.find("h1", attrs={"class": "playlist-control-panel__playlist-name"}).string.strip()
 
     @property
     def description(self):
         """The description of the playlist"""
-        return self._pagesoup.find("div", attrs = {"class" : "playlist-control-panel__description"}).string.strip()
+        return self._pagesoup.find("div", attrs={"class": "playlist-control-panel__description"}).string.strip()
 
     @property
     def visibility(self):
         """The visibility of the playlist"""
-        return self._pagesoup.find("span", attrs = {"class" : "playlist-control-panel__visibility-state"}).string.strip().lower()
+        return self._pagesoup.find("span", attrs={"class": "playlist-control-panel__visibility-state"}).string.strip().lower()
 
     @property
     def num_items(self):
         """The number of items in the playlist"""
-        #This is doable but I just don't care right now
+        # This is doable but I just don't care right now
         NotImplemented
+
 
 class HTMLChannel(HTMLObj):
     """Channel under a user as extracted from their channels page"""
@@ -405,19 +419,19 @@ class HTMLChannel(HTMLObj):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check for direct matches first
+        # Check for direct matches first
         if isinstance(other, int):
             return self.channel_id_b10 == other
         if isinstance(other, str):
             return str(other) in (self.slug, self.channel_id_b36)
 
-        #Check for object attributes to match to
+        # Check for object attributes to match to
         if hasattr(other, "channel_id"):
             return self.channel_id_b10 == utils.ensure_b10(other.channel_id)
         if hasattr(other, "slug"):
             return self.slug == other.slug
 
-        #Check conversion to integer last, in case an ID or something happens to match but the other is not actually a channel
+        # Check conversion to integer last, in case an ID or something happens to match but the other is not actually a channel
         if hasattr(other, "__int__"):
             return self.channel_id_b10 == int(other)
 
@@ -446,8 +460,10 @@ class HTMLChannel(HTMLObj):
         """The title of the channel"""
         return self["data-title"]
 
+
 class HTMLVideo(HTMLObj):
     """Video on a user or channel page as extracted from the page's HTML"""
+
     def __init__(self, elem):
         """Video on a user or channel page as extracted from the page's HTML.
 
@@ -457,7 +473,7 @@ class HTMLVideo(HTMLObj):
 
         super().__init__(elem)
 
-        #The binary data of our thumbnail
+        # The binary data of our thumbnail
         self.__thumbnail = None
 
     def __int__(self):
@@ -478,19 +494,20 @@ class HTMLVideo(HTMLObj):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check for direct matches first
+        # Check for direct matches first
         if isinstance(other, int):
             return self.video_id_b10 == other
         if isinstance(other, str):
             return str(other) == self.video_id_b36
 
-        #Check for object attributes to match to
+        # Check for object attributes to match to
         if hasattr(other, "video_id"):
             return self.video_id_b10 == utils.ensure_b10(other.video_id)
         if hasattr(other, "stream_id"):
             return self.video_id_b10 == utils.ensure_b10(other.stream_id)
 
-        #Check conversion to integer last, in case another ID or something happens to match
+        # Check conversion to integer last, in case another ID or something
+        # happens to match
         if hasattr(other, "__int__"):
             return self.video_id_b10 == int(other)
 
@@ -512,13 +529,13 @@ class HTMLVideo(HTMLObj):
     @property
     def thumbnail_url(self):
         """The URL of the video's thumbnail image"""
-        return self._elem.find("img", attrs = {"class" : "thumbnail__image"}).get("src")
+        return self._elem.find("img", attrs={"class": "thumbnail__image"}).get("src")
 
     @property
     def thumbnail(self):
         """The video thumbnail as a binary string"""
-        if not self.__thumbnail: #We never queried the thumbnail before
-            response = requests.get(self.thumbnail_url, timeout = static.Delays.request_timeout)
+        if not self.__thumbnail:  # We never queried the thumbnail before
+            response = requests.get(self.thumbnail_url, timeout=static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 
             self.__thumbnail = response.content
@@ -528,20 +545,22 @@ class HTMLVideo(HTMLObj):
     @property
     def video_url(self):
         """The URL of the video's viewing page"""
-        return static.URI.rumble_base + self._elem.find("a", attrs = {"class" : "videostream__link link"}).get("href")
+        return static.URI.rumble_base + self._elem.find("a", attrs={"class": "videostream__link link"}).get("href")
 
     @property
     def title(self):
         """The title of the video"""
-        return self._elem.find("h3", attrs = {"class" : "thumbnail__title"}).get("title")
+        return self._elem.find("h3", attrs={"class": "thumbnail__title"}).get("title")
 
     @property
     def upload_date(self):
         """The time that the video was uploaded, in seconds since epoch"""
-        return utils.parse_timestamp(self._elem.find("time", attrs = {"class" : "videostream__data--subitem videostream__time"}).get("datetime"))
+        return utils.parse_timestamp(self._elem.find("time", attrs={"class": "videostream__data--subitem videostream__time"}).get("datetime"))
+
 
 class Scraper:
     """Scraper for general information"""
+
     def __init__(self, servicephp):
         """Scraper for general information.
 
@@ -561,11 +580,14 @@ class Scraper:
         """Our username"""
         return self.servicephp.username
 
-    def soup_request(self, url: str):
-        """Make a GET request to a URL, and return HTML beautiful soup for scraping.
+    def soup_request(self, url: str, allow_soft_404: bool = False):
+        """Make a GET request to a URL, and return HTML beautiful soup for
+        scraping.
 
     Args:
         url (str): The URL to query.
+        allow_soft_404 (bool): Treat a 404 as a success if text is returned.
+            Defaults to False
 
     Returns:
         Soup (bs4.BeautifulSoup): The webpage at the URL, logged-in version.
@@ -573,13 +595,15 @@ class Scraper:
 
         r = requests.get(
             url,
-            cookies = self.session_cookie,
-            timeout = static.Delays.request_timeout,
-            headers = static.RequestHeaders.user_agent,
+            cookies=self.session_cookie,
+            timeout=static.Delays.request_timeout,
+            headers=static.RequestHeaders.user_agent,
             )
 
-        assert r.status_code == 200, f"Fetching page {url} failed: {r}\n{r.text}"
-        return bs4.BeautifulSoup(r.text, features = "html.parser")
+        assert r.status_code == 200 or (allow_soft_404 and r.status_code == 404 and r.text), \
+            f"Fetching page {url} failed: {r}\n{r.text}"
+
+        return bs4.BeautifulSoup(r.text, features="html.parser")
 
     def get_muted_user_record(self, username: str = None):
         """Get the record IDs for mutes.
@@ -589,41 +613,42 @@ class Scraper:
             Defaults to None.
 
     Returns:
-        Record (int, dict): Either the single user's mute record ID, or a dict of all username:mute record ID pairs.
+        Record (int, dict): Either the single user's mute record ID, or a dict
+            of all username:mute record ID pairs.
         """
 
-        #The page we are on
+        # The page we are on
         pagenum = 1
 
-        #username : record ID
+        # username : record ID
         record_ids = {}
 
-        #While there are more pages
+        # While there are more pages
         while True:
-            #Get the next page of mutes and search for mute buttons
-            soup = self.soup_request(static.URI.mutes_page.format(page = pagenum))
-            elems = soup.find_all("button", attrs = {"class" : "unmute_action button-small"})
+            # Get the next page of mutes and search for mute buttons
+            soup = self.soup_request(static.URI.mutes_page.format(page=pagenum))
+            elems = soup.find_all("button", attrs={"class": "unmute_action button-small"})
 
-            #We reached the last page
+            # We reached the last page
             if not elems:
                 break
 
-            #Get the record IDs per username from each button
+            # Get the record IDs per username from each button
             for e in elems:
-                #We were searching for a specific username and found it
+                # We were searching for a specific username and found it
                 if username and e.attrs["data-username"] == username:
                     return e.attrs["data-record-id"]
 
                 record_ids[e.attrs["data-username"]] = int(e.attrs["data-record-id"])
 
-            #Turn the page
-            pagenum +=1
+            # Turn the page
+            pagenum += 1
 
-        #Only return record IDs if we weren't searching for a particular one
+        # Only return record IDs if we weren't searching for a particular one
         if not username:
             return record_ids
 
-        #We were searching for a user and did not find them
+        # We were searching for a user and did not find them
         return None
 
     def get_channels(self, username: str = None):
@@ -640,12 +665,12 @@ class Scraper:
         if not username:
             username = self.username
 
-        #Get the page of channels and parse for them
-        soup = self.soup_request(static.URI.channels_page.format(username = username))
-        elems = soup.find_all("div", attrs = {"data-type" : "channel"})
+        # Get the page of channels and parse for them
+        soup = self.soup_request(static.URI.channels_page.format(username=username))
+        elems = soup.find_all("div", attrs={"data-type": "channel"})
         return [HTMLChannel(e) for e in elems]
 
-    def get_videos(self, username = None, is_channel = False, max_num = None):
+    def get_videos(self, username=None, is_channel=False, max_num=None):
         """Get the videos under a user or channel.
 
     Args:
@@ -653,7 +678,8 @@ class Scraper:
             Defaults to ourselves.
         is_channel (bool): Is this a channel instead of a userpage?
             Defaults to False.
-        max_num (int): The maximum number of videos to retrieve, starting from the newest.
+        max_num (int): The maximum number of videos to retrieve, starting from
+            the newest.
             Defaults to None, return all videos.
             Note, rounded up to the nearest page.
 
@@ -661,35 +687,35 @@ class Scraper:
         Videos (list): List of HTMLVideo objects.
         """
 
-        #default to the logged-in username
+        # default to the logged-in username
         if not username:
             username = self.username
 
-        #If this is a channel username, we will need a slightly different URL
+        # If this is a channel username, we will need a slightly different URL
         uc = ("user", "c")[is_channel]
 
-        #The base userpage URL currently has all their videos / livestreams on it
+        # The base userpage URL currently has all their videos / livestreams on it
         url_start = f"{static.URI.rumble_base}/{uc}/{username}"
 
-        #Start the loop with:
-        #- no videos found yet
-        #- the assumption that there will be new video elements
-        #- a current page number of 1
+        # Start the loop with:
+        # no videos found yet
+        # the assumption that there will be new video elements
+        # a current page number of 1
         videos = []
         new_video_elems = True
         pagenum = 1
         while new_video_elems and (not max_num or len(videos) < max_num):
-            #Get the next page of videos
-            soup = self.soup_request(f"{url_start}?page={pagenum}")
+            # Get the next page of videos
+            soup = self.soup_request(f"{url_start}?page={pagenum}", allow_soft_404=True)
 
-            #Search for video listings
-            new_video_elems = soup.find_all("div", attrs = {"class" : "videostream thumbnail__grid--item"})
+            # Search for video listings
+            new_video_elems = soup.find_all("div", attrs={"class": "videostream thumbnail__grid--item"})
 
-            #We found some video listings
+            # We found some video listings
             if new_video_elems:
                 videos += [HTMLVideo(e) for e in new_video_elems]
 
-            #Turn the page
+            # Turn the page
             pagenum += 1
 
         return videos
@@ -697,7 +723,7 @@ class Scraper:
     def get_playlists(self):
         """Get the playlists under the logged in user"""
         soup = self.soup_request(static.URI.playlists_page)
-        return [HTMLPlaylist(elem, self) for elem in soup.find_all("div", attrs = {"class" : "playlist"})]
+        return [HTMLPlaylist(elem, self) for elem in soup.find_all("div", attrs={"class": "playlist"})]
 
     def get_categories(self):
         """Load the primary and secondary upload categories from Rumble
@@ -712,12 +738,12 @@ class Scraper:
         print("Loading categories")
         soup = self.soup_request(static.URI.uploadphp)
 
-        options_box1 = soup.find("input", attrs = {"id" : "category_primary"}).parent
-        options_elems1 = options_box1.find_all("div", attrs = {"class" : "select-option"})
+        options_box1 = soup.find("input", attrs={"id": "category_primary"}).parent
+        options_elems1 = options_box1.find_all("div", attrs={"class": "select-option"})
         categories1 = {e.string.strip() : int(e.attrs["data-value"]) for e in options_elems1}
 
-        options_box2 = soup.find("input", attrs = {"id" : "category_secondary"}).parent
-        options_elems2 = options_box2.find_all("div", attrs = {"class" : "select-option"})
-        categories2 = {e.string.strip() : int(e.attrs["data-value"]) for e in options_elems2}
+        options_box2 = soup.find("input", attrs={"id": "category_secondary"}).parent
+        options_elems2 = options_box2.find_all("div", attrs={"class": "select-option"})
+        categories2 = {e.string.strip(): int(e.attrs["data-value"]) for e in options_elems2}
 
         return categories1, categories2
