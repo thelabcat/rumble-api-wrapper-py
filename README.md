@@ -1,4 +1,4 @@
-<h1><img src="https://raw.githubusercontent.com/thelabcat/rumble-api-wrapper-py/main/src/docs/assets/cocorum_icon.png" alt="" width="64"/> Cocorum: Rumble Live Stream API Python Wrapper</h1>
+<h1><img src="https://raw.githubusercontent.com/thelabcat/cocorum/main/src/docs/assets/cocorum_icon.png" alt="" width="64"/> Cocorum: Rumble Live Stream API Python Wrapper</h1>
 
 A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality of life additions, such as:
 
@@ -7,11 +7,11 @@ A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality o
 - Chat has new_messages and new_rants properties that return only messages and rants since the last time they were read.
 
 ## Installation:
-You can find [this project on PyPi.org](https://pypi.org/project/cocorum/), and install it using any PyPi-compatible method (including Pip). Alternatively, you can view and download [the source code on GitHub](https://github.com/thelabcat/rumble-api-wrapper-py).
+You can find [this project on PyPi.org](https://pypi.org/project/cocorum/), and install it using any PyPi-compatible method (including Pip). Alternatively, you can view and download [the source code on GitHub](https://github.com/thelabcat/cocorum).
 
 ## Usage:
 
-I recommend taking a gander at [the full documentation](https://thelabcat.github.io/rumble-api-wrapper-py/), but here's a basic intro:
+I recommend taking a gander at [the full documentation](https://thelabcat.github.io/cocorum/), but here's a basic intro:
 
 For the most part, attributes that are not added features have the same name as the direct JSON counterparts, with the exception of adding prefixes to some things that have the same name in the JSON as Python builtin functions. For example, thing/id in JSON is thing.thing_id in this Python wrapper.
 
