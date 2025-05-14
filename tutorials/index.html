@@ -629,7 +629,7 @@ start_time = time.time()
 while time.time() - start_time &lt; 60 and (msg := chat.get_message()):
     print(msg.user.username, &quot;said&quot;, msg)
 </code></pre>
-<p>A note about this. <code>ChatAPI().get_message()</code> will always wait for an additional message, even after the time runs out. I've also had trouble getting the chat to close properly once the stream ends, or staying open if it is inactive for several minutes. See <a href="https://github.com/thelabcat/rumble-api-wrapper-py/issues/5">GitHub issue #5</a> for more info on this.</p>
+<p>A note about this. <code>ChatAPI().get_message()</code> will always wait for an additional message, even after the time runs out. I've also had trouble getting the chat to close properly once the stream ends, or staying open if it is inactive for several minutes. See <a href="https://github.com/thelabcat/cocorum/issues/5">GitHub issue #5</a> for more info on this.</p>
 
 
 
