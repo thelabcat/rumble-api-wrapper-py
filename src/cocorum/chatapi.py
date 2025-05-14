@@ -1,22 +1,18 @@
 #!/usr/bin/env python3
 """Internal chat API client
 
-This part of cocorum is not part of the official Rumble Live Stream API, but may provide a more reliable method of ensuring all chat messages are received.
-It also can do to-chat interactions, sometimes via Service.PHP.
+Interface with the Rumble chat API to send and receive messages, etc.
 
-Example usage:
-```
-from cocorum import chatapi
+Copyright 2025 Wilbur Jaywright.
 
-#Additionally pass username and password for to-chat interactions
-chat = chatapi.ChatAPI(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
-chat.clear_mailbox() #Erase messages that were still visible before we connected
+This file is part of Cocorum.
 
-#Get messages for one minute
-start_time = time.time()
-while time.time() - start_time < 60 and (msg := chat.get_message()):
-    print(msg.user.username, "said", msg)
-```
+Cocorum is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Cocorum is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with Cocorum. If not, see <https://www.gnu.org/licenses/>.
+
 S.D.G."""
 
 import time

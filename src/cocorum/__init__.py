@@ -1,7 +1,20 @@
 #!/usr/bin/env python3
-"""An unofficial Python wrapper for the Rumble.com APIs
+"""
+Cocorum
 
-A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality of life additions, such as:
+An unofficial Python wrapper for the Rumble.com APIs
+
+Copyright 2025 Wilbur Jaywright.
+
+This file is part of Cocorum.
+
+Cocorum is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+Cocorum is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with Cocorum. If not, see <https://www.gnu.org/licenses/>.
+
+This base module is a Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality of life additions, such as:
 - Automatic refresh when past the refresh_rate delay when querying any non_static property.
 - All timespamps are parsed to seconds since Epoch, UTC timezone.
 - Chat has new_messages and new_rants properties that return only messages and rants since the last time they were read.
@@ -10,7 +23,7 @@ A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality o
 Modules exported by this package:
 
 - `chatapi`: Provide the ChatAPI object for interacting with a livestream chat.
-- `servicephp`: Privide the ServicePHP object for interacting with the service.php API.
+- `servicephp`: Provide the ServicePHP object for interacting with the service.php API.
 - `uploadphp`: Provide the UploadPHP object for uploading videos.
 - `scraping`: Provide functions and the Scraper object for getting various data via HTML scraping.
 - `jsonhandles`: Abstract classes for handling JSON data blocks.
@@ -539,6 +552,7 @@ class RumbleAPI():
     """Rumble Live Stream API wrapper"""
     def __init__(self, api_url, refresh_rate = static.Delays.api_refresh_default):
         """Rumble Live Stream API wrapper
+
     Args:
         api_url (str): The Rumble API URL, with the key.
         refresh_rate (int, float): How long to reuse queried data before refreshing.
