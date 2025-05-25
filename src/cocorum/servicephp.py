@@ -670,7 +670,7 @@ class ServicePHP:
             )
         soup = bs4.BeautifulSoup(r.json()["html"], features = "html.parser")
         comment_elems = soup.find_all(self._is_comment_elem)
-        return [scraping.HTMLComment(e) for e in comment_elems]
+        return [scraping.HTMLComment(e, self) for e in comment_elems]
 
     def comment_add(self, video_id, comment: str, reply_id: int = 0):
         """Post a comment on a video.
@@ -791,7 +791,7 @@ class ServicePHP:
                 }
             ).text)
 
-    def playlist_delete_video(self, playlist_id: str, video_id: int):
+    def playlist_delete_video(self, playlist_id: str, video_id):
         """Remove a video from a playlist.
 
     Args:
@@ -844,7 +844,7 @@ class ServicePHP:
             Defaults to nothing.
         visibility (str): Set to public, unlisted, or private via string.
             Defaults to 'public'.
-        channel_id (int, str): The ID of the channel to create the playlist under.
+        channel_id (int, str): The ID of the channel to have the playlist under.
             Defaults to none.
 
     Returns:

@@ -136,6 +136,22 @@ class User(Chatter):
         except KeyError:
             return []
 
+    def mute(self, duration: int = None, total: bool = False):
+        """Mute this user.
+
+    Args:
+        duration (int): How long to mute the user in seconds.
+            Defaults to infinite.
+        total (bool): Wether or not they are muted across all videos.
+            Defaults to False, just this video.
+            """
+
+        self.chat.mute(self, self.username, duration, total)
+
+    def unmute(self):
+        """Unmute this user."""
+        self.chat.unmute(self.username)
+
 class Channel(Chatter):
     """A channel in the SSE chat"""
     def __init__(self, jsondata, chat):
@@ -500,6 +516,18 @@ class Message(ChatAPIObj):
 
         return False
 
+    def delete(self):
+        """Delete this message from the chat"""
+        return self.chat.delete(self)
+
+    def pin(self):
+        """Pin this message"""
+        return self.chat.pin_message(self)
+
+    def unpin(self):
+        """Unpin this message if it was pinned"""
+        return self.chat.unpin_message(self)
+
 class ChatAPI():
     """The Rumble internal chat API"""
     def __init__(self, stream_id, username: str = None, password: str = None, session = None, history_len = 1000):
@@ -630,8 +658,10 @@ class ChatAPI():
         """Delete a message in chat.
 
     Args:
-        message (int): Object which when converted to integer is the target message ID.
+        message (int | Message): Object which when converted to integer is the target message ID.
         """
+
+        assert not hasattr(message, "deleted") or not message.deleted, "Message was already deleted"
 
         assert self.session_cookie, "Not logged in, cannot delete message"
         assert utils.options_check(self.message_api_url + f"/{int(message)}", "DELETE"), "Rumble denied options request to delete message"
@@ -647,15 +677,28 @@ class ChatAPI():
             print("Error: Deleting message failed,", r, r.content.decode(static.Misc.text_encoding))
             return False
 
+        if hasattr(message, "deleted"):
+            message.deleted = True
+
         return True
 
     def pin_message(self, message):
-        """Pin a message"""
+        """Pin a message
+
+        Args:
+            message (int | Message): Converting this to int must return a chat message ID.
+        """
+
         assert self.session_cookie, "Not logged in, cannot pin message"
         return self.servicephp.chat_pin(self.stream_id_b10, message)
 
     def unpin_message(self, message = None):
-        """Unpin the pinned message"""
+        """Unpin the pinned message
+
+        Args:
+            message (None | int | Message): Message to unpin, defaults to known pinned message.
+        """
+
         assert self.session_cookie, "Not logged in, cannot unpin message"
         if not message:
             message = self.pinned_message

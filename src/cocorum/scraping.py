@@ -25,14 +25,17 @@ from . import utils
 class HTMLObj:
     """Abstract object scraped from bs4 HTML"""
 
-    def __init__(self, elem):
+    def __init__(self, elem, sphp = None):
         """Abstract object scraped from bs4 HTML
 
     Args:
         elem (bs4.Tag): The BeautifulSoup element to base our data on.
+        sphp (ServicePHP): The parent ServicePHP, for convenience methods.
+            Defaults to None.
         """
 
         self._elem = elem
+        self.servicephp = sphp
 
     def __getitem__(self, key):
         """Get a key from the element attributes
@@ -51,10 +54,10 @@ class HTMLUserBadge(HTMLObj):
         """A user badge as extracted from a bs4 HTML element.
 
     Args:
-        elem (bs4.Tag): The badge <img> element
+        elem (bs4.Tag): The badge <img> element.
         """
 
-        super().__init__(elem)
+        super().__init__(elem, sphp)
         self.slug = elem.attrs["src"].split("/")[-1:elem.attrs["src"].rfind("_")]
         self.__icon = None
 
@@ -107,14 +110,15 @@ class HTMLUserBadge(HTMLObj):
 class HTMLComment(HTMLObj):
     """A comment on a video as returned by service.php comment.list"""
 
-    def __init__(self, elem):
+    def __init__(self, elem, sphp):
         """A comment on a video as returned by service.php comment.list
 
     Args:
         elem (bs4.Tag): The <li> element of the comment.
+        sphp (ServicePHP): The parent ServicePHP, for convenience methods.
         """
 
-        super().__init__(elem)
+        super().__init__(elem, sphp)
 
         # Badges of the user who commented if we have them
         badges_unkeyed = (HTMLUserBadge(badge_elem) for badge_elem in self._elem.find_all("li", attrs={"class": "comments-meta-user-badge"}))
@@ -214,6 +218,33 @@ class HTMLComment(HTMLObj):
         """The votes on this comment"""
         return HTMLContentVotes(self._elem.find("div", attrs={"class": "rumbles-vote"}))
 
+    def pin(self, unpin: bool = False):
+        """Pin or unpin this comment.
+
+    Args:
+        unpin (bool): If true, unpins instead of pinning comment.
+        """
+
+        return self.servicephp.comment_pin(self, unpin)
+
+    def delete(self):
+        """Delete this comment"""
+
+        return self.servicephp.comment_delete(self)
+
+    def restore(self):
+        """Un-delete this comment"""
+
+        return self.servicephp.comment_restore(self)
+
+    def rumbles(self, vote: int):
+        """Post a like or dislike on this comment.
+
+    Args:
+        vote (int): -1, 0, or 1 (0 means clear vote).
+        """
+
+        return self.servicephp.rumbles(vote, self, item_type = 2)
 
 class HTMLContentVotes(HTMLObj):
     """Votes made on content"""
@@ -284,6 +315,9 @@ class HTMLPlaylist(HTMLObj):
 
         # The Scraper object that created this one
         self.scraper = scraper
+
+        # Convenience access to ServicePHP
+        self.servicephp = self.scraper.servicephp
 
         # The binary data of our thumbnail
         self.__thumbnail = None
@@ -408,6 +442,55 @@ class HTMLPlaylist(HTMLObj):
         # This is doable but I just don't care right now
         NotImplemented
 
+    def add_video(self, video_id):
+        """Add a video to this playlist
+
+    Args:
+        video_id (int, str): The numeric ID of the video to add, in base 10 or 36.
+        """
+
+        self.servicephp.playlist_add_video(self.playlist_id, video_id)
+
+    def delete_video(self, video_id):
+        """Remove a video from this playlist
+
+    Args:
+        video_id (int, str): The numeric ID of the video to remove, in base 10 or 36.
+        """
+
+        self.servicephp.playlist_delete_video(self.playlist_id, video_id)
+
+    def edit(self, title: str = None, description: str = None, visibility: str = None, channel_id = False):
+        """Edit the details of this playlist.
+
+    Args:
+        title (str): The title of the playlist.
+            Defaults to staying the same.
+        description (str): Describe the playlist.
+            Defaults to staying the same.
+        visibility (str): Set to public, unlisted, or private via string.
+            Defaults to staying the same.
+        channel_id (int | str | None): The ID of the channel to have the playlist under.
+            Defaults to staying the same.
+        """
+
+        if title is None:
+            title = self.title
+        if description is None:
+            description = self.description
+        if visibility is None:
+            visibility = self.visibility
+        if channel_id == False:
+            channel_id = self.channel_id
+
+        # TODO this probably doesn't work
+        self = self.servicephp.playlist_edit(self.playlist_id, title, description, visibility, channel_id)
+        return self
+
+    def delete(self):
+        """Delete this playlist"""
+
+        self.servicephp.playlist_delete(self)
 
 class HTMLChannel(HTMLObj):
     """Channel under a user as extracted from their channels page"""
