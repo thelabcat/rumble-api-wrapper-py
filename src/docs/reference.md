@@ -8,7 +8,8 @@ For the most part, wrapper attributes that are not added features have the same 
 4. [cocorum.uploadphp](modules_ref/cocorum_uploadphp.md), a wrapper for Rumble's upload.php API, used to upload videos.
 5. [cocorum.scraping](modules_ref/cocorum_scraping.md), a way of getting data from Rumble HTML, wether from the web or the APIs for some reason. 
 6. [cocorum.jsonhandles](modules_ref/cocorum_jsonhandles.md), abstract classes for handling JSON data blocks.
-7. [cocorum.utils](modules_ref/cocorum_utils.md), utility functions for local calculations or one-off checks.
-8. [cocorum.static](modules_ref/cocorum_static.md), static global data used across the library.
+7. [cocorum.basehandles](modules_ref/cocorum_basehandles.md), abstract classes with common methods for both JSON and HTML wrappers.
+8. [cocorum.utils](modules_ref/cocorum_utils.md), utility functions for local calculations or one-off checks.
+9. [cocorum.static](modules_ref/cocorum_static.md), static global data used across the library.
 
 S.D.G.

@@ -20,6 +20,7 @@ import bs4
 from . import scraping
 from . import static
 from . import utils
+from .basehandles import *
 from .jsonhandles import JSONObj
 
 class APIUserBadge(JSONObj):
@@ -36,28 +37,6 @@ class APIUserBadge(JSONObj):
         self.slug = slug #The unique identification for this badge
         self.__icon = None
 
-    def __eq__(self, other):
-        """Check if this badge is equal to another.
-
-    Args:
-        other (str, APIUserBadge): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        #Check if the string is either our slug or our label in any language
-        if isinstance(other, str):
-            return other in (self.slug, self.label.values())
-
-        #Check if the compared object has the same slug, if it has one
-        if hasattr(other, "slug"):
-            return self.slug == other.slug
-
-    def __str__(self):
-        """The chat user badge in string form (its slug)"""
-        return self.slug
-
     @property
     def label(self):
         """A dictionary of lang:label pairs"""
@@ -68,18 +47,7 @@ class APIUserBadge(JSONObj):
         """The URL of the badge's icon"""
         return static.URI.rumble_base + self["icons"][static.Misc.badge_icon_size]
 
-    @property
-    def icon(self):
-        """The badge's icon as a bytestring"""
-        if not self.__icon: #We never queried the icon before
-            response = requests.get(self.icon_url, timeout = static.Delays.request_timeout)
-            assert response.status_code == 200, "Status code " + str(response.status_code)
-
-            self.__icon = response.content
-
-        return self.__icon
-
-class APIComment(JSONObj):
+class APIComment(JSONObj, BaseComment):
     """A comment on a video as returned by a successful attempt to make it"""
     def __init__(self, jsondata):
         """A comment on a video as returned by a successful attempt to make it
@@ -88,58 +56,16 @@ class APIComment(JSONObj):
         jsondata (dict): The JSON block for a single comment.
         """
 
-        super().__init__(jsondata)
+        JSONObj.__init__(self, jsondata)
 
         #Badges of the user who commented if we have them
         if self.get("comment_user_badges"):
             self.user_badges = {slug : APIUserBadge(slug, data) for slug, data in self["comment_user_badges"].items()}
 
-    def __int__(self):
-        """The comment in integer form (its ID)"""
-        return self.comment_id
-
-    def __str__(self):
-        """The comment as a string (its text)"""
-        return self.text
-
-    def __eq__(self, other):
-        """Determine if this comment is equal to another
-
-    Args:
-        other (int, str, APIComment): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        #Check for direct matches first
-        if isinstance(other, int):
-            return self.comment_id_b10 == other
-        if isinstance(other, str):
-            return str(self) == other
-
-        #Check for object attributes to match to
-        if hasattr(other, "comment_id"):
-            return self.comment_id_b10 == utils.ensure_b10(other.comment_id)
-
-        #Check conversion to integer last
-        if hasattr(other, "__int__"):
-            return self.comment_id_b10 == int(other)
-
     @property
     def comment_id(self):
         """The numeric ID of the comment"""
         return int(self["comment_id"])
-
-    @property
-    def comment_id_b10(self):
-        """The base 10 ID of the comment"""
-        return self.comment_id
-
-    @property
-    def comment_id_b36(self):
-        """The base 36 ID of the comment"""
-        return utils.base_10_to_36(self.comment_id)
 
     @property
     def text(self):
@@ -156,41 +82,21 @@ class APIComment(JSONObj):
         """TODO"""
         return self["comment_tree_size"]
 
-class APIContentVotes(JSONObj):
+    def pin(self, unpin: bool = False):
+        """Pin or unpin this comment.
+
+    Args:
+        unpin (bool): If true, unpins instead of pinning comment.
+        """
+
+        return self.servicephp.comment_pin(self, unpin)
+
+class APIContentVotes(JSONObj, BaseContentVotes):
     """Votes made on content"""
-    def __int__(self):
-        """The integer form of the content votes"""
-        return self.score
 
     def __str__(self):
         """The string form of the content votes"""
         return self.score_formatted
-
-    def __eq__(self, other):
-        """Determine if this content votes is equal to another
-
-    Args:
-        other (int, str, APIContentVotes): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        #Check for direct matches first
-        if isinstance(other, int):
-            return self.score == other
-        if isinstance(other, str):
-            return other in (str(self.score), self.score_formatted)
-
-        #Check for object attributes to match to
-        if hasattr(other, "score"):
-            #if hasattr(other, "content_id") and hasattr(other, "content_type"):
-            #    return self.score, self.content_id, self.content_type == other.score, other.content_id, other.content_type
-            return self.score == other.score
-
-        #Check conversion to integer last
-        if hasattr(other, "__int__"):
-            return self.score == int(other)
 
     @property
     def num_votes_up(self):
@@ -239,7 +145,7 @@ class APIContentVotes(JSONObj):
         """The numerical ID of the content being voted on"""
         return self["content_id"]
 
-class APIUser(JSONObj):
+class APIUser(JSONObj, BaseUser):
     """User data as returned by the API"""
     def __init__(self, jsondata):
         """User data as returned by the API.
@@ -248,38 +154,10 @@ class APIUser(JSONObj):
         jsondata (dict): The JSON data block of a single user.
         """
 
-        super().__init__(jsondata)
+        JSONObj.__init__(self, jsondata)
 
         #Our profile picture data
         self.__picture = None
-
-    def __int__(self):
-        """The user as an integer (it's ID in base 10)"""
-        return self.user_id_b10
-
-    def __eq__(self, other):
-        """Determine if this user is equal to another.
-
-    Args:
-        other (int, str, APIUser): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        #Check for direct matches first
-        if isinstance(other, int):
-            return self.user_id_b10 == other
-        if isinstance(other, str):
-            return str(other) in (self.user_id_b36, self.username)
-
-        #Check for object attributes to match to
-        if hasattr(other, "user_id"):
-            return self.user_id_b10 == utils.ensure_b10(other.user_id)
-
-        #Check conversion to integer last, in case another ID or something happens to match
-        if hasattr(other, "__int__"):
-            return self.user_id_b10 == int(other)
 
     @property
     def user_id(self):
@@ -335,7 +213,7 @@ class APIUser(JSONObj):
         """TODO -> Bool"""
         return self["followed"]
 
-class APIPlaylist(JSONObj):
+class APIPlaylist(JSONObj, BasePlaylist):
     """Playlist as returned by the API"""
     def __init__(self, jsondata):
         """Playlist as returned by the API.
@@ -344,55 +222,13 @@ class APIPlaylist(JSONObj):
         jsondata (dict): The JSON data block of a playlist.
         """
 
-        super().__init__(jsondata)
+        JSONObj.__init__(self, jsondata)
         self.user = APIUser(jsondata["user"])
-
-    def __int__(self):
-        """The playlist as an integer (it's ID in base 10)"""
-        return self.playlist_id_b10
-
-    def __str__(self):
-        """The playlist as a string (it's ID in base 36)"""
-        return self.playlist_id_b36
-
-    def __eq__(self, other):
-        """Determine if this playlist is equal to another.
-
-    Args:
-        other (int, str, APIPlaylist): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        #Check for direct matches first
-        if isinstance(other, int):
-            return self.playlist_id_b10 == other
-        if isinstance(other, str):
-            return str(other) == self.playlist_id_b36
-
-        #Check for object attributes to match to
-        if hasattr(other, "playlist_id"):
-            return self.playlist_id_b10 == utils.ensure_b10(other.playlist_id)
-
-        #Check conversion to integer last, in case another ID or something happens to match
-        if hasattr(other, "__int__"):
-            return self.playlist_id_b10 == int(other)
 
     @property
     def playlist_id(self):
         """The numeric playlist ID in base 36"""
         return self["id"]
-
-    @property
-    def playlist_id_b36(self):
-        """The numeric ID of the playlist in base 36"""
-        return self.playlist_id
-
-    @property
-    def playlist_id_b10(self):
-        """The numeric ID of the playlist in base 10"""
-        return utils.base_36_to_10(self.playlist_id)
 
     @property
     def title(self):

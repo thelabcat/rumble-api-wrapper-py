@@ -18,6 +18,7 @@ nav:
     - modules_ref/cocorum_uploadphp.md
     - modules_ref/cocorum_scraping.md
     - modules_ref/cocorum_jsonhandles.md
+    - modules_ref/cocorum_basehandles.md
     - modules_ref/cocorum_utils.md
     - modules_ref/cocorum_static.md
   - explanation.md

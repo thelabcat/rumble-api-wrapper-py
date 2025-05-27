@@ -27,6 +27,7 @@ Modules exported by this package:
 - `uploadphp`: Provide the UploadPHP object for uploading videos.
 - `scraping`: Provide functions and the Scraper object for getting various data via HTML scraping.
 - `jsonhandles`: Abstract classes for handling JSON data blocks.
+- `basehandles`: Abstract classes with common methods for both JSON and HTML wrappers.
 - `utils`: Various utility functions for internal calculations and checks.
 - `static`: Global data that does not change across the package.
 

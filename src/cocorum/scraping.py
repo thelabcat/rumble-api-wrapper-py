@@ -20,6 +20,7 @@ import requests
 import bs4
 from . import static
 from . import utils
+from .basehandles import *
 
 
 class HTMLObj:
@@ -47,41 +48,19 @@ class HTMLObj:
         return self._elem.attrs[key]
 
 
-class HTMLUserBadge(HTMLObj):
+class HTMLUserBadge(HTMLObj, BaseUserBadge):
     """A user badge as extracted from a bs4 HTML element"""
 
-    def __init__(self, elem):
+    def __init__(self, elem, sphp):
         """A user badge as extracted from a bs4 HTML element.
 
     Args:
         elem (bs4.Tag): The badge <img> element.
         """
 
-        super().__init__(elem, sphp)
+        HTMLObj.__init__(self, elem, sphp)
         self.slug = elem.attrs["src"].split("/")[-1:elem.attrs["src"].rfind("_")]
         self.__icon = None
-
-    def __eq__(self, other):
-        """Check if this badge is equal to another.
-
-    Args:
-        other (str, HTMLUserBadge): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        # Check if the string is either our slug or our label in any language
-        if isinstance(other, str):
-            return other in (self.slug, self.label.values())
-
-        # Check if the compared object has the same slug, if it has one
-        if hasattr(other, "slug"):
-            return self.slug == other.slug
-
-    def __str__(self):
-        """The chat user badge in string form"""
-        return self.slug
 
     @property
     def label(self):
@@ -94,20 +73,7 @@ class HTMLUserBadge(HTMLObj):
         """The URL of the badge's icon"""
         return static.URI.rumble_base + self["src"]
 
-    @property
-    def icon(self):
-        """The badge's icon as a bytestring"""
-        if not self.__icon:  # We never queried the icon before
-            # TODO make the timeout configurable
-            response = requests.get(self.icon_url, timeout = static.Delays.request_timeout)
-            assert response.status_code == 200, "Status code " + str(response.status_code)
-
-            self.__icon = response.content
-
-        return self.__icon
-
-
-class HTMLComment(HTMLObj):
+class HTMLComment(HTMLObj, BaseComment):
     """A comment on a video as returned by service.php comment.list"""
 
     def __init__(self, elem, sphp):
@@ -118,44 +84,12 @@ class HTMLComment(HTMLObj):
         sphp (ServicePHP): The parent ServicePHP, for convenience methods.
         """
 
-        super().__init__(elem, sphp)
+        HTMLObj.__init__(self, elem, sphp)
 
         # Badges of the user who commented if we have them
         badges_unkeyed = (HTMLUserBadge(badge_elem) for badge_elem in self._elem.find_all("li", attrs={"class": "comments-meta-user-badge"}))
 
         self.user_badges = {badge.slug: badge for badge in badges_unkeyed}
-
-    def __int__(self):
-        """The comment in integer form (its ID)"""
-        return self.comment_id
-
-    def __str__(self):
-        """The comment as a string (its text)"""
-        return self.text
-
-    def __eq__(self, other):
-        """Determine if this comment is equal to another.
-
-    Args:
-        other (int, str, HTMLComment): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        # Check for direct matches first
-        if isinstance(other, int):
-            return self.comment_id_b10 == other
-        if isinstance(other, str):
-            return str(self) == other
-
-        # Check for object attributes to match to
-        if hasattr(other, "comment_id"):
-            return self.comment_id_b10 == utils.ensure_b10(other.comment_id)
-
-        # Check conversion to integer last
-        if hasattr(other, "__int__"):
-            return self.comment_id_b10 == int(other)
 
     @property
     def is_first(self):
@@ -166,16 +100,6 @@ class HTMLComment(HTMLObj):
     def comment_id(self):
         """The numeric ID of the comment in base 10"""
         return int(self["data-comment-id"])
-
-    @property
-    def comment_id_b10(self):
-        """The base 10 ID of the comment"""
-        return self.comment_id
-
-    @property
-    def comment_id_b36(self):
-        """The base 36 ID of the comment"""
-        return utils.base_10_to_36(self.comment_id)
 
     @property
     def text(self):
@@ -214,75 +138,17 @@ class HTMLComment(HTMLObj):
         return self["data-actions"].split(",")
 
     @property
-    def rumbles(self):
+    def get_rumbles(self):
         """The votes on this comment"""
         return HTMLContentVotes(self._elem.find("div", attrs={"class": "rumbles-vote"}))
 
-    def pin(self, unpin: bool = False):
-        """Pin or unpin this comment.
-
-    Args:
-        unpin (bool): If true, unpins instead of pinning comment.
-        """
-
-        return self.servicephp.comment_pin(self, unpin)
-
-    def delete(self):
-        """Delete this comment"""
-
-        return self.servicephp.comment_delete(self)
-
-    def restore(self):
-        """Un-delete this comment"""
-
-        return self.servicephp.comment_restore(self)
-
-    def rumbles(self, vote: int):
-        """Post a like or dislike on this comment.
-
-    Args:
-        vote (int): -1, 0, or 1 (0 means clear vote).
-        """
-
-        return self.servicephp.rumbles(vote, self, item_type = 2)
-
-class HTMLContentVotes(HTMLObj):
+class HTMLContentVotes(HTMLObj, BaseContentVotes):
     """Votes made on content"""
-
-    def __int__(self):
-        """The integer form of the content votes"""
-        return self.score
 
     def __str__(self):
         """The string form of the content votes"""
         # return self.score_formatted
         return str(self.score)
-
-    def __eq__(self, other):
-        """Determine if this content votes is equal to another.
-
-    Args:
-        other (int, str, HTMLContentVotes): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        # Check for direct matches first
-        if isinstance(other, int):
-            return self.score == other
-        if isinstance(other, str):
-            return str(self) == other
-
-        # Check for object attributes to match to
-        if hasattr(other, "score"):
-            # if hasattr(other, "content_id") and hasattr(other, "content_type"):
-            #    return self.score, self.content_id, self.content_type == other.score, other.content_id, other.content_type
-            return self.score == other.score
-
-        # Check conversion to integer last
-        if hasattr(other, "__int__"):
-            return self.score == int(other)
 
     @property
     def score(self):
@@ -300,7 +166,7 @@ class HTMLContentVotes(HTMLObj):
         return int(self["data-id"])
 
 
-class HTMLPlaylist(HTMLObj):
+class HTMLPlaylist(HTMLObj, BasePlaylist):
     """A playlist as obtained from HTML data"""
 
     def __init__(self, elem, scraper):
@@ -311,7 +177,7 @@ class HTMLPlaylist(HTMLObj):
         scraper (Scraper): The HTML scraper object that spawned us.
         """
 
-        super().__init__(elem)
+        HTMLObj.__init__(self, elem)
 
         # The Scraper object that created this one
         self.scraper = scraper
@@ -324,38 +190,6 @@ class HTMLPlaylist(HTMLObj):
 
         # The loaded page of the playlist
         self.__pagesoup = None
-
-    def __int__(self):
-        """The playlist as an integer (it's ID in base 10)"""
-        return self.playlist_id_b10
-
-    def __str__(self):
-        """The playlist as a string (it's ID in base 36)"""
-        return self.playlist_id_b36
-
-    def __eq__(self, other):
-        """Determine if this playlist is equal to another.
-
-    Args:
-        other (int, str, HTMLPlaylist): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        # Check for direct matches first
-        if isinstance(other, int):
-            return self.playlist_id_b10 == other
-        if isinstance(other, str):
-            return str(other) == self.playlist_id_b36
-
-        # Check for object attributes to match to
-        if hasattr(other, "playlist_id"):
-            return self.playlist_id_b10 == utils.ensure_b10(other.playlist_id)
-
-        # Check conversion to integer last, in case another ID or something happens to match
-        if hasattr(other, "__int__"):
-            return self.playlist_id_b10 == int(other)
 
     @property
     def _pagesoup(self):
@@ -397,16 +231,6 @@ class HTMLPlaylist(HTMLObj):
         return self._url_raw.split("/")[-1]
 
     @property
-    def playlist_id_b36(self):
-        """The numeric ID of the playlist in base 36"""
-        return self.playlist_id
-
-    @property
-    def playlist_id_b10(self):
-        """The numeric ID of the playlist in base 10"""
-        return utils.base_36_to_10(self.playlist_id)
-
-    @property
     def _channel_url_raw(self):
         """The URL of the channel the playlist under (without base URL)"""
         return self._elem.find("a", attrs={"class": "channel__link link"}).get("href")
@@ -439,58 +263,8 @@ class HTMLPlaylist(HTMLObj):
     @property
     def num_items(self):
         """The number of items in the playlist"""
-        # This is doable but I just don't care right now
+        # TODO: This is doable but I just don't care right now
         NotImplemented
-
-    def add_video(self, video_id):
-        """Add a video to this playlist
-
-    Args:
-        video_id (int, str): The numeric ID of the video to add, in base 10 or 36.
-        """
-
-        self.servicephp.playlist_add_video(self.playlist_id, video_id)
-
-    def delete_video(self, video_id):
-        """Remove a video from this playlist
-
-    Args:
-        video_id (int, str): The numeric ID of the video to remove, in base 10 or 36.
-        """
-
-        self.servicephp.playlist_delete_video(self.playlist_id, video_id)
-
-    def edit(self, title: str = None, description: str = None, visibility: str = None, channel_id = False):
-        """Edit the details of this playlist.
-
-    Args:
-        title (str): The title of the playlist.
-            Defaults to staying the same.
-        description (str): Describe the playlist.
-            Defaults to staying the same.
-        visibility (str): Set to public, unlisted, or private via string.
-            Defaults to staying the same.
-        channel_id (int | str | None): The ID of the channel to have the playlist under.
-            Defaults to staying the same.
-        """
-
-        if title is None:
-            title = self.title
-        if description is None:
-            description = self.description
-        if visibility is None:
-            visibility = self.visibility
-        if channel_id == False:
-            channel_id = self.channel_id
-
-        # TODO this probably doesn't work
-        self = self.servicephp.playlist_edit(self.playlist_id, title, description, visibility, channel_id)
-        return self
-
-    def delete(self):
-        """Delete this playlist"""
-
-        self.servicephp.playlist_delete(self)
 
 class HTMLChannel(HTMLObj):
     """Channel under a user as extracted from their channels page"""

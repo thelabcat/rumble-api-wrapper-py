@@ -17,8 +17,9 @@ A Python wrapper for the Rumble Live Stream API v1.0 (beta), with some quality o
     4. [cocorum.uploadphp](modules_ref/cocorum_uploadphp.md)
     5. [cocorum.scraping](modules_ref/cocorum_scraping.md)
     6. [cocorum.jsonhandles](modules_ref/cocorum_jsonhandles.md)
-    7. [cocorum.utils](modules_ref/cocorum_utils.md)
-    8. [cocorum.static](modules_ref/cocorum_static.md)
+    7. [cocorum.basehandles](modules_ref/cocorum_basehandles.md)
+    8. [cocorum.utils](modules_ref/cocorum_utils.md)
+    9. [cocorum.static](modules_ref/cocorum_static.md)
 4. [Explanation](explanation.md)
 
 ## Acknowledgements

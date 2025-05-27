@@ -19,6 +19,7 @@ import time
 import requests
 import json5 as json #For parsing SSE message data
 import sseclient
+from .basehandles import *
 from .jsonhandles import JSONObj, JSONUserAction
 from .servicephp import ServicePHP
 from . import scraping
@@ -55,7 +56,7 @@ class Chatter(JSONUserAction, ChatAPIObj):
         """The user's subpage of Rumble.com"""
         return self["link"]
 
-class User(Chatter):
+class User(Chatter, BaseUser):
     """User in the internal chat API"""
     def __init__(self, jsondata, chat):
         """A user in the internal chat API
@@ -68,25 +69,12 @@ class User(Chatter):
         Chatter.__init__(self, jsondata, chat)
         self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
         self._set_channel_id = None #Channel ID set from message
-
-    def __int__(self):
-        """The user as an integer (it's ID in base 10)"""
-        return self.user_id_b10
+        self.servicephp = self.chat.servicephp
 
     @property
     def user_id(self):
         """The numeric ID of the user in base 10"""
         return int(self["id"])
-
-    @property
-    def user_id_b10(self):
-        """The numeric ID of the user in base 10"""
-        return self.user_id
-
-    @property
-    def user_id_b36(self):
-        """The numeric ID of the user in base 36"""
-        return utils.base_10_to_36(self.user_id)
 
     @property
     def channel_id(self):
@@ -135,22 +123,6 @@ class User(Chatter):
         #User has no badges
         except KeyError:
             return []
-
-    def mute(self, duration: int = None, total: bool = False):
-        """Mute this user.
-
-    Args:
-        duration (int): How long to mute the user in seconds.
-            Defaults to infinite.
-        total (bool): Wether or not they are muted across all videos.
-            Defaults to False, just this video.
-            """
-
-        self.chat.mute(self, self.username, duration, total)
-
-    def unmute(self):
-        """Unmute this user."""
-        self.chat.unmute(self.username)
 
 class Channel(Chatter):
     """A channel in the SSE chat"""
@@ -205,7 +177,7 @@ class Channel(Chatter):
         """The numeric ID of the user of this channel in base 10"""
         return self.user.user_id_b10
 
-class UserBadge(ChatAPIObj):
+class UserBadge(ChatAPIObj, BaseUserBadge):
     """A badge of a user"""
     def __init__(self, slug, jsondata, chat):
         """A user badge in the internal chat API
@@ -215,31 +187,9 @@ class UserBadge(ChatAPIObj):
         chat (ChatAPI): The ChatAPI object that spawned us.
         """
 
-        super().__init__(jsondata, chat)
+        ChatAPIObj.__init__(self, jsondata, chat)
         self.slug = slug #The unique identification for this badge
         self.__icon = None
-
-    def __eq__(self, other):
-        """Check if this badge is equal to another
-
-    Args:
-        other (str, UserBadge): Object to compare to.
-
-    Returns:
-        Comparison (bool, None): Did it fit the criteria?
-        """
-
-        #Check if the string is either our slug or our label in any language
-        if isinstance(other, str):
-            return other in (self.slug, self.label.values())
-
-        #Check if the compared object has the same slug, if it has one
-        if hasattr(other, "slug"):
-            return self.slug == other.slug
-
-    def __str__(self):
-        """The chat user badge in string form"""
-        return self.slug
 
     @property
     def label(self):
@@ -250,17 +200,6 @@ class UserBadge(ChatAPIObj):
     def icon_url(self):
         """The URL of the badge's icon"""
         return static.URI.rumble_base + self["icons"][static.Misc.badge_icon_size]
-
-    @property
-    def icon(self):
-        """The badge's icon as a bytestring"""
-        if not self.__icon: #We never queried the icon before
-            response = requests.get(self.icon_url, timeout = static.Delays.request_timeout)
-            assert response.status_code == 200, "Status code " + str(response.status_code)
-
-            self.__icon = response.content
-
-        return self.__icon
 
 class GiftPurchaseNotification(ChatAPIObj):
     """A subscription gift under a message"""
