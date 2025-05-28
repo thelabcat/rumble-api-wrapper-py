@@ -224,7 +224,7 @@ class APIPlaylist(JSONObj, BasePlaylist):
 
     @property
     def playlist_id(self):
-        """The numeric playlist ID in base 36"""
+        """The numeric playlist ID in base 64"""
         return self["id"]
 
     @property
