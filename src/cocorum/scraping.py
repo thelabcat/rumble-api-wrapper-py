@@ -87,7 +87,7 @@ class HTMLComment(HTMLObj, BaseComment):
         HTMLObj.__init__(self, elem, sphp)
 
         # Badges of the user who commented if we have them
-        badges_unkeyed = (HTMLUserBadge(badge_elem) for badge_elem in self._elem.find_all("li", attrs={"class": "comments-meta-user-badge"}))
+        badges_unkeyed = (HTMLUserBadge(badge_elem, sphp) for badge_elem in self._elem.find_all("li", attrs={"class": "comments-meta-user-badge"}))
 
         self.user_badges = {badge.slug: badge for badge in badges_unkeyed}
 
@@ -227,7 +227,7 @@ class HTMLPlaylist(HTMLObj, BasePlaylist):
 
     @property
     def playlist_id(self):
-        """The numeric ID of the playlist in base 36"""
+        """The numeric ID of the playlist in base 64"""
         return self._url_raw.split("/")[-1]
 
     @property
@@ -263,8 +263,8 @@ class HTMLPlaylist(HTMLObj, BasePlaylist):
     @property
     def num_items(self):
         """The number of items in the playlist"""
-        # TODO: This is doable but I just don't care right now
-        NotImplemented
+        # TODO: This is doable but I just don't care right now.
+        raise NotImplementedError("This is doable but I just don't care right now.")
 
 class HTMLChannel(HTMLObj):
     """Channel under a user as extracted from their channels page"""

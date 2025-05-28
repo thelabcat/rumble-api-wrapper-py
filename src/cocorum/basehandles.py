@@ -39,6 +39,8 @@ class BaseUserBadge:
         if hasattr(other, "slug"):
             return self.slug == other.slug
 
+        return False
+
     def __str__(self):
         """The chat user badge in string form"""
         return self.slug
@@ -229,8 +231,8 @@ class BasePlaylist:
         return self.playlist_id_b10
 
     def __str__(self):
-        """The playlist as a string (it's ID in base 36)"""
-        return self.playlist_id_b36
+        """The playlist as a string (it's ID in base 64)"""
+        return self.playlist_id_b64
 
     def __eq__(self, other):
         """Determine if this playlist is equal to another.
@@ -244,29 +246,30 @@ class BasePlaylist:
 
         # Check for direct matches first
         if isinstance(other, int):
-            return self.playlist_id_b10 == other
+            return self.playlist_id_b64 == other
         if isinstance(other, str):
-            return str(other) == self.playlist_id_b36
+            return str(other) == self.playlist_id_b64
 
-        # Check for object attributes to match to
-        if hasattr(other, "playlist_id_b10"):
-            return self.playlist_id_b10 == other.playlist_id_b10
+        # # Check for object attributes to match to
+        # if hasattr(other, "playlist_id_b10"):
+        #     return self.playlist_id_b10 == other.playlist_id_b10
 
-        # Check conversion to integer last, in case another ID or something happens to match
-        if hasattr(other, "__int__"):
-            return self.playlist_id_b10 == int(other)
+        # # Check conversion to integer last, in case another ID or something happens to match
+        # if hasattr(other, "__int__"):
+        #     return self.playlist_id_b10 == int(other)
 
         return False
 
     @property
-    def playlist_id_b36(self):
-        """The numeric ID of the playlist in base 36"""
+    def playlist_id_b64(self):
+        """The numeric ID of the playlist in base 64"""
         return self.playlist_id
 
     @property
     def playlist_id_b10(self):
         """The numeric ID of the playlist in base 10"""
-        return utils.base_36_to_10(self.playlist_id)
+        raise NotImplementedError("See Cocorum issue #22")
+        # return utils.base_36_to_10(self.playlist_id)
 
     def add_video(self, video_id):
         """Add a video to this playlist
@@ -287,7 +290,7 @@ class BasePlaylist:
         self.servicephp.playlist_delete_video(self.playlist_id, video_id)
 
     def edit(self, title: str = None, description: str = None, visibility: str = None, channel_id = None):
-        """Edit the details of this playlist.
+        """Edit the details of this playlist. WARNING: The original object will probably be stale after this operation.
 
     Args:
         title (str): The title of the playlist.
@@ -300,7 +303,7 @@ class BasePlaylist:
             Defaults to resetting to None.
 
     Returns:
-        playlist (APIPlaylist): The edit result. WARNING: The original object will probably be stale after this operation.
+        playlist (APIPlaylist): The edit result.
         """
 
         if title is None:
@@ -312,9 +315,7 @@ class BasePlaylist:
         # if channel_id is False:
         #     channel_id = self.channel_id
 
-        # TODO this probably doesn't work
-        self = self.servicephp.playlist_edit(self.playlist_id, title, description, visibility, channel_id)
-        return self
+        return self.servicephp.playlist_edit(self.playlist_id, title, description, visibility, channel_id)
 
     def delete(self):
         """Delete this playlist"""

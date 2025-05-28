@@ -612,7 +612,7 @@ class ServicePHP:
         """Add a video to a playlist.
 
     Args:
-        playlist_id (str): The numeric ID of the playlist in base 36.
+        playlist_id (str): The numeric ID of the playlist in base 64.
         video_id (int, str): The numeric ID of the video to add, in base 10 or 36.
         """
 
@@ -628,7 +628,7 @@ class ServicePHP:
         """Remove a video from a playlist.
 
     Args:
-        playlist_id (str): The numeric ID of the playlist in base 36.
+        playlist_id (str): The numeric ID of the playlist in base 64.
         video_id (int, str): The numeric ID of the video to remove, in base 10 or 36.
         """
 
@@ -671,7 +671,7 @@ class ServicePHP:
         """Edit the details of an existing playlist
 
     Args:
-        playlist_id (str): The numeric ID of the playlist to edit in base 36.
+        playlist_id (str): The numeric ID of the playlist to edit in base 64.
         title (str): The title of the playlist.
         description (str): Describe the playlist.
             Defaults to nothing.
@@ -691,7 +691,7 @@ class ServicePHP:
                 "description": str(description),
                 "visibility": str(visibility),
                 "channel_id": str(utils.ensure_b10(channel_id)) if channel_id else None,
-                "playlist_id": utils.ensure_b36(playlist_id),
+                "playlist_id": str(playlist_id),
             }
         )
         return APIPlaylist(r.json()["data"], self)
@@ -700,12 +700,12 @@ class ServicePHP:
         """Delete a playlist.
 
     Args:
-        playlist_id (str): The numeric ID of the playlist to delete in base 36.
+        playlist_id (str): The numeric ID of the playlist to delete in base 64.
         """
 
         print(self.sphp_request(
             "playlist.delete",
-            data = {"playlist_id" : utils.ensure_b36(playlist_id)},
+            data = {"playlist_id" : str(playlist_id)},
             ).text)
 
     def raid_confirm(self, stream_id):
