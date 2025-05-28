@@ -286,7 +286,7 @@ class BasePlaylist:
 
         self.servicephp.playlist_delete_video(self.playlist_id, video_id)
 
-    def edit(self, title: str = None, description: str = None, visibility: str = None, channel_id = False):
+    def edit(self, title: str = None, description: str = None, visibility: str = None, channel_id = None):
         """Edit the details of this playlist.
 
     Args:
@@ -296,8 +296,8 @@ class BasePlaylist:
             Defaults to staying the same.
         visibility (str): Set to public, unlisted, or private via string.
             Defaults to staying the same.
-        channel_id (int | str | None): The ID of the channel to have the playlist under.
-            Defaults to staying the same.
+        channel_id (int | str | None): The ID of the channel to have the playlist under. TODO: Cannot be retrieved!
+            Defaults to resetting to None.
 
     Returns:
         playlist (APIPlaylist): The edit result. WARNING: The original object will probably be stale after this operation.
@@ -309,8 +309,8 @@ class BasePlaylist:
             description = self.description
         if visibility is None:
             visibility = self.visibility
-        if channel_id is False:
-            channel_id = self.channel_id
+        # if channel_id is False:
+        #     channel_id = self.channel_id
 
         # TODO this probably doesn't work
         self = self.servicephp.playlist_edit(self.playlist_id, title, description, visibility, channel_id)

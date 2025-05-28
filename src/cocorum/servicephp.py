@@ -49,14 +49,16 @@ class APIUserBadge(JSONObj):
 
 class APIComment(JSONObj, BaseComment):
     """A comment on a video as returned by a successful attempt to make it"""
-    def __init__(self, jsondata):
+    def __init__(self, jsondata, servicephp):
         """A comment on a video as returned by a successful attempt to make it
 
     Args:
         jsondata (dict): The JSON block for a single comment.
+        servicephp (ServicePHP): The ServicePHP object that spawned us.
         """
 
         JSONObj.__init__(self, jsondata)
+        self.servicephp = servicephp
 
         #Badges of the user who commented if we have them
         if self.get("comment_user_badges"):
@@ -81,15 +83,6 @@ class APIComment(JSONObj, BaseComment):
     def tree_size(self):
         """TODO"""
         return self["comment_tree_size"]
-
-    def pin(self, unpin: bool = False):
-        """Pin or unpin this comment.
-
-    Args:
-        unpin (bool): If true, unpins instead of pinning comment.
-        """
-
-        return self.servicephp.comment_pin(self, unpin)
 
 class APIContentVotes(JSONObj, BaseContentVotes):
     """Votes made on content"""
@@ -147,14 +140,16 @@ class APIContentVotes(JSONObj, BaseContentVotes):
 
 class APIUser(JSONObj, BaseUser):
     """User data as returned by the API"""
-    def __init__(self, jsondata):
+    def __init__(self, jsondata, servicephp):
         """User data as returned by the API.
 
     Args:
         jsondata (dict): The JSON data block of a single user.
+        servicephp (ServicePHP): The ServicePHP object that spawned us.
         """
 
         JSONObj.__init__(self, jsondata)
+        self.servicephp = servicephp
 
         #Our profile picture data
         self.__picture = None
@@ -215,15 +210,17 @@ class APIUser(JSONObj, BaseUser):
 
 class APIPlaylist(JSONObj, BasePlaylist):
     """Playlist as returned by the API"""
-    def __init__(self, jsondata):
+    def __init__(self, jsondata, servicephp):
         """Playlist as returned by the API.
 
     Args:
         jsondata (dict): The JSON data block of a playlist.
+        servicephp (ServicePHP): The ServicePHP object that spawned us.
         """
 
         JSONObj.__init__(self, jsondata)
-        self.user = APIUser(jsondata["user"])
+        self.servicephp = servicephp
+        self.user = APIUser(jsondata["user"], self.servicephp)
 
     @property
     def playlist_id(self):
@@ -530,7 +527,7 @@ class ServicePHP:
                     "target": "comment-create-1",
                     },
                 )
-        return APIComment(r.json()["data"])
+        return APIComment(r.json()["data"], self)
 
     def comment_pin(self, comment_id: int, unpin: bool = False):
         """Pin or unpin a comment by ID.
@@ -568,7 +565,7 @@ class ServicePHP:
             "comment.restore",
             data = {"comment_id": int(comment_id)},
             )
-        return APIComment(r.json()["data"])
+        return APIComment(r.json()["data"], self)
 
     def rumbles(self, vote: int, item_id, item_type: int):
         """Post a like or dislike.
@@ -668,7 +665,7 @@ class ServicePHP:
                 "channel_id": str(utils.ensure_b10(channel_id)) if channel_id else None,
             }
         )
-        return APIPlaylist(r.json()["data"])
+        return APIPlaylist(r.json()["data"], self)
 
     def playlist_edit(self, playlist_id: str, title: str, description: str = "", visibility: str = "public", channel_id = None):
         """Edit the details of an existing playlist
@@ -697,7 +694,7 @@ class ServicePHP:
                 "playlist_id": utils.ensure_b36(playlist_id),
             }
         )
-        return APIPlaylist(r.json()["data"])
+        return APIPlaylist(r.json()["data"], self)
 
     def playlist_delete(self, playlist_id: str):
         """Delete a playlist.
