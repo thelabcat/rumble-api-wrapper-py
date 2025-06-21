@@ -814,6 +814,15 @@
 </li>
         
           <li class="md-nav__item">
+  <a href="#cocorum.chatapi.ChatAPI.close" class="md-nav__link">
+    <span class="md-ellipsis">
+      close
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
   <a href="#cocorum.chatapi.ChatAPI.command" class="md-nav__link">
     <span class="md-ellipsis">
       command
@@ -2202,6 +2211,15 @@
   <a href="#cocorum.chatapi.ChatAPI.clear_mailbox" class="md-nav__link">
     <span class="md-ellipsis">
       clear_mailbox
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#cocorum.chatapi.ChatAPI.close" class="md-nav__link">
+    <span class="md-ellipsis">
+      close
     </span>
   </a>
   
@@ -5443,7 +5461,7 @@ Defaults to False, just this video.</p>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">jsondata</span><span class="p">,</span> <span class="n">chat</span><span class="p">)</span>
 
-        <span class="c1">#Find the user who has this channel</span>
+        <span class="c1"># Find the user who has this channel</span>
         <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">user</span><span class="o">.</span><span class="n">previous_channel_ids</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
@@ -5452,7 +5470,7 @@ Defaults to False, just this video.</p>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">is_appearing</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Is the user of this channel still appearing as it?&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="c1">#The user channel_id still matches our own</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="c1"># The user channel_id still matches our own</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -5731,7 +5749,7 @@ Defaults to False, just this video.</p>
 
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">jsondata</span><span class="p">,</span> <span class="n">chat</span><span class="p">)</span>
 
-    <span class="c1">#Find the user who has this channel</span>
+    <span class="c1"># Find the user who has this channel</span>
     <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">users</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">channel_id</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span> <span class="ow">in</span> <span class="n">user</span><span class="o">.</span><span class="n">previous_channel_ids</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="n">user</span>
@@ -6133,13 +6151,38 @@ Defaults to False, just this video.</p>
 <span class="normal">827</span>
 <span class="normal">828</span>
 <span class="normal">829</span>
-<span class="normal">830</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ChatAPI</span><span class="p">():</span>
+<span class="normal">830</span>
+<span class="normal">831</span>
+<span class="normal">832</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span>
+<span class="normal">838</span>
+<span class="normal">839</span>
+<span class="normal">840</span>
+<span class="normal">841</span>
+<span class="normal">842</span>
+<span class="normal">843</span>
+<span class="normal">844</span>
+<span class="normal">845</span>
+<span class="normal">846</span>
+<span class="normal">847</span>
+<span class="normal">848</span>
+<span class="normal">849</span>
+<span class="normal">850</span>
+<span class="normal">851</span>
+<span class="normal">852</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ChatAPI</span><span class="p">():</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The Rumble internal chat API&quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_id</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">history_len</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The Rumble internal chat API</span>
 
 <span class="sd">    Args:</span>
-<span class="sd">        stream_id (int, str): Stream ID in base 10 or 36.</span>
+<span class="sd">        stream_id (int, str): Stream ID in base 10 int or base 36 str.</span>
+<span class="sd">            WARNING: If a str is passed, this WILL ASSUME BASE 36</span>
+<span class="sd">            even if only digits are present! Convert to int before passing</span>
+<span class="sd">            if it is base 10.</span>
 <span class="sd">        username (str): Username to login with.</span>
 <span class="sd">            Defaults to no login.</span>
 <span class="sd">        password (str): Password to log in with.</span>
@@ -6152,35 +6195,43 @@ Defaults to False, just this video.</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">ensure_b36</span><span class="p">(</span><span class="n">stream_id</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#A mailbox if you will</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__history</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Chat history</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">history_len</span> <span class="o">=</span> <span class="n">history_len</span> <span class="c1">#How many messages to store in history</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">pinned_message</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#If a message is pinned, it is assigned to this</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">#Dictionary of users by user ID</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">#Dictionary of channels by channel ID</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">#  A mailbox if you will</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__history</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">#  Chat history</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history_len</span> <span class="o">=</span> <span class="n">history_len</span>  <span class="c1">#  How many messages to store in history</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pinned_message</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1">#  If a message is pinned, it is assigned to this</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1">#  Dictionary of users by user ID</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1">#  Dictionary of channels by channel ID</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">badges</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="c1">#Generate our URLs</span>
+        <span class="c1"># Generate our URLs</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sse_url</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">ChatAPI</span><span class="o">.</span><span class="n">sse_stream</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stream_id_b10</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id_b10</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SSE stream URL:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sse_url</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_api_url</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">ChatAPI</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stream_id_b10</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id_b10</span><span class="p">)</span>
 
-        <span class="c1">#Connect to SSE stream</span>
-        <span class="c1">#Note: We do NOT want this request to have a timeout</span>
-        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sse_url</span><span class="p">,</span> <span class="n">stream</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">RequestHeaders</span><span class="o">.</span><span class="n">sse_api</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">sseclient</span><span class="o">.</span><span class="n">SSEClient</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+        <span class="c1">#  Connect to SSE stream</span>
+        <span class="c1">#  Note: We do NOT want this request to have a timeout</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sse_url</span><span class="p">,</span> <span class="n">stream</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">RequestHeaders</span><span class="o">.</span><span class="n">sse_api</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">sseclient</span><span class="o">.</span><span class="n">SSEClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">event_generator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">events</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span> <span class="o">=</span> <span class="kc">True</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">parse_init_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__next_event_json</span><span class="p">())</span>
 
-        <span class="c1">#If we have session login, use them</span>
+        <span class="c1">#  If we have session login, use them</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">username</span> <span class="ow">and</span> <span class="n">password</span><span class="p">)</span> <span class="ow">or</span> <span class="n">session</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">ServicePHP</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">=</span> <span class="n">scraping</span><span class="o">.</span><span class="n">Scraper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="kc">None</span>
 
-        <span class="c1">#The last time we sent a message</span>
+        <span class="c1">#  Parse the init data for the stream (must do AFTER we have servicephp)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parse_init_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__next_event_json</span><span class="p">())</span>
+
+        <span class="c1">#  The last time we sent a message</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">last_send_time</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the chat connection&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">session_cookie</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -6225,7 +6276,7 @@ Defaults to False, just this video.</p>
                     <span class="s2">&quot;channel_id&quot;</span><span class="p">:</span> <span class="n">channel_id</span>
                     <span class="p">}</span>
                 <span class="p">},</span>
-            <span class="c1"># headers = static.RequestHeaders.user_agent,</span>
+            <span class="c1">#  headers = static.RequestHeaders.user_agent,</span>
             <span class="n">timeout</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">request_timeout</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -6264,6 +6315,10 @@ Defaults to False, just this video.</p>
 
 <span class="sd">    Args:</span>
 <span class="sd">        message (int | Message): Object which when converted to integer is the target message ID.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        success (bool): Wether the operation succeeded or not.</span>
+<span class="sd">            NOTE: Method will also print an error message if it failed.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s2">&quot;deleted&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">deleted</span><span class="p">,</span> <span class="s2">&quot;Message was already deleted&quot;</span>
@@ -6274,7 +6329,7 @@ Defaults to False, just this video.</p>
         <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">message_api_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="n">cookies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span><span class="p">,</span>
-            <span class="c1"># headers = static.RequestHeaders.user_agent,</span>
+            <span class="c1">#  headers = static.RequestHeaders.user_agent,</span>
             <span class="n">timeout</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">request_timeout</span><span class="p">,</span>
             <span class="p">)</span>
 
@@ -6339,8 +6394,8 @@ Defaults to False, just this video.</p>
 
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span><span class="p">,</span> <span class="s2">&quot;Not logged in, cannot unmute user&quot;</span>
 
-        <span class="c1">#If the user object has a username attribute, use that</span>
-        <span class="c1"># because most user objects will __str__ into their base 36 ID</span>
+        <span class="c1"># If the user object has a username attribute, use that</span>
+        <span class="c1">#  because most user objects will __str__ into their base 36 ID</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
             <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span>
 
@@ -6350,22 +6405,23 @@ Defaults to False, just this video.</p>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__next_event_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Wait for the next event from the SSE and parse the JSON&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span><span class="p">:</span> <span class="c1">#Do not try to query a new event if chat is closed</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span><span class="p">:</span> <span class="c1"># Do not try to query a new event if chat is closed</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chat closed, cannot retrieve new JSON data.&quot;</span><span class="p">)</span>
             <span class="k">return</span>
 
         <span class="k">try</span><span class="p">:</span>
             <span class="n">event</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_generator</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ReadTimeout</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Request read timeout.&quot;</span><span class="p">)</span>
             <span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">#Chat has been closed</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Chat has been closed</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chat has closed.&quot;</span><span class="p">)</span>
             <span class="k">return</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="c1">#Blank SSE event</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="c1"># Blank SSE event</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Blank SSE event:&gt;&quot;</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="s2">&quot;&lt;:&quot;</span><span class="p">)</span>
-            <span class="c1">#Self recursion should work so long as we don&#39;t get dozens of blank events in a row</span>
+            <span class="c1"># Self recursion should work so long as we don&#39;t get dozens of blank events in a row</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__next_event_json</span><span class="p">()</span>
 
         <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
@@ -6381,17 +6437,17 @@ Defaults to False, just this video.</p>
             <span class="nb">print</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;That is not init json&quot;</span><span class="p">)</span>
 
-        <span class="c1">#Parse pre-connection users, channels, then messages</span>
+        <span class="c1"># Parse pre-connection users, channels, then messages</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_users</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_channels</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">update_mailbox</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
-        <span class="c1">#Load the chat badges</span>
+        <span class="c1"># Load the chat badges</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">load_badges</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rants_enabled</span> <span class="o">=</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;config&quot;</span><span class="p">][</span><span class="s2">&quot;rants&quot;</span><span class="p">][</span><span class="s2">&quot;enable&quot;</span><span class="p">]</span>
-        <span class="c1">#subscription TODO</span>
-        <span class="c1">#rant levels TODO</span>
+        <span class="c1"># subscription TODO</span>
+        <span class="c1"># rant levels TODO</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_length_max</span> <span class="o">=</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;config&quot;</span><span class="p">][</span><span class="s2">&quot;message_length_max&quot;</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
@@ -6401,7 +6457,7 @@ Defaults to False, just this video.</p>
 <span class="sd">        jsondata (dict): A JSON data block from an SSE event.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Add new messages</span>
+        <span class="c1"># Add new messages</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Message</span><span class="p">(</span><span class="n">message_json</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">message_json</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;messages&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">message_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">clear_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -6417,8 +6473,8 @@ Defaults to False, just this video.</p>
 
         <span class="k">for</span> <span class="n">user_json</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="p">[]):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">user_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">user_json</span> <span class="c1">#Update an existing user&#39;s JSON</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#User is new</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">user_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">user_json</span> <span class="c1"># Update an existing user&#39;s JSON</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1"># User is new</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">user_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">user_json</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">update_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
@@ -6430,8 +6486,8 @@ Defaults to False, just this video.</p>
 
         <span class="k">for</span> <span class="n">channel_json</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channels&quot;</span><span class="p">,</span> <span class="p">[]):</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">channel_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">channel_json</span> <span class="c1">#Update an existing channel&#39;s JSON</span>
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#Channel is new</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">channel_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">channel_json</span> <span class="c1"># Update an existing channel&#39;s JSON</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1"># Channel is new</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="nb">int</span><span class="p">(</span><span class="n">channel_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="p">:</span> <span class="n">Channel</span><span class="p">(</span><span class="n">channel_json</span><span class="p">,</span> <span class="bp">self</span><span class="p">)})</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">load_badges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
@@ -6449,50 +6505,56 @@ Defaults to False, just this video.</p>
         <span class="k">return</span> <span class="n">utils</span><span class="o">.</span><span class="n">base_36_to_10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed&quot;&quot;&quot;</span>
-        <span class="c1">#We don&#39;t already have messages</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the next chat message (parsing any additional data).</span>
+<span class="sd">        Waits for it to come in, returns None if chat closed.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        result (Message | None): Either the next chat message or NoneType.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># We don&#39;t already have messages</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span><span class="p">:</span>
             <span class="n">jsondata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__next_event_json</span><span class="p">()</span>
 
-            <span class="c1">#The chat has closed</span>
+            <span class="c1"># The chat has closed</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="n">jsondata</span><span class="p">:</span>
                 <span class="k">return</span>
 
-            <span class="c1">#Messages were deleted</span>
+            <span class="c1"># Messages were deleted</span>
             <span class="k">if</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;delete_messages&quot;</span><span class="p">,</span> <span class="s2">&quot;delete_non_rant_messages&quot;</span><span class="p">):</span>
-                <span class="c1">#Flag the messages in our history as being deleted</span>
+                <span class="c1"># Flag the messages in our history as being deleted</span>
                 <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">message_id</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;message_ids&quot;</span><span class="p">]:</span>
                         <span class="n">message</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-            <span class="c1">#Re-initialize (could contain new messages)</span>
+            <span class="c1"># Re-initialize (could contain new messages)</span>
             <span class="k">elif</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">parse_init_data</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
-            <span class="c1">#Pinned message</span>
+            <span class="c1"># Pinned message</span>
             <span class="k">elif</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pin_message&quot;</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">pinned_message</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">)</span>
 
-            <span class="c1">#New messages</span>
+            <span class="c1"># New messages</span>
             <span class="k">elif</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;messages&quot;</span><span class="p">:</span>
-                <span class="c1">#Parse users, channels, then messages</span>
+                <span class="c1"># Parse users, channels, then messages</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update_users</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update_channels</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">update_mailbox</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
-            <span class="c1">#Unimplemented event type</span>
+            <span class="c1"># Unimplemented event type</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;API sent an unimplemented SSE event type&quot;</span><span class="p">)</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
-        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#Get the oldest message in the mailbox</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="c1">#Add the message to the history</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Get the oldest message in the mailbox</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="c1"># Add the message to the history</span>
 
-        <span class="c1">#Make sure the history is not too long, clipping off the oldest messages</span>
+        <span class="c1"># Make sure the history is not too long, clipping off the oldest messages</span>
         <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="p">[</span> <span class="p">:</span> <span class="nb">max</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_len</span><span class="p">,</span> <span class="mi">0</span><span class="p">))]</span>
 
-        <span class="c1">#Return the next message from the mailbox</span>
+        <span class="c1"># Return the next message from the mailbox</span>
         <span class="k">return</span> <span class="n">m</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -6606,7 +6668,10 @@ Defaults to False, just this video.</p>
             </td>
             <td>
               <div class="doc-md-description">
-                <p>Stream ID in base 10 or 36.</p>
+                <p>Stream ID in base 10 int or base 36 str.
+WARNING: If a str is passed, this WILL ASSUME BASE 36
+even if only digits are present! Convert to int before passing
+if it is base 10.</p>
               </div>
             </td>
             <td>
@@ -6731,11 +6796,20 @@ Defaults to 1000.</p>
 <span class="normal">514</span>
 <span class="normal">515</span>
 <span class="normal">516</span>
-<span class="normal">517</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_id</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">history_len</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">stream_id</span><span class="p">,</span> <span class="n">username</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">session</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">history_len</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;The Rumble internal chat API</span>
 
 <span class="sd">Args:</span>
-<span class="sd">    stream_id (int, str): Stream ID in base 10 or 36.</span>
+<span class="sd">    stream_id (int, str): Stream ID in base 10 int or base 36 str.</span>
+<span class="sd">        WARNING: If a str is passed, this WILL ASSUME BASE 36</span>
+<span class="sd">        even if only digits are present! Convert to int before passing</span>
+<span class="sd">        if it is base 10.</span>
 <span class="sd">    username (str): Username to login with.</span>
 <span class="sd">        Defaults to no login.</span>
 <span class="sd">    password (str): Password to log in with.</span>
@@ -6748,34 +6822,37 @@ Defaults to 1000.</p>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">ensure_b36</span><span class="p">(</span><span class="n">stream_id</span><span class="p">)</span>
 
-    <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#A mailbox if you will</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__history</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#Chat history</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">history_len</span> <span class="o">=</span> <span class="n">history_len</span> <span class="c1">#How many messages to store in history</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">pinned_message</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#If a message is pinned, it is assigned to this</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">#Dictionary of users by user ID</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1">#Dictionary of channels by channel ID</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">#  A mailbox if you will</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__history</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">#  Chat history</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">history_len</span> <span class="o">=</span> <span class="n">history_len</span>  <span class="c1">#  How many messages to store in history</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">pinned_message</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1">#  If a message is pinned, it is assigned to this</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">users</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1">#  Dictionary of users by user ID</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1">#  Dictionary of channels by channel ID</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">badges</span> <span class="o">=</span> <span class="p">{}</span>
 
-    <span class="c1">#Generate our URLs</span>
+    <span class="c1"># Generate our URLs</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">sse_url</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">ChatAPI</span><span class="o">.</span><span class="n">sse_stream</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stream_id_b10</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id_b10</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;SSE stream URL:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sse_url</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">message_api_url</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">ChatAPI</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">stream_id_b10</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id_b10</span><span class="p">)</span>
 
-    <span class="c1">#Connect to SSE stream</span>
-    <span class="c1">#Note: We do NOT want this request to have a timeout</span>
-    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sse_url</span><span class="p">,</span> <span class="n">stream</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">RequestHeaders</span><span class="o">.</span><span class="n">sse_api</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">sseclient</span><span class="o">.</span><span class="n">SSEClient</span><span class="p">(</span><span class="n">response</span><span class="p">)</span>
+    <span class="c1">#  Connect to SSE stream</span>
+    <span class="c1">#  Note: We do NOT want this request to have a timeout</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sse_url</span><span class="p">,</span> <span class="n">stream</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">headers</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">RequestHeaders</span><span class="o">.</span><span class="n">sse_api</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">client</span> <span class="o">=</span> <span class="n">sseclient</span><span class="o">.</span><span class="n">SSEClient</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">event_generator</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">events</span><span class="p">()</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">parse_init_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__next_event_json</span><span class="p">())</span>
 
-    <span class="c1">#If we have session login, use them</span>
+    <span class="c1">#  If we have session login, use them</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">username</span> <span class="ow">and</span> <span class="n">password</span><span class="p">)</span> <span class="ow">or</span> <span class="n">session</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">ServicePHP</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">session</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">=</span> <span class="n">scraping</span><span class="o">.</span><span class="n">Scraper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="kc">None</span>
 
-    <span class="c1">#The last time we sent a message</span>
+    <span class="c1">#  Parse the init data for the stream (must do AFTER we have servicephp)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">parse_init_data</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__next_event_json</span><span class="p">())</span>
+
+    <span class="c1">#  The last time we sent a message</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">last_send_time</span> <span class="o">=</span> <span class="mi">0</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6798,44 +6875,46 @@ Defaults to 1000.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">685</span>
-<span class="normal">686</span>
-<span class="normal">687</span>
-<span class="normal">688</span>
-<span class="normal">689</span>
-<span class="normal">690</span>
-<span class="normal">691</span>
-<span class="normal">692</span>
-<span class="normal">693</span>
-<span class="normal">694</span>
-<span class="normal">695</span>
-<span class="normal">696</span>
-<span class="normal">697</span>
-<span class="normal">698</span>
-<span class="normal">699</span>
-<span class="normal">700</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">700</span>
 <span class="normal">701</span>
 <span class="normal">702</span>
 <span class="normal">703</span>
 <span class="normal">704</span>
-<span class="normal">705</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__next_event_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="normal">705</span>
+<span class="normal">706</span>
+<span class="normal">707</span>
+<span class="normal">708</span>
+<span class="normal">709</span>
+<span class="normal">710</span>
+<span class="normal">711</span>
+<span class="normal">712</span>
+<span class="normal">713</span>
+<span class="normal">714</span>
+<span class="normal">715</span>
+<span class="normal">716</span>
+<span class="normal">717</span>
+<span class="normal">718</span>
+<span class="normal">719</span>
+<span class="normal">720</span>
+<span class="normal">721</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">__next_event_json</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Wait for the next event from the SSE and parse the JSON&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span><span class="p">:</span> <span class="c1">#Do not try to query a new event if chat is closed</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span><span class="p">:</span> <span class="c1"># Do not try to query a new event if chat is closed</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chat closed, cannot retrieve new JSON data.&quot;</span><span class="p">)</span>
         <span class="k">return</span>
 
     <span class="k">try</span><span class="p">:</span>
         <span class="n">event</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">event_generator</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">except</span> <span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ReadTimeout</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Request read timeout.&quot;</span><span class="p">)</span>
         <span class="n">event</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="p">:</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">#Chat has been closed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># Chat has been closed</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Chat has closed.&quot;</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="c1">#Blank SSE event</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="p">:</span> <span class="c1"># Blank SSE event</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Blank SSE event:&gt;&quot;</span><span class="p">,</span> <span class="n">event</span><span class="p">,</span> <span class="s2">&quot;&lt;:&quot;</span><span class="p">)</span>
-        <span class="c1">#Self recursion should work so long as we don&#39;t get dozens of blank events in a row</span>
+        <span class="c1"># Self recursion should work so long as we don&#39;t get dozens of blank events in a row</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__next_event_json</span><span class="p">()</span>
 
     <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">event</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
@@ -6860,11 +6939,39 @@ Defaults to 1000.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">741</span>
-<span class="normal">742</span>
-<span class="normal">743</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">757</span>
+<span class="normal">758</span>
+<span class="normal">759</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">clear_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete anything in the mailbox&quot;&quot;&quot;</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span> <span class="o">=</span> <span class="p">[]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h3 id="cocorum.chatapi.ChatAPI.close" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">close</span><span class="p">()</span></code>
+
+</h3>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Close the chat connection</p>
+
+            <details class="quote">
+              <summary>Source code in <code>cocorum/chatapi.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Close the chat connection&quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">response</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">chat_running</span> <span class="o">=</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -6940,18 +7047,7 @@ Defaults to 1000.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">572</span>
-<span class="normal">573</span>
-<span class="normal">574</span>
-<span class="normal">575</span>
-<span class="normal">576</span>
-<span class="normal">577</span>
-<span class="normal">578</span>
-<span class="normal">579</span>
-<span class="normal">580</span>
-<span class="normal">581</span>
-<span class="normal">582</span>
-<span class="normal">583</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">583</span>
 <span class="normal">584</span>
 <span class="normal">585</span>
 <span class="normal">586</span>
@@ -6962,7 +7058,18 @@ Defaults to 1000.</p>
 <span class="normal">591</span>
 <span class="normal">592</span>
 <span class="normal">593</span>
-<span class="normal">594</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="normal">594</span>
+<span class="normal">595</span>
+<span class="normal">596</span>
+<span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span>
+<span class="normal">604</span>
+<span class="normal">605</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">command</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">command_message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Send a native chat command</span>
 
 <span class="sd">Args:</span>
@@ -7035,20 +7142,33 @@ Defaults to 1000.</p>
       </tbody>
     </table>
 
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>success</code></td>            <td>
+                  <code>bool</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Wether the operation succeeded or not.
+NOTE: Method will also print an error message if it failed.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
+
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">596</span>
-<span class="normal">597</span>
-<span class="normal">598</span>
-<span class="normal">599</span>
-<span class="normal">600</span>
-<span class="normal">601</span>
-<span class="normal">602</span>
-<span class="normal">603</span>
-<span class="normal">604</span>
-<span class="normal">605</span>
-<span class="normal">606</span>
-<span class="normal">607</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">607</span>
 <span class="normal">608</span>
 <span class="normal">609</span>
 <span class="normal">610</span>
@@ -7063,11 +7183,30 @@ Defaults to 1000.</p>
 <span class="normal">619</span>
 <span class="normal">620</span>
 <span class="normal">621</span>
-<span class="normal">622</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span>
+<span class="normal">625</span>
+<span class="normal">626</span>
+<span class="normal">627</span>
+<span class="normal">628</span>
+<span class="normal">629</span>
+<span class="normal">630</span>
+<span class="normal">631</span>
+<span class="normal">632</span>
+<span class="normal">633</span>
+<span class="normal">634</span>
+<span class="normal">635</span>
+<span class="normal">636</span>
+<span class="normal">637</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">delete_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Delete a message in chat.</span>
 
 <span class="sd">Args:</span>
 <span class="sd">    message (int | Message): Object which when converted to integer is the target message ID.</span>
+
+<span class="sd">Returns:</span>
+<span class="sd">    success (bool): Wether the operation succeeded or not.</span>
+<span class="sd">        NOTE: Method will also print an error message if it failed.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">assert</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="s2">&quot;deleted&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">message</span><span class="o">.</span><span class="n">deleted</span><span class="p">,</span> <span class="s2">&quot;Message was already deleted&quot;</span>
@@ -7078,7 +7217,7 @@ Defaults to 1000.</p>
     <span class="n">r</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message_api_url</span> <span class="o">+</span> <span class="sa">f</span><span class="s2">&quot;/</span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">message</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
         <span class="n">cookies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span><span class="p">,</span>
-        <span class="c1"># headers = static.RequestHeaders.user_agent,</span>
+        <span class="c1">#  headers = static.RequestHeaders.user_agent,</span>
         <span class="n">timeout</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">request_timeout</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -7107,27 +7246,35 @@ Defaults to 1000.</p>
 
     <div class="doc doc-contents ">
 
-        <p>Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed</p>
+        <p>Return the next chat message (parsing any additional data).
+    Waits for it to come in, returns None if chat closed.</p>
+
+
+    <p><span class="doc-section-title">Returns:</span></p>
+    <table>
+      <thead>
+        <tr>
+<th>Name</th>          <th>Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+          <tr class="doc-section-item">
+<td><code>result</code></td>            <td>
+                  <code><a class="autorefs autorefs-internal" title="cocorum.chatapi.Message" href="#cocorum.chatapi.Message">Message</a> | None</code>
+            </td>
+            <td>
+              <div class="doc-md-description">
+                <p>Either the next chat message or NoneType.</p>
+              </div>
+            </td>
+          </tr>
+      </tbody>
+    </table>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">785</span>
-<span class="normal">786</span>
-<span class="normal">787</span>
-<span class="normal">788</span>
-<span class="normal">789</span>
-<span class="normal">790</span>
-<span class="normal">791</span>
-<span class="normal">792</span>
-<span class="normal">793</span>
-<span class="normal">794</span>
-<span class="normal">795</span>
-<span class="normal">796</span>
-<span class="normal">797</span>
-<span class="normal">798</span>
-<span class="normal">799</span>
-<span class="normal">800</span>
-<span class="normal">801</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">801</span>
 <span class="normal">802</span>
 <span class="normal">803</span>
 <span class="normal">804</span>
@@ -7156,51 +7303,79 @@ Defaults to 1000.</p>
 <span class="normal">827</span>
 <span class="normal">828</span>
 <span class="normal">829</span>
-<span class="normal">830</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed&quot;&quot;&quot;</span>
-    <span class="c1">#We don&#39;t already have messages</span>
+<span class="normal">830</span>
+<span class="normal">831</span>
+<span class="normal">832</span>
+<span class="normal">833</span>
+<span class="normal">834</span>
+<span class="normal">835</span>
+<span class="normal">836</span>
+<span class="normal">837</span>
+<span class="normal">838</span>
+<span class="normal">839</span>
+<span class="normal">840</span>
+<span class="normal">841</span>
+<span class="normal">842</span>
+<span class="normal">843</span>
+<span class="normal">844</span>
+<span class="normal">845</span>
+<span class="normal">846</span>
+<span class="normal">847</span>
+<span class="normal">848</span>
+<span class="normal">849</span>
+<span class="normal">850</span>
+<span class="normal">851</span>
+<span class="normal">852</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the next chat message (parsing any additional data).</span>
+<span class="sd">    Waits for it to come in, returns None if chat closed.</span>
+
+<span class="sd">Returns:</span>
+<span class="sd">    result (Message | None): Either the next chat message or NoneType.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># We don&#39;t already have messages</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span><span class="p">:</span>
         <span class="n">jsondata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__next_event_json</span><span class="p">()</span>
 
-        <span class="c1">#The chat has closed</span>
+        <span class="c1"># The chat has closed</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">jsondata</span><span class="p">:</span>
             <span class="k">return</span>
 
-        <span class="c1">#Messages were deleted</span>
+        <span class="c1"># Messages were deleted</span>
         <span class="k">if</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;delete_messages&quot;</span><span class="p">,</span> <span class="s2">&quot;delete_non_rant_messages&quot;</span><span class="p">):</span>
-            <span class="c1">#Flag the messages in our history as being deleted</span>
+            <span class="c1"># Flag the messages in our history as being deleted</span>
             <span class="k">for</span> <span class="n">message</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">message</span><span class="o">.</span><span class="n">message_id</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;message_ids&quot;</span><span class="p">]:</span>
                     <span class="n">message</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="kc">True</span>
 
 
-        <span class="c1">#Re-initialize (could contain new messages)</span>
+        <span class="c1"># Re-initialize (could contain new messages)</span>
         <span class="k">elif</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;init&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">parse_init_data</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
-        <span class="c1">#Pinned message</span>
+        <span class="c1"># Pinned message</span>
         <span class="k">elif</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;pin_message&quot;</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">pinned_message</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;message&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="p">)</span>
 
-        <span class="c1">#New messages</span>
+        <span class="c1"># New messages</span>
         <span class="k">elif</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;messages&quot;</span><span class="p">:</span>
-            <span class="c1">#Parse users, channels, then messages</span>
+            <span class="c1"># Parse users, channels, then messages</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_users</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_channels</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">update_mailbox</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
-        <span class="c1">#Unimplemented event type</span>
+        <span class="c1"># Unimplemented event type</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;API sent an unimplemented SSE event type&quot;</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
-    <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1">#Get the oldest message in the mailbox</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="c1">#Add the message to the history</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="c1"># Get the oldest message in the mailbox</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="c1"># Add the message to the history</span>
 
-    <span class="c1">#Make sure the history is not too long, clipping off the oldest messages</span>
+    <span class="c1"># Make sure the history is not too long, clipping off the oldest messages</span>
     <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="p">[</span> <span class="p">:</span> <span class="nb">max</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__history</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_len</span><span class="p">,</span> <span class="mi">0</span><span class="p">))]</span>
 
-    <span class="c1">#Return the next message from the mailbox</span>
+    <span class="c1"># Return the next message from the mailbox</span>
     <span class="k">return</span> <span class="n">m</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7254,14 +7429,14 @@ Defaults to 1000.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">771</span>
-<span class="normal">772</span>
-<span class="normal">773</span>
-<span class="normal">774</span>
-<span class="normal">775</span>
-<span class="normal">776</span>
-<span class="normal">777</span>
-<span class="normal">778</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_badges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">787</span>
+<span class="normal">788</span>
+<span class="normal">789</span>
+<span class="normal">790</span>
+<span class="normal">791</span>
+<span class="normal">792</span>
+<span class="normal">793</span>
+<span class="normal">794</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">load_badges</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Create our dictionary of badges from an SSE data JSON</span>
 
 <span class="sd">Args:</span>
@@ -7355,25 +7530,25 @@ Defaults to False, just this video.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">647</span>
-<span class="normal">648</span>
-<span class="normal">649</span>
-<span class="normal">650</span>
-<span class="normal">651</span>
-<span class="normal">652</span>
-<span class="normal">653</span>
-<span class="normal">654</span>
-<span class="normal">655</span>
-<span class="normal">656</span>
-<span class="normal">657</span>
-<span class="normal">658</span>
-<span class="normal">659</span>
-<span class="normal">660</span>
-<span class="normal">661</span>
-<span class="normal">662</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">662</span>
 <span class="normal">663</span>
 <span class="normal">664</span>
-<span class="normal">665</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mute_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+<span class="normal">665</span>
+<span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span>
+<span class="normal">671</span>
+<span class="normal">672</span>
+<span class="normal">673</span>
+<span class="normal">674</span>
+<span class="normal">675</span>
+<span class="normal">676</span>
+<span class="normal">677</span>
+<span class="normal">678</span>
+<span class="normal">679</span>
+<span class="normal">680</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">mute_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">,</span> <span class="n">duration</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">total</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Mute a user.</span>
 
 <span class="sd">Args:</span>
@@ -7444,29 +7619,29 @@ Defaults to False, just this video.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">707</span>
-<span class="normal">708</span>
-<span class="normal">709</span>
-<span class="normal">710</span>
-<span class="normal">711</span>
-<span class="normal">712</span>
-<span class="normal">713</span>
-<span class="normal">714</span>
-<span class="normal">715</span>
-<span class="normal">716</span>
-<span class="normal">717</span>
-<span class="normal">718</span>
-<span class="normal">719</span>
-<span class="normal">720</span>
-<span class="normal">721</span>
-<span class="normal">722</span>
-<span class="normal">723</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">723</span>
 <span class="normal">724</span>
 <span class="normal">725</span>
 <span class="normal">726</span>
 <span class="normal">727</span>
 <span class="normal">728</span>
-<span class="normal">729</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
+<span class="normal">729</span>
+<span class="normal">730</span>
+<span class="normal">731</span>
+<span class="normal">732</span>
+<span class="normal">733</span>
+<span class="normal">734</span>
+<span class="normal">735</span>
+<span class="normal">736</span>
+<span class="normal">737</span>
+<span class="normal">738</span>
+<span class="normal">739</span>
+<span class="normal">740</span>
+<span class="normal">741</span>
+<span class="normal">742</span>
+<span class="normal">743</span>
+<span class="normal">744</span>
+<span class="normal">745</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">parse_init_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract initial chat data from the SSE init event JSON</span>
 
 <span class="sd">Args:</span>
@@ -7477,17 +7652,17 @@ Defaults to False, just this video.</p>
         <span class="nb">print</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;That is not init json&quot;</span><span class="p">)</span>
 
-    <span class="c1">#Parse pre-connection users, channels, then messages</span>
+    <span class="c1"># Parse pre-connection users, channels, then messages</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">update_users</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">update_channels</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">update_mailbox</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
-    <span class="c1">#Load the chat badges</span>
+    <span class="c1"># Load the chat badges</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">load_badges</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">rants_enabled</span> <span class="o">=</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;config&quot;</span><span class="p">][</span><span class="s2">&quot;rants&quot;</span><span class="p">][</span><span class="s2">&quot;enable&quot;</span><span class="p">]</span>
-    <span class="c1">#subscription TODO</span>
-    <span class="c1">#rant levels TODO</span>
+    <span class="c1"># subscription TODO</span>
+    <span class="c1"># rant levels TODO</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">message_length_max</span> <span class="o">=</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;config&quot;</span><span class="p">][</span><span class="s2">&quot;message_length_max&quot;</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7541,15 +7716,15 @@ Defaults to False, just this video.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">624</span>
-<span class="normal">625</span>
-<span class="normal">626</span>
-<span class="normal">627</span>
-<span class="normal">628</span>
-<span class="normal">629</span>
-<span class="normal">630</span>
-<span class="normal">631</span>
-<span class="normal">632</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">pin_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">pin_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Pin a message</span>
 
 <span class="sd">    Args:</span>
@@ -7660,18 +7835,7 @@ Defaults to None.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">531</span>
-<span class="normal">532</span>
-<span class="normal">533</span>
-<span class="normal">534</span>
-<span class="normal">535</span>
-<span class="normal">536</span>
-<span class="normal">537</span>
-<span class="normal">538</span>
-<span class="normal">539</span>
-<span class="normal">540</span>
-<span class="normal">541</span>
-<span class="normal">542</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">542</span>
 <span class="normal">543</span>
 <span class="normal">544</span>
 <span class="normal">545</span>
@@ -7699,7 +7863,18 @@ Defaults to None.</p>
 <span class="normal">567</span>
 <span class="normal">568</span>
 <span class="normal">569</span>
-<span class="normal">570</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span>
+<span class="normal">579</span>
+<span class="normal">580</span>
+<span class="normal">581</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">channel_id</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Send a message in chat.</span>
 
 <span class="sd">Args:</span>
@@ -7730,7 +7905,7 @@ Defaults to None.</p>
                 <span class="s2">&quot;channel_id&quot;</span><span class="p">:</span> <span class="n">channel_id</span>
                 <span class="p">}</span>
             <span class="p">},</span>
-        <span class="c1"># headers = static.RequestHeaders.user_agent,</span>
+        <span class="c1">#  headers = static.RequestHeaders.user_agent,</span>
         <span class="n">timeout</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">request_timeout</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -7791,23 +7966,23 @@ Defaults to None.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">667</span>
-<span class="normal">668</span>
-<span class="normal">669</span>
-<span class="normal">670</span>
-<span class="normal">671</span>
-<span class="normal">672</span>
-<span class="normal">673</span>
-<span class="normal">674</span>
-<span class="normal">675</span>
-<span class="normal">676</span>
-<span class="normal">677</span>
-<span class="normal">678</span>
-<span class="normal">679</span>
-<span class="normal">680</span>
-<span class="normal">681</span>
-<span class="normal">682</span>
-<span class="normal">683</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unmute_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span>
+<span class="normal">688</span>
+<span class="normal">689</span>
+<span class="normal">690</span>
+<span class="normal">691</span>
+<span class="normal">692</span>
+<span class="normal">693</span>
+<span class="normal">694</span>
+<span class="normal">695</span>
+<span class="normal">696</span>
+<span class="normal">697</span>
+<span class="normal">698</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unmute_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Unmute a user.</span>
 
 <span class="sd">Args:</span>
@@ -7816,8 +7991,8 @@ Defaults to None.</p>
 
     <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span><span class="p">,</span> <span class="s2">&quot;Not logged in, cannot unmute user&quot;</span>
 
-    <span class="c1">#If the user object has a username attribute, use that</span>
-    <span class="c1"># because most user objects will __str__ into their base 36 ID</span>
+    <span class="c1"># If the user object has a username attribute, use that</span>
+    <span class="c1">#  because most user objects will __str__ into their base 36 ID</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
         <span class="n">user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span>
 
@@ -7876,18 +8051,18 @@ Defaults to None.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">634</span>
-<span class="normal">635</span>
-<span class="normal">636</span>
-<span class="normal">637</span>
-<span class="normal">638</span>
-<span class="normal">639</span>
-<span class="normal">640</span>
-<span class="normal">641</span>
-<span class="normal">642</span>
-<span class="normal">643</span>
-<span class="normal">644</span>
-<span class="normal">645</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unpin_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span>
+<span class="normal">654</span>
+<span class="normal">655</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span>
+<span class="normal">659</span>
+<span class="normal">660</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">unpin_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Unpin the pinned message</span>
 
 <span class="sd">    Args:</span>
@@ -7951,18 +8126,18 @@ Defaults to None.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">758</span>
-<span class="normal">759</span>
-<span class="normal">760</span>
-<span class="normal">761</span>
-<span class="normal">762</span>
-<span class="normal">763</span>
-<span class="normal">764</span>
-<span class="normal">765</span>
-<span class="normal">766</span>
-<span class="normal">767</span>
-<span class="normal">768</span>
-<span class="normal">769</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">774</span>
+<span class="normal">775</span>
+<span class="normal">776</span>
+<span class="normal">777</span>
+<span class="normal">778</span>
+<span class="normal">779</span>
+<span class="normal">780</span>
+<span class="normal">781</span>
+<span class="normal">782</span>
+<span class="normal">783</span>
+<span class="normal">784</span>
+<span class="normal">785</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_channels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update our dictionary of channels from an SSE data JSON</span>
 
 <span class="sd">Args:</span>
@@ -7971,8 +8146,8 @@ Defaults to None.</p>
 
     <span class="k">for</span> <span class="n">channel_json</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;channels&quot;</span><span class="p">,</span> <span class="p">[]):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">channel_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">channel_json</span> <span class="c1">#Update an existing channel&#39;s JSON</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#Channel is new</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">channel_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">channel_json</span> <span class="c1"># Update an existing channel&#39;s JSON</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1"># Channel is new</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="nb">int</span><span class="p">(</span><span class="n">channel_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="p">:</span> <span class="n">Channel</span><span class="p">(</span><span class="n">channel_json</span><span class="p">,</span> <span class="bp">self</span><span class="p">)})</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8026,22 +8201,22 @@ Defaults to None.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">731</span>
-<span class="normal">732</span>
-<span class="normal">733</span>
-<span class="normal">734</span>
-<span class="normal">735</span>
-<span class="normal">736</span>
-<span class="normal">737</span>
-<span class="normal">738</span>
-<span class="normal">739</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">747</span>
+<span class="normal">748</span>
+<span class="normal">749</span>
+<span class="normal">750</span>
+<span class="normal">751</span>
+<span class="normal">752</span>
+<span class="normal">753</span>
+<span class="normal">754</span>
+<span class="normal">755</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_mailbox</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse chat messages from an SSE data JSON</span>
 
 <span class="sd">Args:</span>
 <span class="sd">    jsondata (dict): A JSON data block from an SSE event.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Add new messages</span>
+    <span class="c1"># Add new messages</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span> <span class="o">+=</span> <span class="p">[</span><span class="n">Message</span><span class="p">(</span><span class="n">message_json</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">message_json</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;messages&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">message_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__mailbox</span><span class="p">]</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8095,18 +8270,18 @@ Defaults to None.</p>
 
             <details class="quote">
               <summary>Source code in <code>cocorum/chatapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">745</span>
-<span class="normal">746</span>
-<span class="normal">747</span>
-<span class="normal">748</span>
-<span class="normal">749</span>
-<span class="normal">750</span>
-<span class="normal">751</span>
-<span class="normal">752</span>
-<span class="normal">753</span>
-<span class="normal">754</span>
-<span class="normal">755</span>
-<span class="normal">756</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">761</span>
+<span class="normal">762</span>
+<span class="normal">763</span>
+<span class="normal">764</span>
+<span class="normal">765</span>
+<span class="normal">766</span>
+<span class="normal">767</span>
+<span class="normal">768</span>
+<span class="normal">769</span>
+<span class="normal">770</span>
+<span class="normal">771</span>
+<span class="normal">772</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">update_users</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Update our dictionary of users from an SSE data JSON</span>
 
 <span class="sd">Args:</span>
@@ -8115,8 +8290,8 @@ Defaults to None.</p>
 
     <span class="k">for</span> <span class="n">user_json</span> <span class="ow">in</span> <span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;users&quot;</span><span class="p">,</span> <span class="p">[]):</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">user_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">user_json</span> <span class="c1">#Update an existing user&#39;s JSON</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#User is new</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">user_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">user_json</span> <span class="c1"># Update an existing user&#39;s JSON</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1"># User is new</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">users</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">user_json</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">])]</span> <span class="o">=</span> <span class="n">User</span><span class="p">(</span><span class="n">user_json</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -9233,11 +9408,11 @@ Defaults to None.</p>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">jsondata</span><span class="p">,</span> <span class="n">chat</span><span class="p">)</span>
 
-        <span class="c1">#Set the channel ID of our user if we can</span>
+        <span class="c1"># Set the channel ID of our user if we can</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">_set_channel_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span>
 
-        <span class="c1">#Remember if we were deleted</span>
+        <span class="c1"># Remember if we were deleted</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="kc">False</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -9253,25 +9428,25 @@ Defaults to None.</p>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span>
 
-        <span class="c1">#Check if the other object&#39;s text matches our own, if it has such</span>
+        <span class="c1"># Check if the other object&#39;s text matches our own, if it has such</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
-            <span class="c1">#Check if the other object&#39;s user ID matches our own, if it has one</span>
+            <span class="c1"># Check if the other object&#39;s user ID matches our own, if it has one</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">):</span>
-                <span class="c1">#Check if the other object is a raid notification, if it says</span>
+                <span class="c1"># Check if the other object is a raid notification, if it says</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;raid_notification&quot;</span><span class="p">):</span>
                     <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raid_notification</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">raid_notification</span><span class="p">)</span>
 
                 <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-            <span class="c1">#Check if the other object&#39;s username matches our own, if it has one</span>
+            <span class="c1"># Check if the other object&#39;s username matches our own, if it has one</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
-                <span class="c1">#Check if the other object is a raid notification, if it says</span>
+                <span class="c1"># Check if the other object is a raid notification, if it says</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;raid_notification&quot;</span><span class="p">):</span>
                     <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raid_notification</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">raid_notification</span><span class="p">)</span>
 
                 <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-            <span class="c1">#No user identifying attributes, but the text does match</span>
+            <span class="c1"># No user identifying attributes, but the text does match</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -9321,9 +9496,9 @@ Defaults to None.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The numeric ID of the channel who posted the message, if there is one&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="c1">#Note: For some reason, channel IDs in messages alone show up as integers in the SSE events</span>
+            <span class="c1"># Note: For some reason, channel IDs in messages alone show up as integers in the SSE events</span>
             <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;channel_id&quot;</span><span class="p">])</span>
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#This user is not appearing as a channel and so has no channel ID</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1"># This user is not appearing as a channel and so has no channel ID</span>
             <span class="k">return</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -9964,25 +10139,25 @@ Defaults to None.</p>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span>
 
-    <span class="c1">#Check if the other object&#39;s text matches our own, if it has such</span>
+    <span class="c1"># Check if the other object&#39;s text matches our own, if it has such</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
-        <span class="c1">#Check if the other object&#39;s user ID matches our own, if it has one</span>
+        <span class="c1"># Check if the other object&#39;s user ID matches our own, if it has one</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;user_id&quot;</span><span class="p">):</span>
-            <span class="c1">#Check if the other object is a raid notification, if it says</span>
+            <span class="c1"># Check if the other object is a raid notification, if it says</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;raid_notification&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raid_notification</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">raid_notification</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-        <span class="c1">#Check if the other object&#39;s username matches our own, if it has one</span>
+        <span class="c1"># Check if the other object&#39;s username matches our own, if it has one</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
-            <span class="c1">#Check if the other object is a raid notification, if it says</span>
+            <span class="c1"># Check if the other object is a raid notification, if it says</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;raid_notification&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">raid_notification</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">user_id</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">raid_notification</span><span class="p">)</span>
 
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-        <span class="c1">#No user identifying attributes, but the text does match</span>
+        <span class="c1"># No user identifying attributes, but the text does match</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10077,11 +10252,11 @@ Defaults to None.</p>
 
     <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">jsondata</span><span class="p">,</span> <span class="n">chat</span><span class="p">)</span>
 
-    <span class="c1">#Set the channel ID of our user if we can</span>
+    <span class="c1"># Set the channel ID of our user if we can</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">_set_channel_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">channel_id</span>
 
-    <span class="c1">#Remember if we were deleted</span>
+    <span class="c1"># Remember if we were deleted</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">deleted</span> <span class="o">=</span> <span class="kc">False</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10329,8 +10504,8 @@ Defaults to None.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">Chatter</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">,</span> <span class="n">chat</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">previous_channel_ids</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#List of channels the user has appeared as, including the current one</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_id</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#Channel ID set from message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">previous_channel_ids</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># List of channels the user has appeared as, including the current one</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_id</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Channel ID set from message</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">servicephp</span>
 
     <span class="nd">@property</span>
@@ -10342,15 +10517,15 @@ Defaults to None.</p>
     <span class="k">def</span><span class="w"> </span><span class="nf">channel_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The numeric channel ID that the user is appearing with in base 10&quot;&quot;&quot;</span>
 
-        <span class="c1">#Try to get our channel ID from our own JSON (may be deprecated)</span>
+        <span class="c1"># Try to get our channel ID from our own JSON (may be deprecated)</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">new</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;channel_id&quot;</span><span class="p">])</span>
 
-        <span class="c1">#Rely on messages to have assigned our channel ID</span>
+        <span class="c1"># Rely on messages to have assigned our channel ID</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="n">new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_id</span>
 
-        <span class="k">if</span> <span class="n">new</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_channel_ids</span><span class="p">:</span> <span class="c1">#Record the appearance of a new chanel appearance, including None</span>
+        <span class="k">if</span> <span class="n">new</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">previous_channel_ids</span><span class="p">:</span> <span class="c1"># Record the appearance of a new chanel appearance, including None</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">previous_channel_ids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">new</span>
 
@@ -10382,7 +10557,7 @@ Defaults to None.</p>
         <span class="k">try</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">badges</span><span class="p">[</span><span class="n">badge_slug</span><span class="p">]</span> <span class="k">for</span> <span class="n">badge_slug</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;badges&quot;</span><span class="p">]]</span>
 
-        <span class="c1">#User has no badges</span>
+        <span class="c1"># User has no badges</span>
         <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 </code></pre></div></td></tr></table></div>
@@ -10629,8 +10804,8 @@ Defaults to None.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">Chatter</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">,</span> <span class="n">chat</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">previous_channel_ids</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1">#List of channels the user has appeared as, including the current one</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_id</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1">#Channel ID set from message</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">previous_channel_ids</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># List of channels the user has appeared as, including the current one</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_set_channel_id</span> <span class="o">=</span> <span class="kc">None</span> <span class="c1"># Channel ID set from message</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">chat</span><span class="o">.</span><span class="n">servicephp</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -10704,7 +10879,7 @@ Defaults to None.</p>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">ChatAPIObj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">,</span> <span class="n">chat</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span> <span class="c1">#The unique identification for this badge</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span> <span class="c1"># The unique identification for this badge</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__icon</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -10854,7 +11029,7 @@ Defaults to None.</p>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="n">ChatAPIObj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">,</span> <span class="n">chat</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span> <span class="c1">#The unique identification for this badge</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span> <span class="c1"># The unique identification for this badge</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__icon</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
             </details>

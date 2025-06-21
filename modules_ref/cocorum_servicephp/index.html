@@ -2673,7 +2673,7 @@ All other classes are supporting sub-classes.</p>
         <span class="n">JSONObj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">servicephp</span>
 
-        <span class="c1">#Badges of the user who commented if we have them</span>
+        <span class="c1"># Badges of the user who commented if we have them</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comment_user_badges&quot;</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">user_badges</span> <span class="o">=</span> <span class="p">{</span><span class="n">slug</span> <span class="p">:</span> <span class="n">APIUserBadge</span><span class="p">(</span><span class="n">slug</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">slug</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;comment_user_badges&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 
@@ -2881,7 +2881,7 @@ All other classes are supporting sub-classes.</p>
     <span class="n">JSONObj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">servicephp</span>
 
-    <span class="c1">#Badges of the user who commented if we have them</span>
+    <span class="c1"># Badges of the user who commented if we have them</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;comment_user_badges&quot;</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">user_badges</span> <span class="o">=</span> <span class="p">{</span><span class="n">slug</span> <span class="p">:</span> <span class="n">APIUserBadge</span><span class="p">(</span><span class="n">slug</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="k">for</span> <span class="n">slug</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;comment_user_badges&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
 </code></pre></div></td></tr></table></div>
@@ -3937,7 +3937,7 @@ All other classes are supporting sub-classes.</p>
         <span class="n">JSONObj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">servicephp</span>
 
-        <span class="c1">#Our profile picture data</span>
+        <span class="c1"># Our profile picture data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__picture</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -3968,10 +3968,10 @@ All other classes are supporting sub-classes.</p>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">picture</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The user&#39;s profile picture as a bytes string&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">picture_url</span><span class="p">:</span> <span class="c1">#The profile picture is blank</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">picture_url</span><span class="p">:</span> <span class="c1"># The profile picture is blank</span>
             <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__picture</span><span class="p">:</span> <span class="c1">#We never queried the profile pic before</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__picture</span><span class="p">:</span> <span class="c1"># We never queried the profile pic before</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">picture_url</span><span class="p">,</span> <span class="n">timeout</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">request_timeout</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;Status code &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
 
@@ -4282,7 +4282,7 @@ All other classes are supporting sub-classes.</p>
     <span class="n">JSONObj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">servicephp</span>
 
-    <span class="c1">#Our profile picture data</span>
+    <span class="c1"># Our profile picture data</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__picture</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4311,7 +4311,7 @@ All other classes are supporting sub-classes.</p>
 
     <div class="doc doc-contents ">
             <p class="doc doc-class-bases">
-              Bases: <code><a class="autorefs autorefs-internal" title="cocorum.jsonhandles.JSONObj" href="../cocorum_jsonhandles/#cocorum.jsonhandles.JSONObj">JSONObj</a></code></p>
+              Bases: <code><a class="autorefs autorefs-internal" title="cocorum.jsonhandles.JSONObj" href="../cocorum_jsonhandles/#cocorum.jsonhandles.JSONObj">JSONObj</a></code>, <code><a class="autorefs autorefs-internal" title="cocorum.basehandles.BaseUserBadge" href="../cocorum_basehandles/#cocorum.basehandles.BaseUserBadge">BaseUserBadge</a></code></p>
 
 
         <p>A badge of a user as returned by the API</p>
@@ -4345,7 +4345,7 @@ All other classes are supporting sub-classes.</p>
 <span class="normal">45</span>
 <span class="normal">46</span>
 <span class="normal">47</span>
-<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">APIUserBadge</span><span class="p">(</span><span class="n">JSONObj</span><span class="p">):</span>
+<span class="normal">48</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">APIUserBadge</span><span class="p">(</span><span class="n">JSONObj</span><span class="p">,</span> <span class="n">BaseUserBadge</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;A badge of a user as returned by the API&quot;&quot;&quot;</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slug</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;A badge of a user as returned by the API.</span>
@@ -4355,8 +4355,8 @@ All other classes are supporting sub-classes.</p>
 <span class="sd">        jsondata (dict): The JSON data block of the badge.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span> <span class="c1">#The unique identification for this badge</span>
+        <span class="n">JSONObj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span> <span class="c1"># The unique identification for this badge</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__icon</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
@@ -4505,8 +4505,8 @@ All other classes are supporting sub-classes.</p>
 <span class="sd">    jsondata (dict): The JSON data block of the badge.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">jsondata</span><span class="p">)</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span> <span class="c1">#The unique identification for this badge</span>
+    <span class="n">JSONObj</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">jsondata</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">=</span> <span class="n">slug</span> <span class="c1"># The unique identification for this badge</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__icon</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -7396,39 +7396,39 @@ Defaults to False, just this video.</p>
 <span class="sd">            Defaults to using the password instead.</span>
 <span class="sd">            &quot;&quot;&quot;</span>
 
-        <span class="c1">#Save the username</span>
+        <span class="c1"># Save the username</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
 
-        <span class="c1">#Session is the token directly</span>
+        <span class="c1"># Session is the token directly</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span> <span class="o">=</span> <span class="p">{</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">session_token_key</span><span class="p">,</span> <span class="n">session</span><span class="p">}</span>
 
-        <span class="c1">#Session is a cookie dict</span>
+        <span class="c1"># Session is a cookie dict</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">assert</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">session_token_key</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Session cookie dict must have &#39;</span><span class="si">{</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">session_token_key</span><span class="si">}</span><span class="s2">&#39; as key.&quot;</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span> <span class="o">=</span> <span class="n">session</span>
 
-        <span class="c1">#Session was passed but it is not anything we can use</span>
+        <span class="c1"># Session was passed but it is not anything we can use</span>
         <span class="k">elif</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session must be a token str or cookie dict, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">session</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-        <span class="c1">#Session was not passed, but credentials were</span>
+        <span class="c1"># Session was not passed, but credentials were</span>
         <span class="k">elif</span> <span class="n">username</span> <span class="ow">and</span> <span class="n">password</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
 
-        <span class="c1">#Neither session nor credentials were passed:</span>
+        <span class="c1"># Neither session nor credentials were passed:</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must pass either userame and password, or a session token&quot;</span><span class="p">)</span>
 
         <span class="k">assert</span> <span class="n">utils</span><span class="o">.</span><span class="n">test_session_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span><span class="p">),</span> <span class="s2">&quot;Session cookie is invalid.&quot;</span>
 
-        <span class="c1">#Stored ID of the logged in user</span>
+        <span class="c1"># Stored ID of the logged in user</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__user_id</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">user_id</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The numeric ID of the logged in user in base 10&quot;&quot;&quot;</span>
-        <span class="c1">#We do not have a user ID, extract it from the unread notifications response</span>
+        <span class="c1"># We do not have a user ID, extract it from the unread notifications response</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__user_id</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">j</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sphp_request</span><span class="p">(</span>
                 <span class="s2">&quot;user.has_unread_notifications&quot;</span><span class="p">,</span>
@@ -7466,11 +7466,11 @@ Defaults to False, just this video.</p>
                 <span class="n">timeout</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">request_timeout</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Service.PHP request for </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="c1">#If the request json has a data -&gt; success value, make sure it is True</span>
+        <span class="c1"># If the request json has a data -&gt; success value, make sure it is True</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
             <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Service.PHP request for </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> failed: </span><span class="se">\n</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="c1">#Data was not a dict but was not empty</span>
+        <span class="c1"># Data was not a dict but was not empty</span>
         <span class="k">elif</span> <span class="n">d</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Service.PHP request for </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> did not fail but returned unknown data type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
@@ -7487,7 +7487,7 @@ Defaults to False, just this video.</p>
 <span class="sd">        Cookie (dict): Cookie dict to be passed with requests, which authenticates them.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Get salts</span>
+        <span class="c1"># Get salts</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sphp_request</span><span class="p">(</span>
                 <span class="s2">&quot;user.get_salts&quot;</span><span class="p">,</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">},</span>
@@ -7495,13 +7495,13 @@ Defaults to False, just this video.</p>
                 <span class="p">)</span>
         <span class="n">salts</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;salts&quot;</span><span class="p">]</span>
 
-        <span class="c1">#Get session token</span>
+        <span class="c1"># Get session token</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sphp_request</span><span class="p">(</span>
                 <span class="s2">&quot;user.login&quot;</span><span class="p">,</span>
                 <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
                     <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
 
-                    <span class="c1">#Hash the password using the salts</span>
+                    <span class="c1"># Hash the password using the salts</span>
                     <span class="s2">&quot;password_hashes&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">calc_password_hashes</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">salts</span><span class="p">)),</span>
                     <span class="p">},</span>
                 <span class="n">logged_in</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -8022,33 +8022,33 @@ Defaults to using the password instead.</p>
 <span class="sd">        Defaults to using the password instead.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="c1">#Save the username</span>
+    <span class="c1"># Save the username</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
 
-    <span class="c1">#Session is the token directly</span>
+    <span class="c1"># Session is the token directly</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span> <span class="o">=</span> <span class="p">{</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">session_token_key</span><span class="p">,</span> <span class="n">session</span><span class="p">}</span>
 
-    <span class="c1">#Session is a cookie dict</span>
+    <span class="c1"># Session is a cookie dict</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">session</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">session_token_key</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Session cookie dict must have &#39;</span><span class="si">{</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">session_token_key</span><span class="si">}</span><span class="s2">&#39; as key.&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span> <span class="o">=</span> <span class="n">session</span>
 
-    <span class="c1">#Session was passed but it is not anything we can use</span>
+    <span class="c1"># Session was passed but it is not anything we can use</span>
     <span class="k">elif</span> <span class="n">session</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Session must be a token str or cookie dict, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">session</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
-    <span class="c1">#Session was not passed, but credentials were</span>
+    <span class="c1"># Session was not passed, but credentials were</span>
     <span class="k">elif</span> <span class="n">username</span> <span class="ow">and</span> <span class="n">password</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">login</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
 
-    <span class="c1">#Neither session nor credentials were passed:</span>
+    <span class="c1"># Neither session nor credentials were passed:</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Must pass either userame and password, or a session token&quot;</span><span class="p">)</span>
 
     <span class="k">assert</span> <span class="n">utils</span><span class="o">.</span><span class="n">test_session_cookie</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span><span class="p">),</span> <span class="s2">&quot;Session cookie is invalid.&quot;</span>
 
-    <span class="c1">#Stored ID of the logged in user</span>
+    <span class="c1"># Stored ID of the logged in user</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__user_id</span> <span class="o">=</span> <span class="kc">None</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -8923,7 +8923,7 @@ Defaults to zero (don't reply to anybody).</p>
 <span class="sd">    Cookie (dict): Cookie dict to be passed with requests, which authenticates them.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Get salts</span>
+    <span class="c1"># Get salts</span>
     <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sphp_request</span><span class="p">(</span>
             <span class="s2">&quot;user.get_salts&quot;</span><span class="p">,</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">},</span>
@@ -8931,13 +8931,13 @@ Defaults to zero (don't reply to anybody).</p>
             <span class="p">)</span>
     <span class="n">salts</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s2">&quot;data&quot;</span><span class="p">][</span><span class="s2">&quot;salts&quot;</span><span class="p">]</span>
 
-    <span class="c1">#Get session token</span>
+    <span class="c1"># Get session token</span>
     <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sphp_request</span><span class="p">(</span>
             <span class="s2">&quot;user.login&quot;</span><span class="p">,</span>
             <span class="n">data</span> <span class="o">=</span> <span class="p">{</span>
                 <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span><span class="p">,</span>
 
-                <span class="c1">#Hash the password using the salts</span>
+                <span class="c1"># Hash the password using the salts</span>
                 <span class="s2">&quot;password_hashes&quot;</span><span class="p">:</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">utils</span><span class="o">.</span><span class="n">calc_password_hashes</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">salts</span><span class="p">)),</span>
                 <span class="p">},</span>
             <span class="n">logged_in</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
@@ -10015,11 +10015,11 @@ logged_in: The request should use the session cookie</p>
             <span class="n">timeout</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">request_timeout</span><span class="p">,</span>
             <span class="p">)</span>
     <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Service.PHP request for </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> failed: </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="c1">#If the request json has a data -&gt; success value, make sure it is True</span>
+    <span class="c1"># If the request json has a data -&gt; success value, make sure it is True</span>
     <span class="n">d</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">json</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">d</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;success&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Service.PHP request for </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> failed: </span><span class="se">\n</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="c1">#Data was not a dict but was not empty</span>
+    <span class="c1"># Data was not a dict but was not empty</span>
     <span class="k">elif</span> <span class="n">d</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Service.PHP request for </span><span class="si">{</span><span class="n">service_name</span><span class="si">}</span><span class="s2"> did not fail but returned unknown data type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">d</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 

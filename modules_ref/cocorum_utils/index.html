@@ -958,7 +958,7 @@ While most of these functions aren't usually meant to be used directly, you migh
 <span class="sd">        Hash (str): The hex digest hash result.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Actually, we can except bytes, but if we got string, encode the string</span>
+        <span class="c1"># Actually, we can except bytes, but if we got string, encode the string</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">text_encoding</span><span class="p">)</span>
 
@@ -977,13 +977,13 @@ While most of these functions aren't usually meant to be used directly, you migh
 <span class="sd">        Hash (str): The completed stretched hash.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Start with the salt and password together</span>
+        <span class="c1"># Start with the salt and password together</span>
         <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="n">salt</span> <span class="o">+</span> <span class="n">password</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">text_encoding</span><span class="p">)</span>
 
-        <span class="c1">#Make one hash of it</span>
+        <span class="c1"># Make one hash of it</span>
         <span class="n">current</span> <span class="o">=</span> <span class="n">MD5Ex</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-        <span class="c1">#Then keep re-adding the password and re-hashing</span>
+        <span class="c1"># Then keep re-adding the password and re-hashing</span>
         <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
             <span class="n">current</span> <span class="o">=</span> <span class="n">MD5Ex</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">current</span> <span class="o">+</span> <span class="n">password</span><span class="p">)</span>
 
@@ -1102,7 +1102,7 @@ While most of these functions aren't usually meant to be used directly, you migh
 <span class="sd">    Hash (str): The hex digest hash result.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Actually, we can except bytes, but if we got string, encode the string</span>
+    <span class="c1"># Actually, we can except bytes, but if we got string, encode the string</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">message</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">text_encoding</span><span class="p">)</span>
 
@@ -1254,13 +1254,13 @@ While most of these functions aren't usually meant to be used directly, you migh
 <span class="sd">    Hash (str): The completed stretched hash.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Start with the salt and password together</span>
+    <span class="c1"># Start with the salt and password together</span>
     <span class="n">message</span> <span class="o">=</span> <span class="p">(</span><span class="n">salt</span> <span class="o">+</span> <span class="n">password</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">text_encoding</span><span class="p">)</span>
 
-    <span class="c1">#Make one hash of it</span>
+    <span class="c1"># Make one hash of it</span>
     <span class="n">current</span> <span class="o">=</span> <span class="n">MD5Ex</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">message</span><span class="p">)</span>
 
-    <span class="c1">#Then keep re-adding the password and re-hashing</span>
+    <span class="c1"># Then keep re-adding the password and re-hashing</span>
     <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">iterations</span><span class="p">):</span>
         <span class="n">current</span> <span class="o">=</span> <span class="n">MD5Ex</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">current</span> <span class="o">+</span> <span class="n">password</span><span class="p">)</span>
 
@@ -1841,13 +1841,13 @@ Defaults to False.</p>
 <span class="sd">        Hashes (iter): The three results of hashing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="c1">#Stretch-hash the password with the first salt</span>
+    <span class="c1"># Stretch-hash the password with the first salt</span>
     <span class="n">stretched1</span> <span class="o">=</span> <span class="n">MD5Ex</span><span class="o">.</span><span class="n">hash_stretch</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">salts</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">128</span><span class="p">)</span>
 
-    <span class="c1">#Add the second salt to that result, and hash one more time</span>
+    <span class="c1"># Add the second salt to that result, and hash one more time</span>
     <span class="n">final_hash1</span> <span class="o">=</span> <span class="n">MD5Ex</span><span class="o">.</span><span class="n">hash</span><span class="p">(</span><span class="n">stretched1</span> <span class="o">+</span> <span class="n">salts</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-    <span class="c1">#Stretch-hash the password with the third salt</span>
+    <span class="c1"># Stretch-hash the password with the third salt</span>
     <span class="n">stretched2</span> <span class="o">=</span> <span class="n">MD5Ex</span><span class="o">.</span><span class="n">hash_stretch</span><span class="p">(</span><span class="n">password</span><span class="p">,</span> <span class="n">salts</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">128</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">final_hash1</span><span class="p">,</span> <span class="n">stretched2</span><span class="p">,</span> <span class="n">salts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -1980,19 +1980,19 @@ Defaults to False.</p>
 <span class="sd">        Number (int): The number in base 10.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="c1">#It is base 10 or has an integer conversion method</span>
+    <span class="c1"># It is base 10 or has an integer conversion method</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s2">&quot;__int__&quot;</span><span class="p">):</span>
         <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
 
-    <span class="c1">#It is a string or has a string conversion attribute</span>
+    <span class="c1"># It is a string or has a string conversion attribute</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s2">&quot;__str__&quot;</span><span class="p">):</span>
         <span class="n">num</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
 
-        <span class="c1">#The string number is in base 10</span>
+        <span class="c1"># The string number is in base 10</span>
         <span class="k">if</span> <span class="n">num</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span> <span class="ow">and</span> <span class="n">assume_10</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">base_10_to_36</span><span class="p">(</span><span class="n">num</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
 
-    <span class="c1">#It is base 36:</span>
+    <span class="c1"># It is base 36:</span>
     <span class="k">return</span> <span class="n">base_36_to_10</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2123,19 +2123,19 @@ Defaults to False.</p>
 <span class="sd">        Number (str): The number in base 36.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="c1">#It is base 10</span>
+    <span class="c1"># It is base 10</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s2">&quot;__int__&quot;</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">base_10_to_36</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
 
-    <span class="c1">#It is a string or has a string conversion attribute</span>
+    <span class="c1"># It is a string or has a string conversion attribute</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">num</span><span class="p">,</span> <span class="s2">&quot;__str__&quot;</span><span class="p">):</span>
         <span class="n">num</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
 
-        <span class="c1">#The string number is in base 10</span>
+        <span class="c1"># The string number is in base 10</span>
         <span class="k">if</span> <span class="n">num</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">()</span> <span class="ow">and</span> <span class="n">assume_10</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">base_10_to_36</span><span class="p">(</span><span class="n">num</span><span class="p">)</span>
 
-    <span class="c1">#It is base 36:</span>
+    <span class="c1"># It is base 36:</span>
     <span class="k">return</span> <span class="n">num</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2591,7 +2591,7 @@ Defaults to no parameters.</p>
 <span class="sd">        Timestamp (float): The same timestamp value, in seconds since Epoch, UTC.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-    <span class="c1">#Trims off the 6 TODO characters at the end</span>
+    <span class="c1"># Trims off the 6 TODO characters at the end</span>
     <span class="k">return</span> <span class="n">calendar</span><span class="o">.</span><span class="n">timegm</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span><span class="n">timestamp</span><span class="p">[:</span><span class="o">-</span><span class="mi">6</span><span class="p">],</span> <span class="n">static</span><span class="o">.</span><span class="n">Misc</span><span class="o">.</span><span class="n">timestamp_format</span><span class="p">))</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -2709,7 +2709,7 @@ Defaults to no parameters.</p>
 
     <span class="n">title</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&lt;title&gt;&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&lt;/title&gt;&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
-    <span class="c1">#If the session token is invalid, it won&#39;t log us in and &quot;Login&quot; will still be shown</span>
+    <span class="c1"># If the session token is invalid, it won&#39;t log us in and &quot;Login&quot; will still be shown</span>
     <span class="k">return</span> <span class="s2">&quot;Login&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">title</span>
 </code></pre></div></td></tr></table></div>
             </details>

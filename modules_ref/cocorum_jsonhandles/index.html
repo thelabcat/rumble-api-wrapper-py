@@ -1127,20 +1127,20 @@ This library does not contain any classes or functions meant to be used directly
 <span class="sd">        Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Check if the compared string is our username, or base 36 user ID if we have one</span>
+        <span class="c1"># Check if the compared string is our username, or base 36 user ID if we have one</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="c1">#We have a base 36 user ID</span>
+            <span class="c1"># We have a base 36 user ID</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;user_id_b36&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="n">other</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id_b36</span><span class="p">)</span>
 
-            <span class="c1">#We only have our username</span>
+            <span class="c1"># We only have our username</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">other</span>
 
-        <span class="c1">#Check if the compared object has a username and if it matches our own</span>
+        <span class="c1"># Check if the compared object has a username and if it matches our own</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">username</span>
 
-        <span class="c1">#Check if the compared object has a user ID in base 36 and if it matches our own, if we have one</span>
+        <span class="c1"># Check if the compared object has a user ID in base 36 and if it matches our own, if we have one</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;user_id_b36&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;user_id_b36&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id_b36</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">user_id_b36</span>
 
@@ -1161,10 +1161,10 @@ This library does not contain any classes or functions meant to be used directly
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">profile_pic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The user&#39;s profile picture as a bytes string&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_pic_url</span><span class="p">:</span> <span class="c1">#The profile picture is blank</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">profile_pic_url</span><span class="p">:</span> <span class="c1"># The profile picture is blank</span>
             <span class="k">return</span> <span class="sa">b</span><span class="s1">&#39;&#39;</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__profile_pic</span><span class="p">:</span> <span class="c1">#We never queried the profile pic before</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">__profile_pic</span><span class="p">:</span> <span class="c1"># We never queried the profile pic before</span>
             <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">profile_pic_url</span><span class="p">,</span> <span class="n">timeout</span> <span class="o">=</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">request_timeout</span><span class="p">)</span>
             <span class="k">assert</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">,</span> <span class="s2">&quot;Status code &quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
 
@@ -1353,20 +1353,20 @@ This library does not contain any classes or functions meant to be used directly
 <span class="sd">    Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Check if the compared string is our username, or base 36 user ID if we have one</span>
+    <span class="c1"># Check if the compared string is our username, or base 36 user ID if we have one</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="c1">#We have a base 36 user ID</span>
+        <span class="c1"># We have a base 36 user ID</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;user_id_b36&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">other</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id_b36</span><span class="p">)</span>
 
-        <span class="c1">#We only have our username</span>
+        <span class="c1"># We only have our username</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">other</span>
 
-    <span class="c1">#Check if the compared object has a username and if it matches our own</span>
+    <span class="c1"># Check if the compared object has a username and if it matches our own</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">username</span>
 
-    <span class="c1">#Check if the compared object has a user ID in base 36 and if it matches our own, if we have one</span>
+    <span class="c1"># Check if the compared object has a user ID in base 36 and if it matches our own, if we have one</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;user_id_b36&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;user_id_b36&quot;</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">user_id_b36</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">user_id_b36</span>
 </code></pre></div></td></tr></table></div>

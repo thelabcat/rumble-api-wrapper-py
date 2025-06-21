@@ -1234,13 +1234,13 @@ All other classes are supporting sub-classes.</p>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">servicephp</span>
 
-        <span class="c1">#Create a scraper to get some extra data we need</span>
+        <span class="c1"># Create a scraper to get some extra data we need</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">=</span> <span class="n">scraping</span><span class="o">.</span><span class="n">Scraper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span><span class="p">)</span>
 
-        <span class="c1">#Get list of channels we could use</span>
+        <span class="c1"># Get list of channels we could use</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span><span class="o">.</span><span class="n">get_channels</span><span class="p">()</span>
 
-        <span class="c1">#Primary and secondary video categories AKA site and media channels</span>
+        <span class="c1"># Primary and secondary video categories AKA site and media channels</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">categories1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span><span class="o">.</span><span class="n">get_categories</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1280,7 +1280,7 @@ All other classes are supporting sub-classes.</p>
                 <span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span><span class="p">,</span>
                 <span class="p">)</span>
         <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Upload.PHP request failed: </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="c1">#If the request json has a data -&gt; success value, make sure it is True</span>
+        <span class="c1"># If the request json has a data -&gt; success value, make sure it is True</span>
 
         <span class="k">return</span> <span class="n">r</span>
 
@@ -1294,11 +1294,11 @@ All other classes are supporting sub-classes.</p>
 <span class="sd">        Result (int, None): Either the confirmed channel ID, or None if it didn&#39;t exist / wasn&#39;t specified.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#No channel selected</span>
+        <span class="c1"># No channel selected</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">channel_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="kc">None</span>
 
-        <span class="c1">#Look for a channel match</span>
+        <span class="c1"># Look for a channel match</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">channel_id</span><span class="p">:</span>
                 <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">channel_id_b10</span>
@@ -1318,7 +1318,7 @@ All other classes are supporting sub-classes.</p>
 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Uploading video in&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_num_chunks</span><span class="p">,</span> <span class="s2">&quot;chunks&quot;</span><span class="p">)</span>
 
-        <span class="c1">#Base upload params</span>
+        <span class="c1"># Base upload params</span>
         <span class="n">upload_params</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;chunkSz&quot;</span><span class="p">:</span> <span class="n">static</span><span class="o">.</span><span class="n">Upload</span><span class="o">.</span><span class="n">chunksz</span><span class="p">,</span>
             <span class="s2">&quot;chunkQty&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_num_chunks</span><span class="p">,</span>
@@ -1327,30 +1327,30 @@ All other classes are supporting sub-classes.</p>
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__cur_num_chunks</span><span class="p">):</span>
                 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Uploading chunk </span><span class="si">{</span><span class="n">i</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__cur_num_chunks</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-                <span class="c1">#Parameters for this chunk upload</span>
+                <span class="c1"># Parameters for this chunk upload</span>
                 <span class="n">chunk_params</span> <span class="o">=</span> <span class="n">upload_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
                 <span class="n">chunk_params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
                     <span class="s2">&quot;chunk&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__cur_upload_id</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">,</span>
                     <span class="p">})</span>
 
-                <span class="c1">#Get permission to upload the chunk</span>
+                <span class="c1"># Get permission to upload the chunk</span>
                 <span class="k">assert</span> <span class="n">utils</span><span class="o">.</span><span class="n">options_check</span><span class="p">(</span>
                     <span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">uploadphp</span><span class="p">,</span>
                     <span class="s2">&quot;PUT&quot;</span><span class="p">,</span>
                     <span class="n">cookies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span><span class="p">,</span>
                     <span class="n">params</span> <span class="o">=</span> <span class="n">chunk_params</span><span class="p">,</span>
                     <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;Chunk </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2"> upload failed at OPTIONS request.&quot;</span>
-                <span class="c1">#Upload the chunk</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">(</span><span class="n">chunk_params</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">Upload</span><span class="o">.</span><span class="n">chunksz</span><span class="p">),</span> <span class="n">timeout</span> <span class="o">=</span> <span class="mi">300</span><span class="p">)</span> <span class="c1">#Set static? TODO</span>
+                <span class="c1"># Upload the chunk</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">(</span><span class="n">chunk_params</span><span class="p">,</span> <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">static</span><span class="o">.</span><span class="n">Upload</span><span class="o">.</span><span class="n">chunksz</span><span class="p">),</span> <span class="n">timeout</span> <span class="o">=</span> <span class="mi">300</span><span class="p">)</span> <span class="c1"># Set static? TODO</span>
 
-        <span class="c1">#Params for the merge request</span>
+        <span class="c1"># Params for the merge request</span>
         <span class="n">merge_params</span> <span class="o">=</span> <span class="n">upload_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">merge_params</span><span class="o">.</span><span class="n">update</span><span class="p">({</span>
             <span class="s2">&quot;merge&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
             <span class="s2">&quot;chunk&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__cur_upload_id</span><span class="si">}</span><span class="s2">.mp4&quot;</span><span class="p">,</span>
             <span class="p">})</span>
 
-        <span class="c1">#Tell the server to merge the chunks</span>
+        <span class="c1"># Tell the server to merge the chunks</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merging chunks at server&quot;</span><span class="p">)</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">(</span><span class="n">merge_params</span><span class="p">)</span>
         <span class="n">merged_video_fn</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>
@@ -1370,15 +1370,15 @@ All other classes are supporting sub-classes.</p>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Uploading video&quot;</span><span class="p">)</span>
 
         <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="c1">#Get permission to upload the file</span>
+            <span class="c1"># Get permission to upload the file</span>
             <span class="k">assert</span> <span class="n">utils</span><span class="o">.</span><span class="n">options_check</span><span class="p">(</span>
                 <span class="n">static</span><span class="o">.</span><span class="n">URI</span><span class="o">.</span><span class="n">uploadphp</span><span class="p">,</span>
                 <span class="s2">&quot;PUT&quot;</span><span class="p">,</span>
                 <span class="n">cookies</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">session_cookie</span><span class="p">,</span>
                 <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;api&quot;</span><span class="p">:</span> <span class="n">static</span><span class="o">.</span><span class="n">Upload</span><span class="o">.</span><span class="n">api_ver</span><span class="p">},</span>
                 <span class="p">),</span> <span class="s2">&quot;File upload failed at OPTIONS request.&quot;</span>
-            <span class="c1">#Upload the file</span>
-            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">({},</span> <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">timeout</span> <span class="o">=</span> <span class="mi">300</span><span class="p">)</span> <span class="c1">#Set static? TODO</span>
+            <span class="c1"># Upload the file</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">({},</span> <span class="n">data</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">(),</span> <span class="n">timeout</span> <span class="o">=</span> <span class="mi">300</span><span class="p">)</span> <span class="c1"># Set static? TODO</span>
 
         <span class="n">uploaded_fn</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Video file on server is&quot;</span><span class="p">,</span> <span class="n">uploaded_fn</span><span class="p">)</span>
@@ -1450,12 +1450,12 @@ All other classes are supporting sub-classes.</p>
 
         <span class="n">start_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
 
-        <span class="c1">#IDK if the second half of this is correct, TODO</span>
+        <span class="c1"># IDK if the second half of this is correct, TODO</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur_upload_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span><span class="w"> </span><span class="si">:</span><span class="s2">06</span><span class="si">}</span><span class="s2">&quot;</span>
 
-        <span class="c1">#Is the file large enough that it needs to be chunked</span>
+        <span class="c1"># Is the file large enough that it needs to be chunked</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span> <span class="o">&gt;</span> <span class="n">static</span><span class="o">.</span><span class="n">Upload</span><span class="o">.</span><span class="n">chunksz</span><span class="p">:</span>
-            <span class="c1">#Number of chunks we will need to do, rounded up</span>
+            <span class="c1"># Number of chunks we will need to do, rounded up</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__cur_num_chunks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span> <span class="o">//</span> <span class="n">static</span><span class="o">.</span><span class="n">Upload</span><span class="o">.</span><span class="n">chunksz</span> <span class="o">+</span> <span class="mi">1</span>
             <span class="n">server_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chunked_vidfile_upload</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -1463,31 +1463,31 @@ All other classes are supporting sub-classes.</p>
 
         <span class="n">end_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
 
-        <span class="c1">#Get the uploaded duration</span>
+        <span class="c1"># Get the uploaded duration</span>
         <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">({</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">server_filename</span><span class="p">})</span>
         <span class="n">checked_duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Server says video duration is&quot;</span><span class="p">,</span> <span class="n">checked_duration</span><span class="p">)</span>
 
-        <span class="c1">#Get thumbnails</span>
+        <span class="c1"># Get thumbnails</span>
         <span class="n">auto_thumbnails</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">({</span><span class="s2">&quot;thumbnails&quot;</span> <span class="p">:</span> <span class="n">server_filename</span><span class="p">})</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
         <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;thumbnail&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-        <span class="c1">#thumbnail is an auto index</span>
+        <span class="c1"># thumbnail is an auto index</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
             <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">thumbnail</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">auto_thumbnails</span><span class="p">),</span> <span class="s2">&quot;Thumbnail index is invalid&quot;</span>
             <span class="n">thumbnail</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">auto_thumbnails</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">thumbnail</span><span class="p">]</span>
 
-        <span class="c1">#Thumbnail is path string</span>
+        <span class="c1"># Thumbnail is path string</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">),</span> <span class="s2">&quot;Thumbnail was a str but is not a valid path&quot;</span>
             <span class="n">thumbnail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upload_cthumb</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span>
 
-        <span class="c1">#Unknown</span>
+        <span class="c1"># Unknown</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Thumbnail argument is of unknown type&quot;</span><span class="p">)</span>
 
-        <span class="c1">#Get the primary category</span>
+        <span class="c1"># Get the primary category</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category1</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">category1</span> <span class="o">=</span> <span class="n">category1</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
             <span class="k">if</span> <span class="n">category1</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
@@ -1496,7 +1496,7 @@ All other classes are supporting sub-classes.</p>
                 <span class="n">category1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories1</span><span class="p">[</span><span class="n">category1</span><span class="p">]</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category1</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)),</span> <span class="sa">f</span><span class="s2">&quot;Primary category must be number or str name, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">category1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
-        <span class="c1">#Get the secondary category, but allow None</span>
+        <span class="c1"># Get the secondary category, but allow None</span>
         <span class="n">category2</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;category2&quot;</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category2</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">category2</span> <span class="o">=</span> <span class="n">category2</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -1506,12 +1506,12 @@ All other classes are supporting sub-classes.</p>
                 <span class="n">category2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories2</span><span class="p">[</span><span class="n">category2</span><span class="p">]</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">or</span> <span class="n">category2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Secondary category must be number or str name, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">category1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
-        <span class="c1">#Publish the upload</span>
+        <span class="c1"># Publish the upload</span>
         <span class="n">updata</span> <span class="o">=</span> <span class="p">{</span>
             <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
             <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
             <span class="s2">&quot;video[]&quot;</span><span class="p">:</span> <span class="n">server_filename</span><span class="p">,</span>
-            <span class="s2">&quot;featured&quot;</span><span class="p">:</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="c1">#Never seems to change</span>
+            <span class="s2">&quot;featured&quot;</span><span class="p">:</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="c1"># Never seems to change</span>
             <span class="s2">&quot;rights&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
             <span class="s2">&quot;terms&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
             <span class="s2">&quot;facebookUpload&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -1525,19 +1525,19 @@ All other classes are supporting sub-classes.</p>
             <span class="s2">&quot;siteChannelId&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">category1</span><span class="p">),</span>
             <span class="s2">&quot;mediaChannelId&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">category2</span><span class="p">),</span>
             <span class="s2">&quot;isGamblingRelated&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;set_default_channel_id&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="c1">#Set to 1 to &quot;Set this channel as default&quot; on Rumble</span>
-            <span class="c1">#Scheduled visibility takes precedent over visibility setting</span>
+            <span class="s2">&quot;set_default_channel_id&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="c1"># Set to 1 to &quot;Set this channel as default&quot; on Rumble</span>
+            <span class="c1"># Scheduled visibility takes precedent over visibility setting</span>
             <span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;visibility&quot;</span><span class="p">,</span> <span class="s2">&quot;public&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduled_publish&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;private&quot;</span><span class="p">,</span>
             <span class="s2">&quot;availability&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;availability&quot;</span><span class="p">,</span> <span class="s2">&quot;free&quot;</span><span class="p">),</span>
             <span class="s2">&quot;file_meta&quot;</span><span class="p">:</span> <span class="p">{</span>
-                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="c1">#File name</span>
-                <span class="s2">&quot;modified&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">),</span> <span class="c1">#Timestamp file was modified, miliseconds</span>
-                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span><span class="p">,</span> <span class="c1">#Exact length of entire MP4 file in bytes</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="c1"># File name</span>
+                <span class="s2">&quot;modified&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">),</span> <span class="c1"># Timestamp file was modified, miliseconds</span>
+                <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span><span class="p">,</span> <span class="c1"># Exact length of entire MP4 file in bytes</span>
                 <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">mimetypes</span><span class="o">.</span><span class="n">guess_file_type</span><span class="p">(</span><span class="n">file_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-                <span class="s2">&quot;time_start&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span> <span class="c1">#Timestamp file started uploading, miliseconds</span>
+                <span class="s2">&quot;time_start&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span> <span class="c1"># Timestamp file started uploading, miliseconds</span>
                 <span class="s2">&quot;speed&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span> <span class="o">/</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">),</span>
                 <span class="s2">&quot;num_chunks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_num_chunks</span><span class="p">,</span>
-                <span class="s2">&quot;time_end&quot;</span><span class="p">:</span> <span class="n">end_time</span><span class="p">,</span> <span class="c1">#Timestamp we finished uploading, miliseconds</span>
+                <span class="s2">&quot;time_end&quot;</span><span class="p">:</span> <span class="n">end_time</span><span class="p">,</span> <span class="c1"># Timestamp we finished uploading, miliseconds</span>
                 <span class="p">},</span>
             <span class="s2">&quot;schedulerDatetime&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">form_timestamp</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduled_publish&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduled_publish&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
             <span class="s2">&quot;thumb&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">),</span>
@@ -1550,7 +1550,7 @@ All other classes are supporting sub-classes.</p>
             <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
             <span class="p">)</span>
 
-        <span class="c1">#Extract the json from the response HTML, and return it as an JSONObj derivative</span>
+        <span class="c1"># Extract the json from the response HTML, and return it as an JSONObj derivative</span>
         <span class="k">return</span> <span class="n">UploadResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1663,13 +1663,13 @@ All other classes are supporting sub-classes.</p>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span> <span class="o">=</span> <span class="n">servicephp</span>
 
-    <span class="c1">#Create a scraper to get some extra data we need</span>
+    <span class="c1"># Create a scraper to get some extra data we need</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span> <span class="o">=</span> <span class="n">scraping</span><span class="o">.</span><span class="n">Scraper</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">servicephp</span><span class="p">)</span>
 
-    <span class="c1">#Get list of channels we could use</span>
+    <span class="c1"># Get list of channels we could use</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">channels</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span><span class="o">.</span><span class="n">get_channels</span><span class="p">()</span>
 
-    <span class="c1">#Primary and secondary video categories AKA site and media channels</span>
+    <span class="c1"># Primary and secondary video categories AKA site and media channels</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">categories1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scraper</span><span class="o">.</span><span class="n">get_categories</span><span class="p">()</span>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1780,11 +1780,11 @@ All other classes are supporting sub-classes.</p>
 <span class="sd">    Result (int, None): Either the confirmed channel ID, or None if it didn&#39;t exist / wasn&#39;t specified.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#No channel selected</span>
+    <span class="c1"># No channel selected</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">channel_id</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
 
-    <span class="c1">#Look for a channel match</span>
+    <span class="c1"># Look for a channel match</span>
     <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">channels</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">c</span> <span class="o">==</span> <span class="n">channel_id</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">c</span><span class="o">.</span><span class="n">channel_id_b10</span>
@@ -1975,7 +1975,7 @@ Defaults to static.Delays.request_timeout</p>
             <span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span><span class="p">,</span>
             <span class="p">)</span>
     <span class="k">assert</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Upload.PHP request failed: </span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="se">\n</span><span class="si">{</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="si">}</span><span class="s2">&quot;</span>
-    <span class="c1">#If the request json has a data -&gt; success value, make sure it is True</span>
+    <span class="c1"># If the request json has a data -&gt; success value, make sure it is True</span>
 
     <span class="k">return</span> <span class="n">r</span>
 </code></pre></div></td></tr></table></div>
@@ -2477,12 +2477,12 @@ Defaults to 0, first auto thumbnail.</p>
 
     <span class="n">start_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
 
-    <span class="c1">#IDK if the second half of this is correct, TODO</span>
+    <span class="c1"># IDK if the second half of this is correct, TODO</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__cur_upload_id</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">start_time</span><span class="si">}</span><span class="s2">-</span><span class="si">{</span><span class="n">random</span><span class="o">.</span><span class="n">randrange</span><span class="p">(</span><span class="mi">1000000</span><span class="p">)</span><span class="w"> </span><span class="si">:</span><span class="s2">06</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="c1">#Is the file large enough that it needs to be chunked</span>
+    <span class="c1"># Is the file large enough that it needs to be chunked</span>
     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span> <span class="o">&gt;</span> <span class="n">static</span><span class="o">.</span><span class="n">Upload</span><span class="o">.</span><span class="n">chunksz</span><span class="p">:</span>
-        <span class="c1">#Number of chunks we will need to do, rounded up</span>
+        <span class="c1"># Number of chunks we will need to do, rounded up</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__cur_num_chunks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span> <span class="o">//</span> <span class="n">static</span><span class="o">.</span><span class="n">Upload</span><span class="o">.</span><span class="n">chunksz</span> <span class="o">+</span> <span class="mi">1</span>
         <span class="n">server_filename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chunked_vidfile_upload</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -2490,31 +2490,31 @@ Defaults to 0, first auto thumbnail.</p>
 
     <span class="n">end_time</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">)</span>
 
-    <span class="c1">#Get the uploaded duration</span>
+    <span class="c1"># Get the uploaded duration</span>
     <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">({</span><span class="s2">&quot;duration&quot;</span><span class="p">:</span> <span class="n">server_filename</span><span class="p">})</span>
     <span class="n">checked_duration</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Server says video duration is&quot;</span><span class="p">,</span> <span class="n">checked_duration</span><span class="p">)</span>
 
-    <span class="c1">#Get thumbnails</span>
+    <span class="c1"># Get thumbnails</span>
     <span class="n">auto_thumbnails</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uphp_request</span><span class="p">({</span><span class="s2">&quot;thumbnails&quot;</span> <span class="p">:</span> <span class="n">server_filename</span><span class="p">})</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
     <span class="n">thumbnail</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;thumbnail&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 
-    <span class="c1">#thumbnail is an auto index</span>
+    <span class="c1"># thumbnail is an auto index</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
         <span class="k">assert</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">thumbnail</span> <span class="o">&lt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">auto_thumbnails</span><span class="p">),</span> <span class="s2">&quot;Thumbnail index is invalid&quot;</span>
         <span class="n">thumbnail</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">auto_thumbnails</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">thumbnail</span><span class="p">]</span>
 
-    <span class="c1">#Thumbnail is path string</span>
+    <span class="c1"># Thumbnail is path string</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">assert</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">),</span> <span class="s2">&quot;Thumbnail was a str but is not a valid path&quot;</span>
         <span class="n">thumbnail</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_upload_cthumb</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">)</span>
 
-    <span class="c1">#Unknown</span>
+    <span class="c1"># Unknown</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Thumbnail argument is of unknown type&quot;</span><span class="p">)</span>
 
-    <span class="c1">#Get the primary category</span>
+    <span class="c1"># Get the primary category</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category1</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">category1</span> <span class="o">=</span> <span class="n">category1</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">category1</span><span class="o">.</span><span class="n">isnumeric</span><span class="p">():</span>
@@ -2523,7 +2523,7 @@ Defaults to 0, first auto thumbnail.</p>
             <span class="n">category1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories1</span><span class="p">[</span><span class="n">category1</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category1</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)),</span> <span class="sa">f</span><span class="s2">&quot;Primary category must be number or str name, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">category1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="c1">#Get the secondary category, but allow None</span>
+    <span class="c1"># Get the secondary category, but allow None</span>
     <span class="n">category2</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;category2&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category2</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="n">category2</span> <span class="o">=</span> <span class="n">category2</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
@@ -2533,12 +2533,12 @@ Defaults to 0, first auto thumbnail.</p>
             <span class="n">category2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">categories2</span><span class="p">[</span><span class="n">category2</span><span class="p">]</span>
     <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category2</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">))</span> <span class="ow">or</span> <span class="n">category2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Secondary category must be number or str name, got </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">category1</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
 
-    <span class="c1">#Publish the upload</span>
+    <span class="c1"># Publish the upload</span>
     <span class="n">updata</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">title</span><span class="p">,</span>
         <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;description&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
         <span class="s2">&quot;video[]&quot;</span><span class="p">:</span> <span class="n">server_filename</span><span class="p">,</span>
-        <span class="s2">&quot;featured&quot;</span><span class="p">:</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="c1">#Never seems to change</span>
+        <span class="s2">&quot;featured&quot;</span><span class="p">:</span> <span class="s2">&quot;6&quot;</span><span class="p">,</span> <span class="c1"># Never seems to change</span>
         <span class="s2">&quot;rights&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
         <span class="s2">&quot;terms&quot;</span><span class="p">:</span> <span class="s2">&quot;1&quot;</span><span class="p">,</span>
         <span class="s2">&quot;facebookUpload&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
@@ -2552,19 +2552,19 @@ Defaults to 0, first auto thumbnail.</p>
         <span class="s2">&quot;siteChannelId&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">category1</span><span class="p">),</span>
         <span class="s2">&quot;mediaChannelId&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">category2</span><span class="p">),</span>
         <span class="s2">&quot;isGamblingRelated&quot;</span><span class="p">:</span> <span class="s2">&quot;false&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;set_default_channel_id&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="c1">#Set to 1 to &quot;Set this channel as default&quot; on Rumble</span>
-        <span class="c1">#Scheduled visibility takes precedent over visibility setting</span>
+        <span class="s2">&quot;set_default_channel_id&quot;</span><span class="p">:</span> <span class="s2">&quot;0&quot;</span><span class="p">,</span> <span class="c1"># Set to 1 to &quot;Set this channel as default&quot; on Rumble</span>
+        <span class="c1"># Scheduled visibility takes precedent over visibility setting</span>
         <span class="s2">&quot;visibility&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;visibility&quot;</span><span class="p">,</span> <span class="s2">&quot;public&quot;</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduled_publish&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;private&quot;</span><span class="p">,</span>
         <span class="s2">&quot;availability&quot;</span><span class="p">:</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;availability&quot;</span><span class="p">,</span> <span class="s2">&quot;free&quot;</span><span class="p">),</span>
         <span class="s2">&quot;file_meta&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="c1">#File name</span>
-            <span class="s2">&quot;modified&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">),</span> <span class="c1">#Timestamp file was modified, miliseconds</span>
-            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span><span class="p">,</span> <span class="c1">#Exact length of entire MP4 file in bytes</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">file_path</span><span class="p">),</span> <span class="c1"># File name</span>
+            <span class="s2">&quot;modified&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">getmtime</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">),</span> <span class="c1"># Timestamp file was modified, miliseconds</span>
+            <span class="s2">&quot;size&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span><span class="p">,</span> <span class="c1"># Exact length of entire MP4 file in bytes</span>
             <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">mimetypes</span><span class="o">.</span><span class="n">guess_file_type</span><span class="p">(</span><span class="n">file_path</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span>
-            <span class="s2">&quot;time_start&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span> <span class="c1">#Timestamp file started uploading, miliseconds</span>
+            <span class="s2">&quot;time_start&quot;</span><span class="p">:</span> <span class="n">start_time</span><span class="p">,</span> <span class="c1"># Timestamp file started uploading, miliseconds</span>
             <span class="s2">&quot;speed&quot;</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__cur_file_size</span> <span class="o">/</span> <span class="p">(</span><span class="n">end_time</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">),</span>
             <span class="s2">&quot;num_chunks&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">__cur_num_chunks</span><span class="p">,</span>
-            <span class="s2">&quot;time_end&quot;</span><span class="p">:</span> <span class="n">end_time</span><span class="p">,</span> <span class="c1">#Timestamp we finished uploading, miliseconds</span>
+            <span class="s2">&quot;time_end&quot;</span><span class="p">:</span> <span class="n">end_time</span><span class="p">,</span> <span class="c1"># Timestamp we finished uploading, miliseconds</span>
             <span class="p">},</span>
         <span class="s2">&quot;schedulerDatetime&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">form_timestamp</span><span class="p">(</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduled_publish&quot;</span><span class="p">))</span> <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;scheduled_publish&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
         <span class="s2">&quot;thumb&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">thumbnail</span><span class="p">),</span>
@@ -2577,7 +2577,7 @@ Defaults to 0, first auto thumbnail.</p>
         <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;POST&quot;</span><span class="p">,</span>
         <span class="p">)</span>
 
-    <span class="c1">#Extract the json from the response HTML, and return it as an JSONObj derivative</span>
+    <span class="c1"># Extract the json from the response HTML, and return it as an JSONObj derivative</span>
     <span class="k">return</span> <span class="n">UploadResponse</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;{&quot;</span><span class="p">)</span> <span class="p">:</span> <span class="n">r</span><span class="o">.</span><span class="n">text</span><span class="o">.</span><span class="n">rfind</span><span class="p">(</span><span class="s2">&quot;}&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]))</span>
 </code></pre></div></td></tr></table></div>
             </details>

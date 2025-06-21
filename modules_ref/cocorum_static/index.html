@@ -817,13 +817,13 @@
 <span class="normal">101</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Delays</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Various times for delays and waits&quot;&quot;&quot;</span>
 
-    <span class="c1">#How long to wait before giving up on a network request, in seconds</span>
+    <span class="c1"># How long to wait before giving up on a network request, in seconds</span>
     <span class="n">request_timeout</span> <span class="o">=</span> <span class="mi">20</span>
 
-    <span class="c1">#How long to reuse old data from the main API, in seconds</span>
+    <span class="c1"># How long to reuse old data from the main API, in seconds</span>
     <span class="n">api_refresh_default</span> <span class="o">=</span> <span class="mi">10</span>
 
-    <span class="c1">#Minimum refresh rate for the main API, as defined by Rumble</span>
+    <span class="c1"># Minimum refresh rate for the main API, as defined by Rumble</span>
     <span class="n">api_refresh_minimum</span> <span class="o">=</span> <span class="mi">5</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -884,13 +884,13 @@
 <span class="normal">113</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Message</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;For chat messages&quot;&quot;&quot;</span>
 
-    <span class="c1">#Maximum chat message length</span>
+    <span class="c1"># Maximum chat message length</span>
     <span class="n">max_len</span> <span class="o">=</span> <span class="mi">200</span>
 
-    <span class="c1">#How long to wait between sending messages</span>
+    <span class="c1"># How long to wait between sending messages</span>
     <span class="n">send_cooldown</span> <span class="o">=</span> <span class="mi">3</span>
 
-    <span class="c1">#Prefix Rumble uses for native command</span>
+    <span class="c1"># Prefix Rumble uses for native command</span>
     <span class="n">command_prefix</span> <span class="o">=</span> <span class="s2">&quot;/&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -978,10 +978,10 @@
 <span class="normal">163</span>
 <span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Misc</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;No idea where else to put this data&quot;&quot;&quot;</span>
-    <span class="c1">#Numerical base that the stream ID is in</span>
+    <span class="c1"># Numerical base that the stream ID is in</span>
     <span class="n">base36</span> <span class="o">=</span> <span class="s2">&quot;0123456789abcdefghijklmnopqrstuvwxyz&quot;</span>
 
-    <span class="c1">#Dictionary of badge slugs mapped to UTF-8 glyphs</span>
+    <span class="c1"># Dictionary of badge slugs mapped to UTF-8 glyphs</span>
     <span class="n">badges_as_glyphs</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s2">&quot;verified&quot;</span> <span class="p">:</span> <span class="s2">&quot;✅&quot;</span><span class="p">,</span>
         <span class="s2">&quot;admin&quot;</span> <span class="p">:</span> <span class="s2">&quot;👑&quot;</span><span class="p">,</span>
@@ -995,25 +995,25 @@
         <span class="s2">&quot;whale-blue&quot;</span> <span class="p">:</span> <span class="s2">&quot;🐳&quot;</span><span class="p">,</span>
         <span class="p">}</span>
 
-    <span class="c1">#Encoding for all text-bytes conversions</span>
+    <span class="c1"># Encoding for all text-bytes conversions</span>
     <span class="n">text_encoding</span> <span class="o">=</span> <span class="s2">&quot;utf-8&quot;</span>
 
-    <span class="c1">#Size of chat badge icons to retrieve, only valid one has long been the string 48</span>
+    <span class="c1"># Size of chat badge icons to retrieve, only valid one has long been the string 48</span>
     <span class="n">badge_icon_size</span> <span class="o">=</span> <span class="s2">&quot;48&quot;</span>
 
-    <span class="c1">#Rumble timestamp format, not including the 6 TODO characters at the end</span>
+    <span class="c1"># Rumble timestamp format, not including the 6 TODO characters at the end</span>
     <span class="n">timestamp_format</span> <span class="o">=</span> <span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S&quot;</span>
 
-    <span class="c1">#Key of the session token within the session cookie dict</span>
+    <span class="c1"># Key of the session token within the session cookie dict</span>
     <span class="n">session_token_key</span> <span class="o">=</span> <span class="s2">&quot;u_s&quot;</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">ContentTypes</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Types of content that can be rumbled on&quot;&quot;&quot;</span>
 
-        <span class="c1">#A video or livestream</span>
+        <span class="c1"># A video or livestream</span>
         <span class="n">video</span> <span class="o">=</span> <span class="mi">1</span>
 
-        <span class="c1">#A comment</span>
+        <span class="c1"># A comment</span>
         <span class="n">comment</span> <span class="o">=</span> <span class="mi">2</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1062,10 +1062,10 @@
 <span class="normal">164</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ContentTypes</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Types of content that can be rumbled on&quot;&quot;&quot;</span>
 
-    <span class="c1">#A video or livestream</span>
+    <span class="c1"># A video or livestream</span>
     <span class="n">video</span> <span class="o">=</span> <span class="mi">1</span>
 
-    <span class="c1">#A comment</span>
+    <span class="c1"># A comment</span>
     <span class="n">comment</span> <span class="o">=</span> <span class="mi">2</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1132,10 +1132,10 @@
 <span class="normal">25</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">RequestHeaders</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Headers for various HTTPrequests&quot;&quot;&quot;</span>
 
-    <span class="c1">#Header with a fake user-agent string</span>
+    <span class="c1"># Header with a fake user-agent string</span>
     <span class="n">user_agent</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;User-Agent&quot;</span> <span class="p">:</span> <span class="s2">&quot;Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.103 Safari/537.36&quot;</span><span class="p">}</span>
 
-    <span class="c1">#Headers for the SSE chat API</span>
+    <span class="c1"># Headers for the SSE chat API</span>
     <span class="n">sse_api</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;Accept&#39;</span><span class="p">:</span> <span class="s1">&#39;text/event-stream&#39;</span><span class="p">}</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1199,7 +1199,7 @@
 <span class="normal">40</span>
 <span class="normal">41</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">StaticAPIEndpoints</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;API endpoints that don&#39;t change and shouldn&#39;t trigger a refresh&quot;&quot;&quot;</span>
-    <span class="c1">#Endpoints of the main API</span>
+    <span class="c1"># Endpoints of the main API</span>
     <span class="n">main</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;user_id&quot;</span><span class="p">,</span>
         <span class="s2">&quot;username&quot;</span><span class="p">,</span>
@@ -1207,7 +1207,7 @@
         <span class="s2">&quot;channel_name&quot;</span><span class="p">,</span>
         <span class="p">]</span>
 
-    <span class="c1">#Endpoints of the stream subobject</span>
+    <span class="c1"># Endpoints of the stream subobject</span>
     <span class="n">stream</span> <span class="o">=</span> <span class="p">[</span>
         <span class="s2">&quot;id&quot;</span><span class="p">,</span>
         <span class="s2">&quot;created_on&quot;</span>
@@ -1298,40 +1298,40 @@
 <span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">URI</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;URIs to various Rumble services&quot;&quot;&quot;</span>
 
-    <span class="c1">#Base URL to Rumble&#39;s website, for URLs that are relative to it</span>
+    <span class="c1"># Base URL to Rumble&#39;s website, for URLs that are relative to it</span>
     <span class="n">rumble_base</span> <span class="o">=</span> <span class="s2">&quot;https://rumble.com&quot;</span>
 
-    <span class="c1">#Test the session token by sending it here and checking the title</span>
+    <span class="c1"># Test the session token by sending it here and checking the title</span>
     <span class="n">login_test</span> <span class="o">=</span> <span class="n">rumble_base</span> <span class="o">+</span> <span class="s2">&quot;/login.php&quot;</span>
 
-    <span class="c1">#Webpage with all the mutes on it, format with page number</span>
+    <span class="c1"># Webpage with all the mutes on it, format with page number</span>
     <span class="n">mutes_page</span> <span class="o">=</span> <span class="n">rumble_base</span> <span class="o">+</span> <span class="s2">&quot;/account/moderation/muting?pg=</span><span class="si">{page}</span><span class="s2">&quot;</span>
 
-    <span class="c1">#Channels under a user, format with username</span>
+    <span class="c1"># Channels under a user, format with username</span>
     <span class="n">channels_page</span> <span class="o">=</span> <span class="n">rumble_base</span> <span class="o">+</span> <span class="s2">&quot;/user/</span><span class="si">{username}</span><span class="s2">/channels&quot;</span>
 
-    <span class="c1">#The logged-in user&#39;s playlist page</span>
+    <span class="c1"># The logged-in user&#39;s playlist page</span>
     <span class="n">playlists_page</span> <span class="o">=</span> <span class="n">rumble_base</span> <span class="o">+</span> <span class="s2">&quot;/my-library/playlists&quot;</span>
 
-    <span class="c1">#The Service.PHP API</span>
+    <span class="c1"># The Service.PHP API</span>
     <span class="n">servicephp</span> <span class="o">=</span> <span class="s2">&quot;https://rumble.com/service.php&quot;</span>
 
-    <span class="c1">#The video upload PHP</span>
+    <span class="c1"># The video upload PHP</span>
     <span class="n">uploadphp</span> <span class="o">=</span> <span class="s2">&quot;https://web18.rumble.com/upload.php&quot;</span>
 
     <span class="k">class</span><span class="w"> </span><span class="nc">ChatAPI</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;URIs of the chat API&quot;&quot;&quot;</span>
 
-        <span class="c1">#Rumble&#39;s internal chat URL for a stream, format this string with a stream_id_b10</span>
+        <span class="c1"># Rumble&#39;s internal chat URL for a stream, format this string with a stream_id_b10</span>
         <span class="n">base</span> <span class="o">=</span> <span class="s2">&quot;https://web7.rumble.com/chat/api/chat/</span><span class="si">{stream_id_b10}</span><span class="s2">&quot;</span>
 
-        <span class="c1">#SSE stream of chat events</span>
+        <span class="c1"># SSE stream of chat events</span>
         <span class="n">sse_stream</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;/stream&quot;</span>
 
-        <span class="c1">#Message actions</span>
+        <span class="c1"># Message actions</span>
         <span class="n">message</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;/message&quot;</span>
 
-        <span class="c1">#Chat commands (does not use the base)</span>
+        <span class="c1"># Chat commands (does not use the base)</span>
         <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;https://rumble.com/chat/command&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1386,16 +1386,16 @@
 <span class="normal">88</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">ChatAPI</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;URIs of the chat API&quot;&quot;&quot;</span>
 
-    <span class="c1">#Rumble&#39;s internal chat URL for a stream, format this string with a stream_id_b10</span>
+    <span class="c1"># Rumble&#39;s internal chat URL for a stream, format this string with a stream_id_b10</span>
     <span class="n">base</span> <span class="o">=</span> <span class="s2">&quot;https://web7.rumble.com/chat/api/chat/</span><span class="si">{stream_id_b10}</span><span class="s2">&quot;</span>
 
-    <span class="c1">#SSE stream of chat events</span>
+    <span class="c1"># SSE stream of chat events</span>
     <span class="n">sse_stream</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;/stream&quot;</span>
 
-    <span class="c1">#Message actions</span>
+    <span class="c1"># Message actions</span>
     <span class="n">message</span> <span class="o">=</span> <span class="n">base</span> <span class="o">+</span> <span class="s2">&quot;/message&quot;</span>
 
-    <span class="c1">#Chat commands (does not use the base)</span>
+    <span class="c1"># Chat commands (does not use the base)</span>
     <span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;https://rumble.com/chat/command&quot;</span>
 </code></pre></div></td></tr></table></div>
               </details>
@@ -1463,13 +1463,13 @@
 <span class="normal">123</span>
 <span class="normal">124</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">class</span><span class="w"> </span><span class="nc">Upload</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;Data relating to uploading videos&quot;&quot;&quot;</span>
-    <span class="c1">#Size of upload chunks, not sure if this can be changed</span>
+    <span class="c1"># Size of upload chunks, not sure if this can be changed</span>
     <span class="n">chunksz</span> <span class="o">=</span> <span class="mi">10000000</span>
 
-    <span class="c1">#Upload API version to use</span>
+    <span class="c1"># Upload API version to use</span>
     <span class="n">api_ver</span> <span class="o">=</span> <span class="s2">&quot;1.3&quot;</span>
 
-    <span class="c1">#Maximum upload size is 15GB as stated by Rumble</span>
+    <span class="c1"># Maximum upload size is 15GB as stated by Rumble</span>
     <span class="n">max_filesize</span> <span class="o">=</span> <span class="mi">15</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
               </details>

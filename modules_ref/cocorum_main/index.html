@@ -2289,7 +2289,7 @@ if livestream:
     print(livestream.title)
     print(&quot;Stream visibility is&quot;, livestream.visibility)
 
-    #We will use this later
+    # We will use this later
     STREAM_ID = livestream.stream_id
 
     print(&quot;Stream ID is&quot;, STREAM_ID)
@@ -2409,21 +2409,21 @@ if livestream:
 <span class="sd">        Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Check if the compared string is our message</span>
+        <span class="c1"># Check if the compared string is our message</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span>
 
-        <span class="c1"># #Check if the compared message has the same username and text (not needed)</span>
+        <span class="c1"># # Check if the compared message has the same username and text (not needed)</span>
         <span class="c1"># if type(other) == type(self):</span>
         <span class="c1">#     return (self.username, self.text) == (other.username, other.text)</span>
 
-        <span class="c1">#Check if the compared object has the same text</span>
+        <span class="c1"># Check if the compared object has the same text</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
-            <span class="c1">#Check if the compared object has the same username, if it has one</span>
+            <span class="c1"># Check if the compared object has the same username, if it has one</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span> <span class="c1">#the other object had no username attribute</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span> <span class="c1"># the other object had no username attribute</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Message as a string (its content)&quot;&quot;&quot;</span>
@@ -2624,21 +2624,21 @@ if livestream:
 <span class="sd">    Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Check if the compared string is our message</span>
+    <span class="c1"># Check if the compared string is our message</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span>
 
-    <span class="c1"># #Check if the compared message has the same username and text (not needed)</span>
+    <span class="c1"># # Check if the compared message has the same username and text (not needed)</span>
     <span class="c1"># if type(other) == type(self):</span>
     <span class="c1">#     return (self.username, self.text) == (other.username, other.text)</span>
 
-    <span class="c1">#Check if the compared object has the same text</span>
+    <span class="c1"># Check if the compared object has the same text</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
-        <span class="c1">#Check if the compared object has the same username, if it has one</span>
+        <span class="c1"># Check if the compared object has the same username, if it has one</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span> <span class="c1">#the other object had no username attribute</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span> <span class="c1"># the other object had no username attribute</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -2860,7 +2860,7 @@ if livestream:
 <span class="c1">#</span>
 <span class="c1">#         self._jsondata = jsondata</span>
 <span class="c1">#         self.api = api</span>
-<span class="c1">#         self.is_disappeared = False #The gift is in the API listing</span>
+<span class="c1">#         self.is_disappeared = False # The gift is in the API listing</span>
 <span class="c1">#</span>
 <span class="c1">#</span>
 <span class="c1">#     def __getitem__(self, key):</span>
@@ -2870,9 +2870,9 @@ if livestream:
 <span class="c1">#         key (str): A valid JSON key.</span>
 <span class="c1">#         &quot;&quot;&quot;</span>
 <span class="c1">#</span>
-<span class="c1">#         #The gift has not disappeared from the API listing,</span>
-<span class="c1">#         #the key requested is not a value that doesn&#39;t change,</span>
-<span class="c1">#         #and it has been api.refresh rate since the last time we refreshed</span>
+<span class="c1">#         # The gift has not disappeared from the API listing,</span>
+<span class="c1">#         # the key requested is not a value that doesn&#39;t change,</span>
+<span class="c1">#         # and it has been api.refresh rate since the last time we refreshed</span>
 <span class="c1">#         if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.gifted_subs) and (time.time() - self.api.last_refresh_time &gt; self.api.refresh_rate):</span>
 <span class="c1">#             self.api.refresh()</span>
 <span class="c1">#</span>
@@ -3196,8 +3196,8 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 
         <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">api</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">last_newmessage_time</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Last time we were checked for &quot;new&quot; messages</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">last_newrant_time</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Last time we were checked for &quot;new&quot; rants</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_newmessage_time</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Last time we were checked for &quot;new&quot; messages</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">last_newrant_time</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Last time we were checked for &quot;new&quot; rants</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a key from the stream&#39;s chat JSON&quot;&quot;&quot;</span>
@@ -3207,7 +3207,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
     <span class="k">def</span><span class="w"> </span><span class="nf">latest_message</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The latest chat message&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;latest_message&quot;</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="c1">#No-one has chatted on this stream yet</span>
+            <span class="k">return</span> <span class="kc">None</span> <span class="c1"># No-one has chatted on this stream yet</span>
         <span class="k">return</span> <span class="n">ChatMessage</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;latest_message&quot;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
@@ -3220,16 +3220,16 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
     <span class="k">def</span><span class="w"> </span><span class="nf">new_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Chat messages that are newer than the last time this was referenced&quot;&quot;&quot;</span>
         <span class="n">rem</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recent_messages</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">rem</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">created_on</span><span class="p">)</span> <span class="c1">#Sort the messages so the newest ones are last</span>
+        <span class="n">rem</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">created_on</span><span class="p">)</span> <span class="c1"># Sort the messages so the newest ones are last</span>
 
-        <span class="c1">#There are no recent messages, or all messages are older than the last time we checked</span>
+        <span class="c1"># There are no recent messages, or all messages are older than the last time we checked</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rem</span> <span class="ow">or</span> <span class="n">rem</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">created_on</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_newmessage_time</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">m</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rem</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">m</span><span class="o">.</span><span class="n">created_on</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_newmessage_time</span><span class="p">:</span>
-                <span class="k">break</span> <span class="c1">#i is now the index of the oldest new message</span>
+                <span class="k">break</span> <span class="c1"># i is now the index of the oldest new message</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">last_newmessage_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">rem</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
@@ -3238,7 +3238,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
     <span class="k">def</span><span class="w"> </span><span class="nf">latest_rant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The latest chat rant&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;latest_rant&quot;</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="c1">#No-one has ranted on this stream yet</span>
+            <span class="k">return</span> <span class="kc">None</span> <span class="c1"># No-one has ranted on this stream yet</span>
         <span class="k">return</span> <span class="n">Rant</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;latest_rant&quot;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
@@ -3251,16 +3251,16 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
     <span class="k">def</span><span class="w"> </span><span class="nf">new_rants</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Chat rants that are newer than the last time this was referenced&quot;&quot;&quot;</span>
         <span class="n">rera</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recent_rants</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
-        <span class="n">rera</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">created_on</span><span class="p">)</span> <span class="c1">#Sort the rants so the newest ones are last</span>
+        <span class="n">rera</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">created_on</span><span class="p">)</span> <span class="c1"># Sort the rants so the newest ones are last</span>
 
-        <span class="c1">#There are no recent rants, or all rants are older than the last time we checked</span>
+        <span class="c1"># There are no recent rants, or all rants are older than the last time we checked</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">rera</span> <span class="ow">or</span> <span class="n">rera</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">created_on</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_newrant_time</span><span class="p">:</span>
             <span class="k">return</span> <span class="p">[]</span>
 
         <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rera</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">r</span><span class="o">.</span><span class="n">created_on</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_newrant_time</span><span class="p">:</span>
-                <span class="k">break</span> <span class="c1">#i is now the index of the oldest new rant</span>
+                <span class="k">break</span> <span class="c1"># i is now the index of the oldest new rant</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">last_newrant_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">rera</span><span class="p">[</span><span class="n">i</span><span class="p">:]</span>
@@ -3496,8 +3496,8 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 
     <span class="bp">self</span><span class="o">.</span><span class="n">stream</span> <span class="o">=</span> <span class="n">stream</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">stream</span><span class="o">.</span><span class="n">api</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">last_newmessage_time</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Last time we were checked for &quot;new&quot; messages</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">last_newrant_time</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#Last time we were checked for &quot;new&quot; rants</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">last_newmessage_time</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Last time we were checked for &quot;new&quot; messages</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">last_newrant_time</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Last time we were checked for &quot;new&quot; rants</span>
 </code></pre></div></td></tr></table></div>
             </details>
     </div>
@@ -3675,7 +3675,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">jsondata</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">api</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">is_disappeared</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">#The livestream is in the API listing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">is_disappeared</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># The livestream is in the API listing</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__chat</span> <span class="o">=</span> <span class="n">LiveChat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
@@ -3688,19 +3688,19 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 <span class="sd">        Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Check if the compared string is our stream ID</span>
+        <span class="c1"># Check if the compared string is our stream ID</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">==</span> <span class="n">other</span> <span class="c1">#or self.title == other</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">==</span> <span class="n">other</span> <span class="c1"># or self.title == other</span>
 
-        <span class="c1">#check if the compared number is our chat ID (linked to stream ID)</span>
+        <span class="c1"># check if the compared number is our chat ID (linked to stream ID)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id_b10</span> <span class="o">==</span> <span class="n">other</span>
 
-        <span class="c1">#Check if the compared object has the same stream ID</span>
+        <span class="c1"># Check if the compared object has the same stream ID</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;stream_id&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">==</span> <span class="n">utils</span><span class="o">.</span><span class="n">ensure_b36</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">stream_id</span><span class="p">)</span>
 
-        <span class="c1">#Check if the compared object has the same chat ID</span>
+        <span class="c1"># Check if the compared object has the same chat ID</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;stream_id_b10&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id_b10</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">stream_id_b10</span>
 
@@ -3715,9 +3715,9 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 <span class="sd">        key (str): A valid JSON key.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#The livestream has not disappeared from the API listing,</span>
-        <span class="c1">#the key requested is not a value that doesn&#39;t change,</span>
-        <span class="c1">#and it has been api.refresh rate since the last time we refreshed</span>
+        <span class="c1"># The livestream has not disappeared from the API listing,</span>
+        <span class="c1"># the key requested is not a value that doesn&#39;t change,</span>
+        <span class="c1"># and it has been api.refresh rate since the last time we refreshed</span>
         <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_disappeared</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">static</span><span class="o">.</span><span class="n">StaticAPIEndpoints</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">last_refresh_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">refresh_rate</span><span class="p">):</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 
@@ -4183,19 +4183,19 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 <span class="sd">    Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Check if the compared string is our stream ID</span>
+    <span class="c1"># Check if the compared string is our stream ID</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">==</span> <span class="n">other</span> <span class="c1">#or self.title == other</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">==</span> <span class="n">other</span> <span class="c1"># or self.title == other</span>
 
-    <span class="c1">#check if the compared number is our chat ID (linked to stream ID)</span>
+    <span class="c1"># check if the compared number is our chat ID (linked to stream ID)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id_b10</span> <span class="o">==</span> <span class="n">other</span>
 
-    <span class="c1">#Check if the compared object has the same stream ID</span>
+    <span class="c1"># Check if the compared object has the same stream ID</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;stream_id&quot;</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id</span> <span class="o">==</span> <span class="n">utils</span><span class="o">.</span><span class="n">ensure_b36</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">stream_id</span><span class="p">)</span>
 
-    <span class="c1">#Check if the compared object has the same chat ID</span>
+    <span class="c1"># Check if the compared object has the same chat ID</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;stream_id_b10&quot;</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">stream_id_b10</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">stream_id_b10</span>
 </code></pre></div></td></tr></table></div>
@@ -4270,9 +4270,9 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 <span class="sd">    key (str): A valid JSON key.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#The livestream has not disappeared from the API listing,</span>
-    <span class="c1">#the key requested is not a value that doesn&#39;t change,</span>
-    <span class="c1">#and it has been api.refresh rate since the last time we refreshed</span>
+    <span class="c1"># The livestream has not disappeared from the API listing,</span>
+    <span class="c1"># the key requested is not a value that doesn&#39;t change,</span>
+    <span class="c1"># and it has been api.refresh rate since the last time we refreshed</span>
     <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_disappeared</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">static</span><span class="o">.</span><span class="n">StaticAPIEndpoints</span><span class="o">.</span><span class="n">stream</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">last_refresh_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">refresh_rate</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 
@@ -4366,7 +4366,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">jsondata</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">api</span> <span class="o">=</span> <span class="n">api</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">is_disappeared</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1">#The livestream is in the API listing</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">is_disappeared</span> <span class="o">=</span> <span class="kc">False</span> <span class="c1"># The livestream is in the API listing</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">__chat</span> <span class="o">=</span> <span class="n">LiveChat</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -4492,26 +4492,26 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 <span class="sd">        Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Check if the compared string is our message</span>
+        <span class="c1"># Check if the compared string is our message</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span>
 
-        <span class="c1"># #Check if the compared rant has the same username, amount, and text (unneccesary?)</span>
+        <span class="c1"># # Check if the compared rant has the same username, amount, and text (unneccesary?)</span>
         <span class="c1"># if type(other) == type(self):</span>
         <span class="c1">#     return (self.username, self.amount_cents, self.text) == (other.username, other.amount_cents, other.text)</span>
 
-        <span class="c1">#Check if the compared object has the same text</span>
+        <span class="c1"># Check if the compared object has the same text</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
-            <span class="c1">#Check if the compared object has the same username, if it has one</span>
+            <span class="c1"># Check if the compared object has the same username, if it has one</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
-                <span class="c1">#Check if the compared object has the same cost amount, if it has one</span>
+                <span class="c1"># Check if the compared object has the same cost amount, if it has one</span>
                 <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;amount_cents&quot;</span><span class="p">):</span>
                     <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount_cents</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">amount_cents</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-                <span class="c1">#Other object has no amount_cents attribute</span>
+                <span class="c1"># Other object has no amount_cents attribute</span>
                 <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-            <span class="c1">#Other object had no username attribute</span>
+            <span class="c1"># Other object had no username attribute</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span>
 
     <span class="nd">@property</span>
@@ -4715,26 +4715,26 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 <span class="sd">    Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Check if the compared string is our message</span>
+    <span class="c1"># Check if the compared string is our message</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span>
 
-    <span class="c1"># #Check if the compared rant has the same username, amount, and text (unneccesary?)</span>
+    <span class="c1"># # Check if the compared rant has the same username, amount, and text (unneccesary?)</span>
     <span class="c1"># if type(other) == type(self):</span>
     <span class="c1">#     return (self.username, self.amount_cents, self.text) == (other.username, other.amount_cents, other.text)</span>
 
-    <span class="c1">#Check if the compared object has the same text</span>
+    <span class="c1"># Check if the compared object has the same text</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;text&quot;</span><span class="p">):</span>
-        <span class="c1">#Check if the compared object has the same username, if it has one</span>
+        <span class="c1"># Check if the compared object has the same username, if it has one</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
-            <span class="c1">#Check if the compared object has the same cost amount, if it has one</span>
+            <span class="c1"># Check if the compared object has the same cost amount, if it has one</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;amount_cents&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount_cents</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">amount_cents</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-            <span class="c1">#Other object has no amount_cents attribute</span>
+            <span class="c1"># Other object has no amount_cents attribute</span>
             <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span><span class="p">)</span>
 
-        <span class="c1">#Other object had no username attribute</span>
+        <span class="c1"># Other object had no username attribute</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">text</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">text</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -5010,7 +5010,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
         <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api_url</span> <span class="o">=</span> <span class="n">api_url</span>
 
-        <span class="c1">#Warn about refresh rate being below minimum</span>
+        <span class="c1"># Warn about refresh rate being below minimum</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">refresh_rate</span> <span class="o">&lt;</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">api_refresh_minimum</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cocorum set to over-refresh, rate of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh_rate</span><span class="si">}</span><span class="s2"> seconds (less than </span><span class="si">{</span><span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">api_refresh_minimum</span><span class="si">}</span><span class="s2">).&quot;</span> <span class="o">+</span> \
                 <span class="s2">&quot;Superscript must self-limit or Rumble will reject queries!&quot;</span><span class="p">)</span>
@@ -5038,7 +5038,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 <span class="sd">        key (str): A valid JSON key.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#This is not a static key, and it&#39;s time to refresh our data</span>
+        <span class="c1"># This is not a static key, and it&#39;s time to refresh our data</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">static</span><span class="o">.</span><span class="n">StaticAPIEndpoints</span><span class="o">.</span><span class="n">main</span> <span class="ow">and</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_refresh_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">refresh_rate</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 
@@ -5057,26 +5057,26 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
-        <span class="c1">#Remove livestream references that are no longer listed</span>
+        <span class="c1"># Remove livestream references that are no longer listed</span>
         <span class="n">listed_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">jsondata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span><span class="p">[</span><span class="s2">&quot;livestreams&quot;</span><span class="p">]]</span>
         <span class="k">for</span> <span class="n">stream_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
             <span class="k">if</span> <span class="n">stream_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">listed_ids</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="p">[</span><span class="n">stream_id</span><span class="p">]</span><span class="o">.</span><span class="n">is_disappeared</span> <span class="o">=</span> <span class="kc">True</span>
                 <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="p">[</span><span class="n">stream_id</span><span class="p">]</span>
 
-        <span class="c1">#Update livestream references&#39; JSONs in-place</span>
+        <span class="c1"># Update livestream references&#39; JSONs in-place</span>
         <span class="k">for</span> <span class="n">jsondata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span><span class="p">[</span><span class="s2">&quot;livestreams&quot;</span><span class="p">]:</span>
             <span class="k">try</span><span class="p">:</span>
-                <span class="c1">#Update the JSON of the stored livestream</span>
+                <span class="c1"># Update the JSON of the stored livestream</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="p">[</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">jsondata</span>
 
-            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#The livestream has not been stored yet</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1"># The livestream has not been stored yet</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="p">[</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Livestream</span><span class="p">(</span><span class="n">jsondata</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">data_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The timestamp on the last data refresh&quot;&quot;&quot;</span>
-        <span class="c1">#Definitely don&#39;t ever trigger a refresh on this</span>
+        <span class="c1"># Definitely don&#39;t ever trigger a refresh on this</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span><span class="p">[</span><span class="s2">&quot;now&quot;</span><span class="p">]</span>
 
     <span class="nd">@property</span>
@@ -5128,7 +5128,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
     <span class="k">def</span><span class="w"> </span><span class="nf">latest_follower</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The latest follower of this user or channel&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;followers&quot;</span><span class="p">][</span><span class="s2">&quot;latest_follower&quot;</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="c1">#No-one has followed this user or channel yet</span>
+            <span class="k">return</span> <span class="kc">None</span> <span class="c1"># No-one has followed this user or channel yet</span>
         <span class="k">return</span> <span class="n">Follower</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;followers&quot;</span><span class="p">][</span><span class="s2">&quot;latest_follower&quot;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
@@ -5163,7 +5163,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
     <span class="k">def</span><span class="w"> </span><span class="nf">latest_subscriber</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;The latest subscriber of this user or channel&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="p">[</span><span class="s2">&quot;subscribers&quot;</span><span class="p">][</span><span class="s2">&quot;latest_subscriber&quot;</span><span class="p">]:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="c1">#No-one has subscribed to this user or channel yet</span>
+            <span class="k">return</span> <span class="kc">None</span> <span class="c1"># No-one has subscribed to this user or channel yet</span>
         <span class="k">return</span> <span class="n">Subscriber</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="s2">&quot;subscribers&quot;</span><span class="p">][</span><span class="s2">&quot;latest_subscriber&quot;</span><span class="p">])</span>
 
     <span class="nd">@property</span>
@@ -5194,7 +5194,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
     <span class="k">def</span><span class="w"> </span><span class="nf">latest_livestream</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return latest livestream to be created. Use this to get a single running livestream&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">livestreams</span><span class="p">:</span>
-            <span class="k">return</span> <span class="kc">None</span> <span class="c1">#No livestreams are running</span>
+            <span class="k">return</span> <span class="kc">None</span> <span class="c1"># No livestreams are running</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">livestreams</span><span class="o">.</span><span class="n">values</span><span class="p">(),</span> <span class="n">key</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">created_on</span><span class="p">)</span>
 
     <span class="nd">@property</span>
@@ -5773,7 +5773,7 @@ WARNING: This is shallow! I have no way to reliably ID particular gifts to updat
 <span class="sd">    key (str): A valid JSON key.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#This is not a static key, and it&#39;s time to refresh our data</span>
+    <span class="c1"># This is not a static key, and it&#39;s time to refresh our data</span>
     <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">static</span><span class="o">.</span><span class="n">StaticAPIEndpoints</span><span class="o">.</span><span class="n">main</span> <span class="ow">and</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">last_refresh_time</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">refresh_rate</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
 
@@ -5886,7 +5886,7 @@ Defaults to static.Delays.api_refresh_default.</p>
         <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">api_url</span> <span class="o">=</span> <span class="n">api_url</span>
 
-        <span class="c1">#Warn about refresh rate being below minimum</span>
+        <span class="c1"># Warn about refresh rate being below minimum</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">refresh_rate</span> <span class="o">&lt;</span> <span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">api_refresh_minimum</span><span class="p">:</span>
             <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cocorum set to over-refresh, rate of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">refresh_rate</span><span class="si">}</span><span class="s2"> seconds (less than </span><span class="si">{</span><span class="n">static</span><span class="o">.</span><span class="n">Delays</span><span class="o">.</span><span class="n">api_refresh_minimum</span><span class="si">}</span><span class="s2">).&quot;</span> <span class="o">+</span> \
                 <span class="s2">&quot;Superscript must self-limit or Rumble will reject queries!&quot;</span><span class="p">)</span>
@@ -5969,20 +5969,20 @@ Defaults to static.Delays.api_refresh_default.</p>
 
     <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
 
-    <span class="c1">#Remove livestream references that are no longer listed</span>
+    <span class="c1"># Remove livestream references that are no longer listed</span>
     <span class="n">listed_ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">jsondata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span><span class="p">[</span><span class="s2">&quot;livestreams&quot;</span><span class="p">]]</span>
     <span class="k">for</span> <span class="n">stream_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="o">.</span><span class="n">copy</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">stream_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">listed_ids</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="p">[</span><span class="n">stream_id</span><span class="p">]</span><span class="o">.</span><span class="n">is_disappeared</span> <span class="o">=</span> <span class="kc">True</span>
             <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="p">[</span><span class="n">stream_id</span><span class="p">]</span>
 
-    <span class="c1">#Update livestream references&#39; JSONs in-place</span>
+    <span class="c1"># Update livestream references&#39; JSONs in-place</span>
     <span class="k">for</span> <span class="n">jsondata</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_jsondata</span><span class="p">[</span><span class="s2">&quot;livestreams&quot;</span><span class="p">]:</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="c1">#Update the JSON of the stored livestream</span>
+            <span class="c1"># Update the JSON of the stored livestream</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="p">[</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">_jsondata</span> <span class="o">=</span> <span class="n">jsondata</span>
 
-        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1">#The livestream has not been stored yet</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span> <span class="c1"># The livestream has not been stored yet</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__livestreams</span><span class="p">[</span><span class="n">jsondata</span><span class="p">[</span><span class="s2">&quot;id&quot;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Livestream</span><span class="p">(</span><span class="n">jsondata</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
 </code></pre></div></td></tr></table></div>
             </details>
@@ -6079,11 +6079,11 @@ Defaults to static.Delays.api_refresh_default.</p>
 <span class="sd">        Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Check if the compared string is our slug or title</span>
+        <span class="c1"># Check if the compared string is our slug or title</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="n">other</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
 
-        <span class="c1">#Check if the compared object has the same slug, if it has one</span>
+        <span class="c1"># Check if the compared object has the same slug, if it has one</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;slug&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">slug</span>
 
@@ -6242,11 +6242,11 @@ Defaults to static.Delays.api_refresh_default.</p>
 <span class="sd">    Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Check if the compared string is our slug or title</span>
+    <span class="c1"># Check if the compared string is our slug or title</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">other</span> <span class="ow">in</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slug</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">)</span>
 
-    <span class="c1">#Check if the compared object has the same slug, if it has one</span>
+    <span class="c1"># Check if the compared object has the same slug, if it has one</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;slug&quot;</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slug</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">slug</span>
 </code></pre></div></td></tr></table></div>
@@ -6373,21 +6373,21 @@ Defaults to static.Delays.api_refresh_default.</p>
 <span class="sd">        Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="c1">#Check if the compared string is our username</span>
+        <span class="c1"># Check if the compared string is our username</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">other</span>
 
-        <span class="c1">#check if the compared number is our amount in cents</span>
+        <span class="c1"># check if the compared number is our amount in cents</span>
         <span class="c1"># if isinstance(other, (int, float)):</span>
             <span class="c1"># return self.amount_cents == other</span>
 
-        <span class="c1">#Check if the compared object&#39;s username matches our own, if it has one</span>
+        <span class="c1"># Check if the compared object&#39;s username matches our own, if it has one</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
-            <span class="c1">#Check if the compared object&#39;s cost amout matches our own, if it has one</span>
+            <span class="c1"># Check if the compared object&#39;s cost amout matches our own, if it has one</span>
             <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;amount_cents&quot;</span><span class="p">):</span>
                 <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount_cents</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">amount_cents</span>
 
-            <span class="c1">#Other object has no amount_cents attribute</span>
+            <span class="c1"># Other object has no amount_cents attribute</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">username</span>
 
     <span class="nd">@property</span>
@@ -6612,21 +6612,21 @@ Defaults to static.Delays.api_refresh_default.</p>
 <span class="sd">    Comparison (bool, None): Did it fit the criteria?</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="c1">#Check if the compared string is our username</span>
+    <span class="c1"># Check if the compared string is our username</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">other</span>
 
-    <span class="c1">#check if the compared number is our amount in cents</span>
+    <span class="c1"># check if the compared number is our amount in cents</span>
     <span class="c1"># if isinstance(other, (int, float)):</span>
         <span class="c1"># return self.amount_cents == other</span>
 
-    <span class="c1">#Check if the compared object&#39;s username matches our own, if it has one</span>
+    <span class="c1"># Check if the compared object&#39;s username matches our own, if it has one</span>
     <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;username&quot;</span><span class="p">):</span>
-        <span class="c1">#Check if the compared object&#39;s cost amout matches our own, if it has one</span>
+        <span class="c1"># Check if the compared object&#39;s cost amout matches our own, if it has one</span>
         <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="s2">&quot;amount_cents&quot;</span><span class="p">):</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">amount_cents</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">amount_cents</span>
 
-        <span class="c1">#Other object has no amount_cents attribute</span>
+        <span class="c1"># Other object has no amount_cents attribute</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">username</span>
 </code></pre></div></td></tr></table></div>
             </details>
