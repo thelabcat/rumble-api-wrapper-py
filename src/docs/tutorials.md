@@ -57,7 +57,7 @@ Let's get some data on this livestream:
 print(livestream.title)
 print("Stream visibility is", livestream.visibility)
 
-#We will use this later
+# We will use this later
 STREAM_ID = livestream.stream_id
 
 print("Stream ID is", STREAM_ID)
@@ -87,15 +87,17 @@ while time.time() - start_time < 60 and livestream.is_live:
 This is a good simple way to get slow chats' messages. But, what if the chat is moving too fast for this to be effective? RLS API queries have a max number of chat messages they will show into the past, and we could miss some if more than that many new chat messages arrive before we can refresh the JSON block. That was the problem GlobalGamer2015 encountered when developing [RUM Bot Live Alerts](https://www.rumbot.org/rum-bot-live-alerts/), and so he found and used a different API: The Rumble internal SSE chat stream.
 
 ## Reading chat using the ChatAPI wrapper
-This is where Cocorum goes into the backroads of Rumble. So far, we have only seen wrappers for the API Rumble expresssly designed for the public to use. Past this point, we get into wrappers for APIs used by the internals of the web interface. If Rumble officially forbids / denies public access to them (which they have every right to do), these wrappers will break. Thankfully, they have made no indication that they intend to do so, as far as I know, so please, don't give them a reason to. We're fudging our boundaries here, make sure you respect the spirit of the law rather than just the letter. I do not, in any regards whatsoever, endorse any sort of cyber-arson, including but not limited to; disrupting the Rumble platform, via misuse of the public RSL API, or any other means.
+This is where Cocorum goes into the backroads of Rumble. So far, we have only seen wrappers for the API that Rumble expresssly designed for the public to use. Beyond this point, we get into wrappers for APIs used by the internals of the web interface. If Rumble officially forbids / denies public access to them (which they have every right to do), these wrappers will break. Thankfully, they have made no indication that they intend to do so as far as I know, so please, don't give them a reason to. We're fudging our boundaries here, make sure you respect the spirit of the law rather than just the letter. I do not, in any regards whatsoever, endorse any sort of cyber-arson, including but not limited to; disrupting the Rumble platform, via misuse of the public RLS API or any other means.
 
 With that being understood, let's connect to the SSE chat stream. I expect this to be in the same interpreter, so `time` will still be imported, api is still a RumbleAPI object, and `STREAM_ID` is still assigned, from earlier.
+
+A warning here, if you used some other method to get your stream ID (such as copying it from a chat popup window's URL), be sure that it is not base 10 AND a string. Said chat URLs have it in base 10, so when copying it from there, you MUST convert it to an integer type before passing it here (done with Python's `int()` function). This is because whatever format you pass must be converted to base 10 internally, and [the converter](../modules_ref/cocorum_utils/#cocorum.utils.ensure_b10) has no way to tell the difference between a base 10 string and a base 36 string that happens to only have base 10 numerals. So, where Cocorum uses such converters, I set them to assume any string is base 36. I could have done this the other way around maybe, but we'd hit the same sort of limitation in reverse.
 
 ```
 from cocorum import chatapi
 
-chat = chatapi.ChatAPI(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
-chat.clear_mailbox() #Erase messages that were still visible before we connected
+chat = chatapi.ChatAPI(stream_id = STREAM_ID) # Stream ID can be an integer or a base 36 string
+chat.clear_mailbox() # Erase messages that were still visible before we connected
 ```
 
 If you don't run `chat.clear_mailbox()`, then the following code will print messages that were already in chat before it gets to waiting for new ones. Anyways, let's monitor chat for one minute. 
@@ -109,4 +111,4 @@ while time.time() - start_time < 60 and (msg := chat.get_message()):
     print(msg.user.username, "said", msg)
 ```
 
-A note about this. `ChatAPI().get_message()` will always wait for an additional message, even after the time runs out. I've also had trouble getting the chat to close properly once the stream ends, or staying open if it is inactive for several minutes. See [GitHub issue #5](https://github.com/thelabcat/cocorum/issues/5) for more info on this.
+A note about this. `ChatAPI().get_message()` will always wait for an additional message, even after the time runs out. I've also had trouble getting the chat to close properly once the stream ends, or staying open if it is inactive for several minutes. See [GitHub issue # 5](https://github.com/thelabcat/cocorum/issues/5) for more info on this.
