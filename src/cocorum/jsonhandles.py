@@ -60,20 +60,20 @@ class JSONUserAction(JSONObj):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check if the compared string is our username, or base 36 user ID if we have one
+        # Check if the compared string is our username, or base 36 user ID if we have one
         if isinstance(other, str):
-            #We have a base 36 user ID
+            # We have a base 36 user ID
             if hasattr(self, "user_id_b36"):
                 return other in (self.username, self.user_id_b36)
 
-            #We only have our username
+            # We only have our username
             return self.username == other
 
-        #Check if the compared object has a username and if it matches our own
+        # Check if the compared object has a username and if it matches our own
         if hasattr(other, "username"):
             return self.username == other.username
 
-        #Check if the compared object has a user ID in base 36 and if it matches our own, if we have one
+        # Check if the compared object has a user ID in base 36 and if it matches our own, if we have one
         if hasattr(self, "user_id_b36") and hasattr(other, "user_id_b36"):
             return self.user_id_b36 == other.user_id_b36
 
@@ -94,10 +94,10 @@ class JSONUserAction(JSONObj):
     @property
     def profile_pic(self):
         """The user's profile picture as a bytes string"""
-        if not self.profile_pic_url: #The profile picture is blank
+        if not self.profile_pic_url: # The profile picture is blank
             return b''
 
-        if not self.__profile_pic: #We never queried the profile pic before
+        if not self.__profile_pic: # We never queried the profile pic before
             response = requests.get(self.profile_pic_url, timeout = static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 

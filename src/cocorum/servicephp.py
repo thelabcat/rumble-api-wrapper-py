@@ -23,7 +23,7 @@ from . import utils
 from .basehandles import *
 from .jsonhandles import JSONObj
 
-class APIUserBadge(JSONObj):
+class APIUserBadge(JSONObj, BaseUserBadge):
     """A badge of a user as returned by the API"""
     def __init__(self, slug, jsondata):
         """A badge of a user as returned by the API.
@@ -33,8 +33,8 @@ class APIUserBadge(JSONObj):
         jsondata (dict): The JSON data block of the badge.
         """
 
-        super().__init__(jsondata)
-        self.slug = slug #The unique identification for this badge
+        JSONObj.__init__(self, jsondata)
+        self.slug = slug # The unique identification for this badge
         self.__icon = None
 
     @property
@@ -60,7 +60,7 @@ class APIComment(JSONObj, BaseComment):
         JSONObj.__init__(self, jsondata)
         self.servicephp = servicephp
 
-        #Badges of the user who commented if we have them
+        # Badges of the user who commented if we have them
         if self.get("comment_user_badges"):
             self.user_badges = {slug : APIUserBadge(slug, data) for slug, data in self["comment_user_badges"].items()}
 
@@ -151,7 +151,7 @@ class APIUser(JSONObj, BaseUser):
         JSONObj.__init__(self, jsondata)
         self.servicephp = servicephp
 
-        #Our profile picture data
+        # Our profile picture data
         self.__picture = None
 
     @property
@@ -182,10 +182,10 @@ class APIUser(JSONObj, BaseUser):
     @property
     def picture(self):
         """The user's profile picture as a bytes string"""
-        if not self.picture_url: #The profile picture is blank
+        if not self.picture_url: # The profile picture is blank
             return b''
 
-        if not self.__picture: #We never queried the profile pic before
+        if not self.__picture: # We never queried the profile pic before
             response = requests.get(self.picture_url, timeout = static.Delays.request_timeout)
             assert response.status_code == 200, "Status code " + str(response.status_code)
 
@@ -300,39 +300,39 @@ class ServicePHP:
             Defaults to using the password instead.
             """
 
-        #Save the username
+        # Save the username
         self.username = username
 
-        #Session is the token directly
+        # Session is the token directly
         if isinstance(session, str):
             self.session_cookie = {static.Misc.session_token_key, session}
 
-        #Session is a cookie dict
+        # Session is a cookie dict
         elif isinstance(session, dict):
             assert session.get(static.Misc.session_token_key), f"Session cookie dict must have '{static.Misc.session_token_key}' as key."
             self.session_cookie = session
 
-        #Session was passed but it is not anything we can use
+        # Session was passed but it is not anything we can use
         elif session is not None:
             raise ValueError(f"Session must be a token str or cookie dict, got {type(session)}")
 
-        #Session was not passed, but credentials were
+        # Session was not passed, but credentials were
         elif username and password:
             self.session_cookie = self.login(username, password)
 
-        #Neither session nor credentials were passed:
+        # Neither session nor credentials were passed:
         else:
             raise ValueError("Must pass either userame and password, or a session token")
 
         assert utils.test_session_cookie(self.session_cookie), "Session cookie is invalid."
 
-        #Stored ID of the logged in user
+        # Stored ID of the logged in user
         self.__user_id = None
 
     @property
     def user_id(self):
         """The numeric ID of the logged in user in base 10"""
-        #We do not have a user ID, extract it from the unread notifications response
+        # We do not have a user ID, extract it from the unread notifications response
         if self.__user_id is None:
             j = self.sphp_request(
                 "user.has_unread_notifications",
@@ -370,11 +370,11 @@ class ServicePHP:
                 timeout = static.Delays.request_timeout,
                 )
         assert r.status_code == 200, f"Service.PHP request for {service_name} failed: {r}\n{r.text}"
-        #If the request json has a data -> success value, make sure it is True
+        # If the request json has a data -> success value, make sure it is True
         d = r.json().get("data")
         if isinstance(d, dict):
             assert d.get("success", True), f"Service.PHP request for {service_name} failed: \n{r.text}"
-        #Data was not a dict but was not empty
+        # Data was not a dict but was not empty
         elif d:
             print(f"Service.PHP request for {service_name} did not fail but returned unknown data type {type(d)}: {d}")
 
@@ -391,7 +391,7 @@ class ServicePHP:
         Cookie (dict): Cookie dict to be passed with requests, which authenticates them.
         """
 
-        #Get salts
+        # Get salts
         r = self.sphp_request(
                 "user.get_salts",
                 data = {"username": username},
@@ -399,13 +399,13 @@ class ServicePHP:
                 )
         salts = r.json()["data"]["salts"]
 
-        #Get session token
+        # Get session token
         r = self.sphp_request(
                 "user.login",
                 data = {
                     "username": username,
 
-                    #Hash the password using the salts
+                    # Hash the password using the salts
                     "password_hashes": ",".join(utils.calc_password_hashes(password, salts)),
                     },
                 logged_in = False,

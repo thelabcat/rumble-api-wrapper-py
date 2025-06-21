@@ -37,7 +37,7 @@ class MD5Ex:
         Hash (str): The hex digest hash result.
         """
 
-        #Actually, we can except bytes, but if we got string, encode the string
+        # Actually, we can except bytes, but if we got string, encode the string
         if isinstance(message, str):
             message = message.encode(static.Misc.text_encoding)
 
@@ -56,13 +56,13 @@ class MD5Ex:
         Hash (str): The completed stretched hash.
         """
 
-        #Start with the salt and password together
+        # Start with the salt and password together
         message = (salt + password).encode(static.Misc.text_encoding)
 
-        #Make one hash of it
+        # Make one hash of it
         current = MD5Ex.hash(message)
 
-        #Then keep re-adding the password and re-hashing
+        # Then keep re-adding the password and re-hashing
         for _ in range(iterations):
             current = MD5Ex.hash(current + password)
 
@@ -78,7 +78,7 @@ def parse_timestamp(timestamp: str) -> float:
         Timestamp (float): The same timestamp value, in seconds since Epoch, UTC.
         """
 
-    #Trims off the 6 TODO characters at the end
+    # Trims off the 6 TODO characters at the end
     return calendar.timegm(time.strptime(timestamp[:-6], static.Misc.timestamp_format))
 
 def form_timestamp(seconds: float, suffix = "+00:00") -> str:
@@ -136,19 +136,19 @@ def ensure_b36(num, assume_10 = False) -> str:
         Number (str): The number in base 36.
         """
 
-    #It is base 10
+    # It is base 10
     if isinstance(num, int) or hasattr(num, "__int__"):
         return base_10_to_36(int(num))
 
-    #It is a string or has a string conversion attribute
+    # It is a string or has a string conversion attribute
     if isinstance(num, str) or hasattr(num, "__str__"):
         num = str(num)
 
-        #The string number is in base 10
+        # The string number is in base 10
         if num.isnumeric() and assume_10:
             return base_10_to_36(num)
 
-    #It is base 36:
+    # It is base 36:
     return num
 
 def ensure_b10(num, assume_10 = False) -> int:
@@ -163,19 +163,19 @@ def ensure_b10(num, assume_10 = False) -> int:
         Number (int): The number in base 10.
         """
 
-    #It is base 10 or has an integer conversion method
+    # It is base 10 or has an integer conversion method
     if isinstance(num, int) or hasattr(num, "__int__"):
         return int(num)
 
-    #It is a string or has a string conversion attribute
+    # It is a string or has a string conversion attribute
     if isinstance(num, str) or hasattr(num, "__str__"):
         num = str(num)
 
-        #The string number is in base 10
+        # The string number is in base 10
         if num.isnumeric() and assume_10:
             return base_10_to_36(num), int(num)
 
-    #It is base 36:
+    # It is base 36:
     return base_36_to_10(num)
 
 def base_36_and_10(num, assume_10 = False):
@@ -223,13 +223,13 @@ def calc_password_hashes(password: str, salts):
         Hashes (iter): The three results of hashing.
         """
 
-    #Stretch-hash the password with the first salt
+    # Stretch-hash the password with the first salt
     stretched1 = MD5Ex.hash_stretch(password, salts[0], 128)
 
-    #Add the second salt to that result, and hash one more time
+    # Add the second salt to that result, and hash one more time
     final_hash1 = MD5Ex.hash(stretched1 + salts[1])
 
-    #Stretch-hash the password with the third salt
+    # Stretch-hash the password with the third salt
     stretched2 = MD5Ex.hash_stretch(password, salts[2], 128)
 
     return final_hash1, stretched2, salts[1]
@@ -265,7 +265,7 @@ def test_session_cookie(session_cookie: dict) -> bool:
 
     title = r.text.split("<title>")[1].split("</title>")[0]
 
-    #If the session token is invalid, it won't log us in and "Login" will still be shown
+    # If the session token is invalid, it won't log us in and "Login" will still be shown
     return "Login" not in title
 
 def options_check(url: str, method: str, origin = static.URI.rumble_base, cookies: dict = {}, params: dict = {}) -> bool:

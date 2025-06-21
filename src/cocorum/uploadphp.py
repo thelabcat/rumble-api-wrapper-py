@@ -74,13 +74,13 @@ class UploadPHP:
 
         self.servicephp = servicephp
 
-        #Create a scraper to get some extra data we need
+        # Create a scraper to get some extra data we need
         self.scraper = scraping.Scraper(self.servicephp)
 
-        #Get list of channels we could use
+        # Get list of channels we could use
         self.channels = self.scraper.get_channels()
 
-        #Primary and secondary video categories AKA site and media channels
+        # Primary and secondary video categories AKA site and media channels
         self.categories1, self.categories2 = self.scraper.get_categories()
 
         self.__cur_file_size = None
@@ -120,7 +120,7 @@ class UploadPHP:
                 timeout = timeout,
                 )
         assert r.status_code == 200, f"Upload.PHP request failed: {r}\n{r.text}"
-        #If the request json has a data -> success value, make sure it is True
+        # If the request json has a data -> success value, make sure it is True
 
         return r
 
@@ -134,11 +134,11 @@ class UploadPHP:
         Result (int, None): Either the confirmed channel ID, or None if it didn't exist / wasn't specified.
         """
 
-        #No channel selected
+        # No channel selected
         if not channel_id:
             return None
 
-        #Look for a channel match
+        # Look for a channel match
         for c in self.channels:
             if c == channel_id:
                 return c.channel_id_b10
@@ -158,7 +158,7 @@ class UploadPHP:
 
         print("Uploading video in", self.__cur_num_chunks, "chunks")
 
-        #Base upload params
+        # Base upload params
         upload_params = {
             "chunkSz": static.Upload.chunksz,
             "chunkQty": self.__cur_num_chunks,
@@ -167,30 +167,30 @@ class UploadPHP:
         with open(file_path, "rb") as f:
             for i in range(self.__cur_num_chunks):
                 print(f"Uploading chunk {i + 1}/{self.__cur_num_chunks}")
-                #Parameters for this chunk upload
+                # Parameters for this chunk upload
                 chunk_params = upload_params.copy()
                 chunk_params.update({
                     "chunk": f"{i}_{self.__cur_upload_id}.mp4",
                     })
 
-                #Get permission to upload the chunk
+                # Get permission to upload the chunk
                 assert utils.options_check(
                     static.URI.uploadphp,
                     "PUT",
                     cookies = self.session_cookie,
                     params = chunk_params,
                     ), f"Chunk {i} upload failed at OPTIONS request."
-                #Upload the chunk
-                self.uphp_request(chunk_params, data = f.read(static.Upload.chunksz), timeout = 300) #Set static? TODO
+                # Upload the chunk
+                self.uphp_request(chunk_params, data = f.read(static.Upload.chunksz), timeout = 300) # Set static? TODO
 
-        #Params for the merge request
+        # Params for the merge request
         merge_params = upload_params.copy()
         merge_params.update({
             "merge": i,
             "chunk": f"{self.__cur_upload_id}.mp4",
             })
 
-        #Tell the server to merge the chunks
+        # Tell the server to merge the chunks
         print("Merging chunks at server")
         r = self.uphp_request(merge_params)
         merged_video_fn = r.text
@@ -210,15 +210,15 @@ class UploadPHP:
         print("Uploading video")
 
         with open(file_path, "rb") as f:
-            #Get permission to upload the file
+            # Get permission to upload the file
             assert utils.options_check(
                 static.URI.uploadphp,
                 "PUT",
                 cookies = self.session_cookie,
                 params = {"api": static.Upload.api_ver},
                 ), "File upload failed at OPTIONS request."
-            #Upload the file
-            r = self.uphp_request({}, data = f.read(), timeout = 300) #Set static? TODO
+            # Upload the file
+            r = self.uphp_request({}, data = f.read(), timeout = 300) # Set static? TODO
 
         uploaded_fn = r.text
         print("Video file on server is", uploaded_fn)
@@ -290,12 +290,12 @@ class UploadPHP:
 
         start_time = int(time.time() * 1000)
 
-        #IDK if the second half of this is correct, TODO
+        # IDK if the second half of this is correct, TODO
         self.__cur_upload_id = f"{start_time}-{random.randrange(1000000) :06}"
 
-        #Is the file large enough that it needs to be chunked
+        # Is the file large enough that it needs to be chunked
         if self.__cur_file_size > static.Upload.chunksz:
-            #Number of chunks we will need to do, rounded up
+            # Number of chunks we will need to do, rounded up
             self.__cur_num_chunks = self.__cur_file_size // static.Upload.chunksz + 1
             server_filename = self._chunked_vidfile_upload(file_path)
         else:
@@ -303,31 +303,31 @@ class UploadPHP:
 
         end_time = int(time.time() * 1000)
 
-        #Get the uploaded duration
+        # Get the uploaded duration
         r = self.uphp_request({"duration": server_filename})
         checked_duration = float(r.text)
         print("Server says video duration is", checked_duration)
 
-        #Get thumbnails
+        # Get thumbnails
         auto_thumbnails = self.uphp_request({"thumbnails" : server_filename}).json()
 
         thumbnail = kwargs.get("thumbnail", 0)
 
-        #thumbnail is an auto index
+        # thumbnail is an auto index
         if isinstance(thumbnail, int):
             assert 0 <= thumbnail <= len(auto_thumbnails), "Thumbnail index is invalid"
             thumbnail = list(auto_thumbnails.keys())[thumbnail]
 
-        #Thumbnail is path string
+        # Thumbnail is path string
         elif isinstance(thumbnail, str):
             assert os.path.exists(thumbnail), "Thumbnail was a str but is not a valid path"
             thumbnail = self._upload_cthumb(thumbnail)
 
-        #Unknown
+        # Unknown
         else:
             raise ValueError("Thumbnail argument is of unknown type")
 
-        #Get the primary category
+        # Get the primary category
         if isinstance(category1, str):
             category1 = category1.strip()
             if category1.isnumeric():
@@ -336,7 +336,7 @@ class UploadPHP:
                 category1 = self.categories1[category1]
         assert isinstance(category1, (int, float)), f"Primary category must be number or str name, got {type(category1)}"
 
-        #Get the secondary category, but allow None
+        # Get the secondary category, but allow None
         category2 = kwargs.get("category2")
         if isinstance(category2, str):
             category2 = category2.strip()
@@ -346,12 +346,12 @@ class UploadPHP:
                 category2 = self.categories2[category2]
         assert isinstance(category2, (int, float)) or category2 is None, f"Secondary category must be number or str name, got {type(category1)}"
 
-        #Publish the upload
+        # Publish the upload
         updata = {
             "title": title,
             "description": kwargs.get("description", ""),
             "video[]": server_filename,
-            "featured": "6", #Never seems to change
+            "featured": "6", # Never seems to change
             "rights": "1",
             "terms": "1",
             "facebookUpload": "",
@@ -365,19 +365,19 @@ class UploadPHP:
             "siteChannelId": str(category1),
             "mediaChannelId": str(category2),
             "isGamblingRelated": "false",
-            "set_default_channel_id": "0", #Set to 1 to "Set this channel as default" on Rumble
-            #Scheduled visibility takes precedent over visibility setting
+            "set_default_channel_id": "0", # Set to 1 to "Set this channel as default" on Rumble
+            # Scheduled visibility takes precedent over visibility setting
             "visibility": kwargs.get("visibility", "public") if not kwargs.get("scheduled_publish") else "private",
             "availability": kwargs.get("availability", "free"),
             "file_meta": {
-                "name": os.path.basename(file_path), #File name
-                "modified": int(os.path.getmtime(file_path) * 1000), #Timestamp file was modified, miliseconds
-                "size": self.__cur_file_size, #Exact length of entire MP4 file in bytes
+                "name": os.path.basename(file_path), # File name
+                "modified": int(os.path.getmtime(file_path) * 1000), # Timestamp file was modified, miliseconds
+                "size": self.__cur_file_size, # Exact length of entire MP4 file in bytes
                 "type": mimetypes.guess_file_type(file_path)[0],
-                "time_start": start_time, #Timestamp file started uploading, miliseconds
+                "time_start": start_time, # Timestamp file started uploading, miliseconds
                 "speed": int(self.__cur_file_size / (end_time - start_time) * 1000),
                 "num_chunks": self.__cur_num_chunks,
-                "time_end": end_time, #Timestamp we finished uploading, miliseconds
+                "time_end": end_time, # Timestamp we finished uploading, miliseconds
                 },
             "schedulerDatetime": utils.form_timestamp(kwargs.get("scheduled_publish")) if kwargs.get("scheduled_publish") else "",
             "thumb": str(thumbnail),
@@ -390,5 +390,5 @@ class UploadPHP:
             method = "POST",
             )
 
-        #Extract the json from the response HTML, and return it as an JSONObj derivative
+        # Extract the json from the response HTML, and return it as an JSONObj derivative
         return UploadResponse(json.loads(r.text[r.text.find("{") : r.text.rfind("}") + 1]))

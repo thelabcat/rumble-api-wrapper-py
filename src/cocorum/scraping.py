@@ -600,8 +600,8 @@ class Scraper:
             categories1 (dict): The primary categories, name : numeric ID
             categories2 (dict): The secondary categories, name : numeric ID"""
 
-        #TODO: We may be able to get this from an internal API at studio.rumble.com instead
-        # See issue #13
+        # TODO: We may be able to get this from an internal API at studio.rumble.com instead
+        # See issue # 13
 
         print("Loading categories")
         soup = self.soup_request(static.URI.uploadphp)

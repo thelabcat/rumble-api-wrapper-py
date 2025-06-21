@@ -55,7 +55,7 @@ if livestream:
     print(livestream.title)
     print("Stream visibility is", livestream.visibility)
 
-    #We will use this later
+    # We will use this later
     STREAM_ID = livestream.stream_id
 
     print("Stream ID is", STREAM_ID)
@@ -81,7 +81,7 @@ import time
 import warnings
 import requests
 
-#Make all submodules available from base name
+# Make all submodules available from base name
 from . import chatapi, servicephp, uploadphp, scraping, jsonhandles, utils, static
 
 from .jsonhandles import JSONObj, JSONUserAction
@@ -105,21 +105,21 @@ class Subscriber(JSONUserAction):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check if the compared string is our username
+        # Check if the compared string is our username
         if isinstance(other, str):
             return self.username == other
 
-        #check if the compared number is our amount in cents
+        # check if the compared number is our amount in cents
         # if isinstance(other, (int, float)):
             # return self.amount_cents == other
 
-        #Check if the compared object's username matches our own, if it has one
+        # Check if the compared object's username matches our own, if it has one
         if hasattr(other, "username"):
-            #Check if the compared object's cost amout matches our own, if it has one
+            # Check if the compared object's cost amout matches our own, if it has one
             if hasattr(other, "amount_cents"):
                 return self.amount_cents == other.amount_cents
 
-            #Other object has no amount_cents attribute
+            # Other object has no amount_cents attribute
             return self.username == other.username
 
     @property
@@ -165,11 +165,11 @@ class StreamCategory(JSONObj):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check if the compared string is our slug or title
+        # Check if the compared string is our slug or title
         if isinstance(other, str):
             return other in (self.slug, self.title)
 
-        #Check if the compared object has the same slug, if it has one
+        # Check if the compared object has the same slug, if it has one
         if hasattr(other, "slug"):
             return self.slug == other.slug
 
@@ -189,7 +189,7 @@ class Livestream():
 
         self._jsondata = jsondata
         self.api = api
-        self.is_disappeared = False #The livestream is in the API listing
+        self.is_disappeared = False # The livestream is in the API listing
         self.__chat = LiveChat(self)
 
     def __eq__(self, other):
@@ -202,19 +202,19 @@ class Livestream():
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check if the compared string is our stream ID
+        # Check if the compared string is our stream ID
         if isinstance(other, str):
-            return self.stream_id == other #or self.title == other
+            return self.stream_id == other # or self.title == other
 
-        #check if the compared number is our chat ID (linked to stream ID)
+        # check if the compared number is our chat ID (linked to stream ID)
         if isinstance(other, (int, float)):
             return self.stream_id_b10 == other
 
-        #Check if the compared object has the same stream ID
+        # Check if the compared object has the same stream ID
         if hasattr(other, "stream_id"):
             return self.stream_id == utils.ensure_b36(other.stream_id)
 
-        #Check if the compared object has the same chat ID
+        # Check if the compared object has the same chat ID
         if hasattr(other, "stream_id_b10"):
             return self.stream_id_b10 == other.stream_id_b10
 
@@ -229,9 +229,9 @@ class Livestream():
         key (str): A valid JSON key.
         """
 
-        #The livestream has not disappeared from the API listing,
-        #the key requested is not a value that doesn't change,
-        #and it has been api.refresh rate since the last time we refreshed
+        # The livestream has not disappeared from the API listing,
+        # the key requested is not a value that doesn't change,
+        # and it has been api.refresh rate since the last time we refreshed
         if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.stream) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
             self.api.refresh()
 
@@ -319,21 +319,21 @@ class ChatMessage(JSONUserAction):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check if the compared string is our message
+        # Check if the compared string is our message
         if isinstance(other, str):
             return self.text == other
 
-        # #Check if the compared message has the same username and text (not needed)
+        # # Check if the compared message has the same username and text (not needed)
         # if type(other) == type(self):
         #     return (self.username, self.text) == (other.username, other.text)
 
-        #Check if the compared object has the same text
+        # Check if the compared object has the same text
         if hasattr(other, "text"):
-            #Check if the compared object has the same username, if it has one
+            # Check if the compared object has the same username, if it has one
             if hasattr(other, "username"):
                 return (self.username, self.text) == (other.username, other.text)
 
-            return self.text == other.text #the other object had no username attribute
+            return self.text == other.text # the other object had no username attribute
 
     def __str__(self):
         """Message as a string (its content)"""
@@ -366,26 +366,26 @@ class Rant(ChatMessage):
         Comparison (bool, None): Did it fit the criteria?
         """
 
-        #Check if the compared string is our message
+        # Check if the compared string is our message
         if isinstance(other, str):
             return self.text == other
 
-        # #Check if the compared rant has the same username, amount, and text (unneccesary?)
+        # # Check if the compared rant has the same username, amount, and text (unneccesary?)
         # if type(other) == type(self):
         #     return (self.username, self.amount_cents, self.text) == (other.username, other.amount_cents, other.text)
 
-        #Check if the compared object has the same text
+        # Check if the compared object has the same text
         if hasattr(other, "text"):
-            #Check if the compared object has the same username, if it has one
+            # Check if the compared object has the same username, if it has one
             if hasattr(other, "username"):
-                #Check if the compared object has the same cost amount, if it has one
+                # Check if the compared object has the same cost amount, if it has one
                 if hasattr(other, "amount_cents"):
                     return (self.username, self.amount_cents, self.text) == (other.username, other.amount_cents, other.text)
 
-                #Other object has no amount_cents attribute
+                # Other object has no amount_cents attribute
                 return (self.username, self.text) == (other.username, other.text)
 
-            #Other object had no username attribute
+            # Other object had no username attribute
             return self.text == other.text
 
     @property
@@ -414,8 +414,8 @@ class LiveChat():
 
         self.stream = stream
         self.api = stream.api
-        self.last_newmessage_time = 0 #Last time we were checked for "new" messages
-        self.last_newrant_time = 0 #Last time we were checked for "new" rants
+        self.last_newmessage_time = 0 # Last time we were checked for "new" messages
+        self.last_newrant_time = 0 # Last time we were checked for "new" rants
 
     def __getitem__(self, key):
         """Return a key from the stream's chat JSON"""
@@ -425,7 +425,7 @@ class LiveChat():
     def latest_message(self):
         """The latest chat message"""
         if not self["latest_message"]:
-            return None #No-one has chatted on this stream yet
+            return None # No-one has chatted on this stream yet
         return ChatMessage(self["latest_message"])
 
     @property
@@ -438,16 +438,16 @@ class LiveChat():
     def new_messages(self):
         """Chat messages that are newer than the last time this was referenced"""
         rem = self.recent_messages.copy()
-        rem.sort(key = lambda x: x.created_on) #Sort the messages so the newest ones are last
+        rem.sort(key = lambda x: x.created_on) # Sort the messages so the newest ones are last
 
-        #There are no recent messages, or all messages are older than the last time we checked
+        # There are no recent messages, or all messages are older than the last time we checked
         if not rem or rem[-1].created_on < self.last_newmessage_time:
             return []
 
         i = 0
         for i, m in enumerate(rem):
             if m.created_on > self.last_newmessage_time:
-                break #i is now the index of the oldest new message
+                break # i is now the index of the oldest new message
 
         self.last_newmessage_time = time.time()
         return rem[i:]
@@ -456,7 +456,7 @@ class LiveChat():
     def latest_rant(self):
         """The latest chat rant"""
         if not self["latest_rant"]:
-            return None #No-one has ranted on this stream yet
+            return None # No-one has ranted on this stream yet
         return Rant(self["latest_rant"])
 
     @property
@@ -469,16 +469,16 @@ class LiveChat():
     def new_rants(self):
         """Chat rants that are newer than the last time this was referenced"""
         rera = self.recent_rants.copy()
-        rera.sort(key = lambda x: x.created_on) #Sort the rants so the newest ones are last
+        rera.sort(key = lambda x: x.created_on) # Sort the rants so the newest ones are last
 
-        #There are no recent rants, or all rants are older than the last time we checked
+        # There are no recent rants, or all rants are older than the last time we checked
         if not rera or rera[-1].created_on < self.last_newrant_time:
             return []
 
         i = 0
         for i, r in enumerate(rera):
             if r.created_on > self.last_newrant_time:
-                break #i is now the index of the oldest new rant
+                break # i is now the index of the oldest new rant
 
         self.last_newrant_time = time.time()
         return rera[i:]
@@ -495,7 +495,7 @@ class GiftedSub(JSONObj):
 #
 #         self._jsondata = jsondata
 #         self.api = api
-#         self.is_disappeared = False #The gift is in the API listing
+#         self.is_disappeared = False # The gift is in the API listing
 #
 #
 #     def __getitem__(self, key):
@@ -505,9 +505,9 @@ class GiftedSub(JSONObj):
 #         key (str): A valid JSON key.
 #         """
 #
-#         #The gift has not disappeared from the API listing,
-#         #the key requested is not a value that doesn't change,
-#         #and it has been api.refresh rate since the last time we refreshed
+#         # The gift has not disappeared from the API listing,
+#         # the key requested is not a value that doesn't change,
+#         # and it has been api.refresh rate since the last time we refreshed
 #         if (not self.is_disappeared) and (key not in static.StaticAPIEndpoints.gifted_subs) and (time.time() - self.api.last_refresh_time > self.api.refresh_rate):
 #             self.api.refresh()
 #
@@ -569,7 +569,7 @@ class RumbleAPI():
         self._jsondata = {}
         self.api_url = api_url
 
-        #Warn about refresh rate being below minimum
+        # Warn about refresh rate being below minimum
         if self.refresh_rate < static.Delays.api_refresh_minimum:
             warnings.warn(f"Cocorum set to over-refresh, rate of {self.refresh_rate} seconds (less than {static.Delays.api_refresh_minimum})." + \
                 "Superscript must self-limit or Rumble will reject queries!")
@@ -597,7 +597,7 @@ class RumbleAPI():
         key (str): A valid JSON key.
         """
 
-        #This is not a static key, and it's time to refresh our data
+        # This is not a static key, and it's time to refresh our data
         if key not in static.StaticAPIEndpoints.main and time.time() - self.last_refresh_time > self.refresh_rate:
             self.refresh()
 
@@ -616,26 +616,26 @@ class RumbleAPI():
 
         self._jsondata = response.json()
 
-        #Remove livestream references that are no longer listed
+        # Remove livestream references that are no longer listed
         listed_ids = [jsondata["id"] for jsondata in self._jsondata["livestreams"]]
         for stream_id in self.__livestreams.copy():
             if stream_id not in listed_ids:
                 self.__livestreams[stream_id].is_disappeared = True
                 del self.__livestreams[stream_id]
 
-        #Update livestream references' JSONs in-place
+        # Update livestream references' JSONs in-place
         for jsondata in self._jsondata["livestreams"]:
             try:
-                #Update the JSON of the stored livestream
+                # Update the JSON of the stored livestream
                 self.__livestreams[jsondata["id"]]._jsondata = jsondata
 
-            except KeyError: #The livestream has not been stored yet
+            except KeyError: # The livestream has not been stored yet
                 self.__livestreams[jsondata["id"]] = Livestream(jsondata, self)
 
     @property
     def data_timestamp(self):
         """The timestamp on the last data refresh"""
-        #Definitely don't ever trigger a refresh on this
+        # Definitely don't ever trigger a refresh on this
         return self._jsondata["now"]
 
     @property
@@ -687,7 +687,7 @@ class RumbleAPI():
     def latest_follower(self):
         """The latest follower of this user or channel"""
         if not self["followers"]["latest_follower"]:
-            return None #No-one has followed this user or channel yet
+            return None # No-one has followed this user or channel yet
         return Follower(self["followers"]["latest_follower"])
 
     @property
@@ -722,7 +722,7 @@ class RumbleAPI():
     def latest_subscriber(self):
         """The latest subscriber of this user or channel"""
         if not self["subscribers"]["latest_subscriber"]:
-            return None #No-one has subscribed to this user or channel yet
+            return None # No-one has subscribed to this user or channel yet
         return Subscriber(self["subscribers"]["latest_subscriber"])
 
     @property
@@ -753,7 +753,7 @@ class RumbleAPI():
     def latest_livestream(self):
         """Return latest livestream to be created. Use this to get a single running livestream"""
         if not self.livestreams:
-            return None #No livestreams are running
+            return None # No livestreams are running
         return max(self.livestreams.values(), key = lambda x: x.created_on)
 
     @property

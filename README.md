@@ -37,7 +37,7 @@ if livestream:
     print(livestream.title)
     print("Stream visibility is", livestream.visibility)
 
-    #We will use this later
+    # We will use this later
     STREAM_ID = livestream.stream_id
 
     print("Stream ID is", STREAM_ID)
@@ -70,11 +70,11 @@ Example usage of `cocorum.chatapi`:
 ```
 from cocorum import chatapi
 
-#Additionally pass username and password for to-chat interactions
-chat = chatapi.ChatAPI(stream_id = STREAM_ID) #Stream ID can be base 10 or 36
-chat.clear_mailbox() #Erase messages that were still visible before we connected
+# Additionally pass username and password for to-chat interactions
+chat = chatapi.ChatAPI(stream_id = STREAM_ID) # Stream ID can be base 10 or 36
+chat.clear_mailbox() # Erase messages that were still visible before we connected
 
-#Get messages for one minute
+# Get messages for one minute
 start_time = time.time()
 while time.time() - start_time < 60 and (msg := chat.get_message()):
     print(msg.user.username, "said", msg)

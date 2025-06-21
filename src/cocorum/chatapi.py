@@ -17,7 +17,7 @@ S.D.G."""
 
 import time
 import requests
-import json5 as json #For parsing SSE message data
+import json5 as json # For parsing SSE message data
 import sseclient
 from .basehandles import *
 from .jsonhandles import JSONObj, JSONUserAction
@@ -67,8 +67,8 @@ class User(Chatter, BaseUser):
         """
 
         Chatter.__init__(self, jsondata, chat)
-        self.previous_channel_ids = [] #List of channels the user has appeared as, including the current one
-        self._set_channel_id = None #Channel ID set from message
+        self.previous_channel_ids = [] # List of channels the user has appeared as, including the current one
+        self._set_channel_id = None # Channel ID set from message
         self.servicephp = self.chat.servicephp
 
     @property
@@ -80,15 +80,15 @@ class User(Chatter, BaseUser):
     def channel_id(self):
         """The numeric channel ID that the user is appearing with in base 10"""
 
-        #Try to get our channel ID from our own JSON (may be deprecated)
+        # Try to get our channel ID from our own JSON (may be deprecated)
         try:
             new = int(self["channel_id"])
 
-        #Rely on messages to have assigned our channel ID
+        # Rely on messages to have assigned our channel ID
         except KeyError:
             new = self._set_channel_id
 
-        if new not in self.previous_channel_ids: #Record the appearance of a new chanel appearance, including None
+        if new not in self.previous_channel_ids: # Record the appearance of a new chanel appearance, including None
             self.previous_channel_ids.append(new)
         return new
 
@@ -120,7 +120,7 @@ class User(Chatter, BaseUser):
         try:
             return [self.chat.badges[badge_slug] for badge_slug in self["badges"]]
 
-        #User has no badges
+        # User has no badges
         except KeyError:
             return []
 
@@ -136,7 +136,7 @@ class Channel(Chatter):
 
         super().__init__(jsondata, chat)
 
-        #Find the user who has this channel
+        # Find the user who has this channel
         for user in self.chat.users.values():
             if user.channel_id == self.channel_id or self.channel_id in user.previous_channel_ids:
                 self.user = user
@@ -145,7 +145,7 @@ class Channel(Chatter):
     @property
     def is_appearing(self):
         """Is the user of this channel still appearing as it?"""
-        return self.user.channel_id == self.channel_id #The user channel_id still matches our own
+        return self.user.channel_id == self.channel_id # The user channel_id still matches our own
 
     @property
     def channel_id(self):
@@ -188,7 +188,7 @@ class UserBadge(ChatAPIObj, BaseUserBadge):
         """
 
         ChatAPIObj.__init__(self, jsondata, chat)
-        self.slug = slug #The unique identification for this badge
+        self.slug = slug # The unique identification for this badge
         self.__icon = None
 
     @property
@@ -286,11 +286,11 @@ class Message(ChatAPIObj):
 
         super().__init__(jsondata, chat)
 
-        #Set the channel ID of our user if we can
+        # Set the channel ID of our user if we can
         if self.user:
             self.user._set_channel_id = self.channel_id
 
-        #Remember if we were deleted
+        # Remember if we were deleted
         self.deleted = False
 
     def __eq__(self, other):
@@ -306,25 +306,25 @@ class Message(ChatAPIObj):
         if isinstance(other, str):
             return self.text == other
 
-        #Check if the other object's text matches our own, if it has such
+        # Check if the other object's text matches our own, if it has such
         if hasattr(other, "text"):
-            #Check if the other object's user ID matches our own, if it has one
+            # Check if the other object's user ID matches our own, if it has one
             if hasattr(other, "user_id"):
-                #Check if the other object is a raid notification, if it says
+                # Check if the other object is a raid notification, if it says
                 if hasattr(other, "raid_notification"):
                     return (self.user_id, self.text, self.raid_notification) == (other.user_id, other.text, other.raid_notification)
 
                 return (self.user_id, self.text) == (other.user_id, other.text)
 
-            #Check if the other object's username matches our own, if it has one
+            # Check if the other object's username matches our own, if it has one
             if hasattr(other, "username"):
-                #Check if the other object is a raid notification, if it says
+                # Check if the other object is a raid notification, if it says
                 if hasattr(other, "raid_notification"):
                     return (self.user_id, self.text, self.raid_notification) == (other.user_id, other.text, other.raid_notification)
 
                 return (self.user.username, self.text) == (other.username, other.text)
 
-            #No user identifying attributes, but the text does match
+            # No user identifying attributes, but the text does match
             return self.text == other.text
 
     def __str__(self):
@@ -374,9 +374,9 @@ class Message(ChatAPIObj):
     def channel_id(self):
         """The numeric ID of the channel who posted the message, if there is one"""
         try:
-            #Note: For some reason, channel IDs in messages alone show up as integers in the SSE events
+            # Note: For some reason, channel IDs in messages alone show up as integers in the SSE events
             return int(self["channel_id"])
-        except KeyError: #This user is not appearing as a channel and so has no channel ID
+        except KeyError: # This user is not appearing as a channel and so has no channel ID
             return None
 
     @property
@@ -486,36 +486,36 @@ class ChatAPI():
 
         self.stream_id = utils.ensure_b36(stream_id)
 
-        self.__mailbox = []  # A mailbox if you will
-        self.__history = []  # Chat history
-        self.history_len = history_len  # How many messages to store in history
-        self.pinned_message = None  # If a message is pinned, it is assigned to this
-        self.users = {}  # Dictionary of users by user ID
-        self.channels = {}  # Dictionary of channels by channel ID
+        self.__mailbox = []  #  A mailbox if you will
+        self.__history = []  #  Chat history
+        self.history_len = history_len  #  How many messages to store in history
+        self.pinned_message = None  #  If a message is pinned, it is assigned to this
+        self.users = {}  #  Dictionary of users by user ID
+        self.channels = {}  #  Dictionary of channels by channel ID
         self.badges = {}
 
-        #Generate our URLs
+        # Generate our URLs
         self.sse_url = static.URI.ChatAPI.sse_stream.format(stream_id_b10 = self.stream_id_b10)
         self.message_api_url = static.URI.ChatAPI.message.format(stream_id_b10 = self.stream_id_b10)
 
-        # Connect to SSE stream
-        # Note: We do NOT want this request to have a timeout
+        #  Connect to SSE stream
+        #  Note: We do NOT want this request to have a timeout
         response = requests.get(self.sse_url, stream = True, headers = static.RequestHeaders.sse_api)
         self.client = sseclient.SSEClient(response)
         self.event_generator = self.client.events()
         self.chat_running = True
 
-        # If we have session login, use them
+        #  If we have session login, use them
         if (username and password) or session:
             self.servicephp = ServicePHP(username, password, session)
             self.scraper = scraping.Scraper(self.servicephp)
         else:
             self.servicephp = None
 
-        # Parse the init data for the stream (must do AFTER we have servicephp)
+        #  Parse the init data for the stream (must do AFTER we have servicephp)
         self.parse_init_data(self.__next_event_json())
 
-        # The last time we sent a message
+        #  The last time we sent a message
         self.last_send_time = 0
 
     @property
@@ -561,7 +561,7 @@ class ChatAPI():
                     "channel_id": channel_id
                     }
                 },
-            # headers = static.RequestHeaders.user_agent,
+            #  headers = static.RequestHeaders.user_agent,
             timeout = static.Delays.request_timeout,
             )
 
@@ -600,6 +600,10 @@ class ChatAPI():
 
     Args:
         message (int | Message): Object which when converted to integer is the target message ID.
+
+    Returns:
+        success (bool): Wether the operation succeeded or not.
+            NOTE: Method will also print an error message if it failed.
         """
 
         assert not hasattr(message, "deleted") or not message.deleted, "Message was already deleted"
@@ -610,7 +614,7 @@ class ChatAPI():
         r = requests.delete(
             self.message_api_url + f"/{int(message)}",
             cookies = self.session_cookie,
-            # headers = static.RequestHeaders.user_agent,
+            #  headers = static.RequestHeaders.user_agent,
             timeout = static.Delays.request_timeout,
             )
 
@@ -675,8 +679,8 @@ class ChatAPI():
 
         assert self.session_cookie, "Not logged in, cannot unmute user"
 
-        #If the user object has a username attribute, use that
-        # because most user objects will __str__ into their base 36 ID
+        # If the user object has a username attribute, use that
+        #  because most user objects will __str__ into their base 36 ID
         if hasattr(user, "username"):
             user = user.username
 
@@ -686,7 +690,7 @@ class ChatAPI():
 
     def __next_event_json(self):
         """Wait for the next event from the SSE and parse the JSON"""
-        if not self.chat_running: #Do not try to query a new event if chat is closed
+        if not self.chat_running: # Do not try to query a new event if chat is closed
             print("Chat closed, cannot retrieve new JSON data.")
             return
 
@@ -696,12 +700,12 @@ class ChatAPI():
             event = None
 
         if not event:
-            self.chat_running = False #Chat has been closed
+            self.chat_running = False # Chat has been closed
             print("Chat has closed.")
             return
-        if not event.data: #Blank SSE event
+        if not event.data: # Blank SSE event
             print("Blank SSE event:>", event, "<:")
-            #Self recursion should work so long as we don't get dozens of blank events in a row
+            # Self recursion should work so long as we don't get dozens of blank events in a row
             return self.__next_event_json()
 
         return json.loads(event.data)
@@ -717,17 +721,17 @@ class ChatAPI():
             print(jsondata)
             raise ValueError("That is not init json")
 
-        #Parse pre-connection users, channels, then messages
+        # Parse pre-connection users, channels, then messages
         self.update_users(jsondata)
         self.update_channels(jsondata)
         self.update_mailbox(jsondata)
 
-        #Load the chat badges
+        # Load the chat badges
         self.load_badges(jsondata)
 
         self.rants_enabled = jsondata["data"]["config"]["rants"]["enable"]
-        #subscription TODO
-        #rant levels TODO
+        # subscription TODO
+        # rant levels TODO
         self.message_length_max = jsondata["data"]["config"]["message_length_max"]
 
     def update_mailbox(self, jsondata):
@@ -737,7 +741,7 @@ class ChatAPI():
         jsondata (dict): A JSON data block from an SSE event.
         """
 
-        #Add new messages
+        # Add new messages
         self.__mailbox += [Message(message_json, self) for message_json in jsondata["data"].get("messages", []) if int(message_json["id"]) not in self.__mailbox]
 
     def clear_mailbox(self):
@@ -753,8 +757,8 @@ class ChatAPI():
 
         for user_json in jsondata["data"].get("users", []):
             try:
-                self.users[int(user_json["id"])]._jsondata = user_json #Update an existing user's JSON
-            except KeyError: #User is new
+                self.users[int(user_json["id"])]._jsondata = user_json # Update an existing user's JSON
+            except KeyError: # User is new
                 self.users[int(user_json["id"])] = User(user_json, self)
 
     def update_channels(self, jsondata):
@@ -766,8 +770,8 @@ class ChatAPI():
 
         for channel_json in jsondata["data"].get("channels", []):
             try:
-                self.channels[int(channel_json["id"])]._jsondata = channel_json #Update an existing channel's JSON
-            except KeyError: #Channel is new
+                self.channels[int(channel_json["id"])]._jsondata = channel_json # Update an existing channel's JSON
+            except KeyError: # Channel is new
                 self.channels.update({int(channel_json["id"]) : Channel(channel_json, self)})
 
     def load_badges(self, jsondata):
@@ -785,48 +789,54 @@ class ChatAPI():
         return utils.base_36_to_10(self.stream_id)
 
     def get_message(self):
-        """Return the next chat message (parsing any additional data), waits for it to come in, returns None if chat closed"""
-        #We don't already have messages
+        """Return the next chat message (parsing any additional data).
+        Waits for it to come in, returns None if chat closed.
+
+    Returns:
+        result (Message | None): Either the next chat message or NoneType.
+        """
+
+        # We don't already have messages
         while not self.__mailbox:
             jsondata = self.__next_event_json()
 
-            #The chat has closed
+            # The chat has closed
             if not jsondata:
                 return
 
-            #Messages were deleted
+            # Messages were deleted
             if jsondata["type"] in ("delete_messages", "delete_non_rant_messages"):
-                #Flag the messages in our history as being deleted
+                # Flag the messages in our history as being deleted
                 for message in self.__history:
                     if message.message_id in jsondata["data"]["message_ids"]:
                         message.deleted = True
 
 
-            #Re-initialize (could contain new messages)
+            # Re-initialize (could contain new messages)
             elif jsondata["type"] == "init":
                 self.parse_init_data(jsondata)
 
-            #Pinned message
+            # Pinned message
             elif jsondata["type"] == "pin_message":
                 self.pinned_message = Message(jsondata["data"]["message"], self)
 
-            #New messages
+            # New messages
             elif jsondata["type"] == "messages":
-                #Parse users, channels, then messages
+                # Parse users, channels, then messages
                 self.update_users(jsondata)
                 self.update_channels(jsondata)
                 self.update_mailbox(jsondata)
 
-            #Unimplemented event type
+            # Unimplemented event type
             else:
                 print("API sent an unimplemented SSE event type")
                 print(jsondata)
 
-        m = self.__mailbox.pop(0) #Get the oldest message in the mailbox
-        self.__history.append(m) #Add the message to the history
+        m = self.__mailbox.pop(0) # Get the oldest message in the mailbox
+        self.__history.append(m) # Add the message to the history
 
-        #Make sure the history is not too long, clipping off the oldest messages
+        # Make sure the history is not too long, clipping off the oldest messages
         del self.__history[ : max((len(self.__history) - self.history_len, 0))]
 
-        #Return the next message from the mailbox
+        # Return the next message from the mailbox
         return m
