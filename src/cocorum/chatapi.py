@@ -473,7 +473,10 @@ class ChatAPI():
         """The Rumble internal chat API
 
     Args:
-        stream_id (int, str): Stream ID in base 10 or 36.
+        stream_id (int, str): Stream ID in base 10 int or base 36 str.
+            WARNING: If a str is passed, this WILL ASSUME BASE 36
+            even if only digits are present! Convert to int before passing
+            if it is base 10.
         username (str): Username to login with.
             Defaults to no login.
         password (str): Password to log in with.
@@ -496,12 +499,13 @@ class ChatAPI():
 
         # Generate our URLs
         self.sse_url = static.URI.ChatAPI.sse_stream.format(stream_id_b10 = self.stream_id_b10)
+        print("SSE stream URL:", self.sse_url)
         self.message_api_url = static.URI.ChatAPI.message.format(stream_id_b10 = self.stream_id_b10)
 
         #  Connect to SSE stream
         #  Note: We do NOT want this request to have a timeout
-        response = requests.get(self.sse_url, stream = True, headers = static.RequestHeaders.sse_api)
-        self.client = sseclient.SSEClient(response)
+        self.response = requests.get(self.sse_url, stream = True, headers = static.RequestHeaders.sse_api)
+        self.client = sseclient.SSEClient(self.response)
         self.event_generator = self.client.events()
         self.chat_running = True
 
@@ -517,6 +521,11 @@ class ChatAPI():
 
         #  The last time we sent a message
         self.last_send_time = 0
+
+    def close(self):
+        """Close the chat connection"""
+        self.response.close()
+        self.chat_running = False
 
     @property
     def session_cookie(self):
@@ -697,6 +706,7 @@ class ChatAPI():
         try:
             event = next(self.event_generator, None)
         except requests.exceptions.ReadTimeout:
+            print("Request read timeout.")
             event = None
 
         if not event:
