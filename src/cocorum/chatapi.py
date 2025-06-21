@@ -486,34 +486,36 @@ class ChatAPI():
 
         self.stream_id = utils.ensure_b36(stream_id)
 
-        self.__mailbox = [] #A mailbox if you will
-        self.__history = [] #Chat history
-        self.history_len = history_len #How many messages to store in history
-        self.pinned_message = None #If a message is pinned, it is assigned to this
-        self.users = {} #Dictionary of users by user ID
-        self.channels = {} #Dictionary of channels by channel ID
+        self.__mailbox = []  # A mailbox if you will
+        self.__history = []  # Chat history
+        self.history_len = history_len  # How many messages to store in history
+        self.pinned_message = None  # If a message is pinned, it is assigned to this
+        self.users = {}  # Dictionary of users by user ID
+        self.channels = {}  # Dictionary of channels by channel ID
         self.badges = {}
 
         #Generate our URLs
         self.sse_url = static.URI.ChatAPI.sse_stream.format(stream_id_b10 = self.stream_id_b10)
         self.message_api_url = static.URI.ChatAPI.message.format(stream_id_b10 = self.stream_id_b10)
 
-        #Connect to SSE stream
-        #Note: We do NOT want this request to have a timeout
+        # Connect to SSE stream
+        # Note: We do NOT want this request to have a timeout
         response = requests.get(self.sse_url, stream = True, headers = static.RequestHeaders.sse_api)
         self.client = sseclient.SSEClient(response)
         self.event_generator = self.client.events()
         self.chat_running = True
-        self.parse_init_data(self.__next_event_json())
 
-        #If we have session login, use them
+        # If we have session login, use them
         if (username and password) or session:
             self.servicephp = ServicePHP(username, password, session)
             self.scraper = scraping.Scraper(self.servicephp)
         else:
             self.servicephp = None
 
-        #The last time we sent a message
+        # Parse the init data for the stream (must do AFTER we have servicephp)
+        self.parse_init_data(self.__next_event_json())
+
+        # The last time we sent a message
         self.last_send_time = 0
 
     @property
